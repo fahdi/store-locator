@@ -4,8 +4,8 @@
 **Version:** 1.0  
 **Date:** October 8, 2025  
 **Project Type:** Take-Home Technical Assessment  
-**Submission Deadline:** Wednesday Morning (October 9, 2025)  
-**Progress Update:** Sunday Evening (October 6, 2025)
+**Submission Deadline:** TBD  
+**Progress Update:** TBD
 
 ---
 
@@ -1064,7 +1064,7 @@ bluesky-store-locator/
 
 ## 9. Development Phases
 
-### Phase 1: Foundation (Day 1 - Oct 8)
+### Phase 1: Foundation (Day 1)
 **Duration:** 4-6 hours
 
 **Goals:**
@@ -1210,14 +1210,14 @@ bluesky-store-locator/
 
 | Date | Milestone | Status |
 |------|-----------|--------|
-| **Oct 8 (Today)** | PRD Complete | ✅ |
-| **Oct 8** | Project setup & authentication | 🔄 |
-| **Oct 8-9** | Map integration & data display | ⏳ |
-| **Oct 9** | Role-based features | ⏳ |
-| **Oct 9** | UI/UX polish | ⏳ |
-| **Oct 9** | Testing & documentation | ⏳ |
-| **Sunday (Oct 6)** | **Progress Update to BlueSky** | ⏳ |
-| **Wednesday Morning** | **Final Submission** | ⏳ |
+| **Dec 2024** | PRD Complete | ✅ |
+| **TBD** | Project setup & authentication | ⏳ |
+| **TBD** | Map integration & data display | ⏳ |
+| **TBD** | Role-based features | ⏳ |
+| **TBD** | UI/UX polish | ⏳ |
+| **TBD** | Testing & documentation | ⏳ |
+| **TBD** | **Progress Update** | ⏳ |
+| **TBD** | **Final Submission** | ⏳ |
 
 ---
 
@@ -1313,13 +1313,13 @@ The following features are explicitly **NOT** required for this project:
 ## 15. References & Resources
 
 ### Provided Resources
-- [Malls Data (malls.json)](https://gist.github.com/topazahmed/ea65717dfee7d8d6725f019957cab0e7)
-- [Auth Server (authServer.js)](https://gist.github.com/topazahmed/fb5e226a906b87a29a8937db6c051d72)
-- [Data Validation (validateData.ts)](https://gist.github.com/topazahmed/56d2896f0ad36eb2e00b286ab894afa5)
-- [Spatial Utilities (spatial.ts)](https://gist.github.com/topazahmed/084b16b58d95efa136a86c89aae567b5)
-- [Spatial Tests (spatial.test.ts)](https://gist.github.com/topazahmed/0b46475d01c19fb8d8b9404f856c0959)
-- [Mock Server (mockServer.js)](https://gist.github.com/topazahmed/11497c33e2ebbeea4f4e5c63fed713c2)
-- [Stores API (stores.json)](https://gist.github.com/topazahmed/3ce4526a67c3b945861ad0246f7bd610)
+- [Malls Data (malls.json)](https://gist.github.com/topazahmed/ea65717dfee7d8d6725f019957cab0e7) - Complete mall and store data for Doha
+- [Auth Server (authServer.js)](https://gist.github.com/topazahmed/fb5e226a906b87a29a8937db6c051d72) - Express server with JWT authentication
+- [Data Validation (validateData.ts)](https://gist.github.com/topazahmed/56d2896f0ad36eb2e00b286ab894afa5) - Validation utilities for required fields and coordinates
+- [Spatial Utilities (spatial.ts)](https://gist.github.com/topazahmed/084b16b58d95efa136a86c89aae567b5) - Distance calculations and proximity functions
+- [Spatial Tests (spatial.test.ts)](https://gist.github.com/topazahmed/0b46475d01c19fb8d8b9404f856c0959) - Unit tests for spatial utilities
+- [Mock Server (mockServer.js)](https://gist.github.com/topazahmed/11497c33e2ebbeea4f4e5c63fed713c2) - Extended mock API with random delays for testing
+- [Stores API (stores.json)](https://gist.github.com/topazahmed/3ce4526a67c3b945861ad0246f7bd610) - Static stores data (update to match malls.json)
 
 ### Documentation Links
 - [React Documentation](https://react.dev/)
@@ -1386,7 +1386,7 @@ The following features are explicitly **NOT** required for this project:
 
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
-| 1.0 | Oct 8, 2025 | Fahad Murtaza | Initial PRD creation |
+| 1.0 | Dec 2024 | Fahad Murtaza | Initial PRD creation |
 
 ---
 
