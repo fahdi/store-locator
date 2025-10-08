@@ -6,16 +6,42 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
-### In Progress
-- Phase 3: Interactive map integration using Leaflet
-- Mall and store markers with geographic positioning
-- Responsive map design for mobile devices
-
 ### Planned
 - Phase 4: Data display components with modal interactions
 - Phase 5: Role-based CRUD operations 
 - Phase 6: UI/UX polish and responsive design enhancements
 - Phase 7: Final testing and deployment preparation
+
+---
+
+## [0.5.0] - 2025-10-08
+
+### Added - Phase 3: Interactive Map Integration Complete
+- **Leaflet Map Integration**: Interactive map centered on Doha, Qatar (25.2854°N, 51.5310°E)
+- **Mall Markers**: Custom SVG icons with status-based colors (green=open, red=closed)
+- **Store Markers**: Individual store positioning with mini markers around parent malls
+- **Interactive Features**: Click-to-view detailed modals for malls and stores
+- **Hover Effects**: CSS animations with scaling and shadow effects
+- **DetailModal Component**: Comprehensive modal displaying store/mall information
+  - Status indicators with color-coded badges
+  - Opening hours and contact information
+  - Store categorization and mall associations
+  - Mobile-responsive design with touch-friendly interactions
+- **Tooltips**: Real-time hover information with store status and categories
+- **Mobile Optimizations**: Enhanced touch interactions and responsive design
+- **Coordinate Generation**: Algorithm for positioning stores around mall locations
+
+### Technical Implementation
+- **MapView.tsx**: Complete interactive map component with state management
+- **DetailModal.tsx**: Modal component with TypeScript interfaces and responsive design
+- **CSS Animations**: Leaflet marker hover effects and pulse animations
+- **Custom Icons**: SVG-based markers with proper accessibility and scalability
+- **Event Handling**: Mouse/touch interactions for desktop and mobile devices
+
+### Changed
+- Updated project status from Phase 2 to Phase 3 complete
+- Enhanced mobile responsiveness across all map components
+- Improved user experience with instant feedback and smooth animations
 
 ---
 
