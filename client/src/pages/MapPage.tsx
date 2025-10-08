@@ -1,120 +1,9 @@
-import { useState, useEffect } from 'react'
-import { Navigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
-import { mallAPI } from '../services/api'
-import { Mall } from '../types'
 import { ROUTES } from '../utils/constants'
 import MapView from '../components/MapView'
 
 export default function MapPage() {
   const { isAuthenticated, user, logout } = useAuth()
-  const [malls, setMalls] = useState<Mall[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
-  const fetchMalls = async () => {
-    setIsLoading(true)
-    setError(null)
-    try {
-      // Use public endpoint if not authenticated, authenticated endpoint if logged in
-      const mallsData = isAuthenticated 
-        ? await mallAPI.getAll()
-        : await mallAPI.getAllPublic()
-      setMalls(mallsData)
-    } catch (err) {
-      console.error('Failed to fetch malls:', err)
-      setError('Failed to load map data. Please try again.')
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    fetchMalls()
-  }, [])
-
-  const handleRetry = () => {
-    fetchMalls()
-  }
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-        {/* Header */}
-        <header className="bg-white shadow-sm border-b">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center h-16">
-              <div className="flex items-center">
-                <h1 className="text-xl font-semibold text-gray-900">
-                  BlueSky Store Locator
-                </h1>
-              </div>
-              <div className="flex items-center space-x-4">
-                <span className="text-sm text-gray-600">Welcome, {user?.username}</span>
-                <button
-                  onClick={logout}
-                  className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded text-sm transition duration-200"
-                >
-                  Logout
-                </button>
-              </div>
-            </div>
-          </div>
-        </header>
-
-        {/* Loading State */}
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading map...</p>
-          </div>
-        </main>
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-        {/* Header */}
-        <header className="bg-white shadow-sm border-b">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center h-16">
-              <div className="flex items-center">
-                <h1 className="text-xl font-semibold text-gray-900">
-                  BlueSky Store Locator
-                </h1>
-              </div>
-              <div className="flex items-center space-x-4">
-                <span className="text-sm text-gray-600">Welcome, {user?.username}</span>
-                <button
-                  onClick={logout}
-                  className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded text-sm transition duration-200"
-                >
-                  Logout
-                </button>
-              </div>
-            </div>
-          </div>
-        </header>
-
-        {/* Error State */}
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="text-center">
-            <div className="text-red-500 text-6xl mb-4">⚠️</div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Unable to Load Map</h2>
-            <p className="text-gray-600 mb-6">{error}</p>
-            <button
-              onClick={handleRetry}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200"
-            >
-              Retry
-            </button>
-          </div>
-        </main>
-      </div>
-    )
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
@@ -189,7 +78,7 @@ export default function MapPage() {
           </div>
         )}
         <div className={!isAuthenticated ? "h-[calc(100vh-7rem)]" : "h-[calc(100vh-4rem)]"}>
-          <MapView malls={malls} />
+          <MapView />
         </div>
       </main>
     </div>

@@ -1,13 +1,14 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { MapContainer, TileLayer, Marker, Popup, Tooltip } from 'react-leaflet'
 import { Icon } from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import { Mall, Store } from '../types'
 import { DOHA_CENTER } from '../utils/constants'
+import { useDataService } from '../hooks/useDataService'
 import DetailModal from './DetailModal'
 
 interface MapViewProps {
-  malls: Mall[]
+  malls?: Mall[] // Make optional since we'll fetch data internally
 }
 
 // Custom icon for open malls
@@ -55,7 +56,8 @@ function generateStoreCoordinates(mallLat: number, mallLng: number, storeId: num
   }
 }
 
-export default function MapView({ malls }: MapViewProps) {
+export default function MapView({ malls: propMalls }: MapViewProps) {
+  const { malls: fetchedMalls, loading, error, refreshData } = useDataService()
   const [modalState, setModalState] = useState<{
     isOpen: boolean
     mall?: Mall
@@ -63,6 +65,9 @@ export default function MapView({ malls }: MapViewProps) {
   }>({
     isOpen: false
   })
+
+  // Use prop malls if provided, otherwise use fetched malls
+  const malls = propMalls || fetchedMalls
 
   const openMallModal = (mall: Mall) => {
     setModalState({ isOpen: true, mall, store: undefined })
@@ -80,9 +85,39 @@ export default function MapView({ malls }: MapViewProps) {
     setModalState({ isOpen: false })
   }
 
+  // Show error state
+  if (error) {
+    return (
+      <div className="h-full w-full flex items-center justify-center bg-gray-50">
+        <div className="text-center p-6">
+          <div className="text-red-600 text-lg font-medium mb-2">Failed to Load Map Data</div>
+          <div className="text-gray-600 text-sm mb-4">{error}</div>
+          <button 
+            onClick={refreshData}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm transition-colors"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  // Show loading state (only if no prop malls provided)
+  if (!propMalls && loading) {
+    return (
+      <div className="h-full w-full flex items-center justify-center bg-gray-50">
+        <div className="text-center p-6">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <div className="text-gray-600 text-sm">Loading map data...</div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <>
-      <div className="h-full w-full">
+      <div className="h-full w-full relative">
       <MapContainer
         center={[DOHA_CENTER.latitude, DOHA_CENTER.longitude]}
         zoom={11}
