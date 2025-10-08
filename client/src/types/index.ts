@@ -42,8 +42,8 @@ export interface User {
 
 export interface AuthResponse {
   token: string
-  role: 'admin' | 'manager' | 'store'
   username: string
+  role: 'admin' | 'manager' | 'store'
 }
 
 export interface APIError {

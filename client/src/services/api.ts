@@ -1,8 +1,8 @@
 // API service for BlueSky Store Locator
 
 import axios from 'axios'
-import type { AuthResponse, LoginCredentials, Mall, Store } from '@/types'
-import { API_BASE_URL, STORAGE_KEYS } from '@/utils/constants'
+import type { AuthResponse, Mall, Store } from '../types'
+import { API_BASE_URL, STORAGE_KEYS } from '../utils/constants'
 
 // Create axios instance with default config
 const api = axios.create({
@@ -43,8 +43,8 @@ api.interceptors.response.use(
 
 // Auth API
 export const authAPI = {
-  login: async (credentials: LoginCredentials): Promise<AuthResponse> => {
-    const response = await api.post<AuthResponse>('/api/login', credentials)
+  login: async (username: string, password: string): Promise<AuthResponse> => {
+    const response = await api.post('/api/login', { username, password })
     return response.data
   },
 }
