@@ -1,1 +1,1 @@
-# store-locator-
+# Store Locator
