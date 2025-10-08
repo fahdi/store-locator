@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
+import toast from 'react-hot-toast'
 import { dataService } from '../services/dataService'
 import { Mall, Store } from '../types'
 
@@ -8,18 +9,20 @@ interface UseDataServiceResult {
   error: string | null
   refreshData: () => Promise<void>
   clearError: () => void
+  retryCount: number
 }
 
 export function useDataService(): UseDataServiceResult {
   const [malls, setMalls] = useState<Mall[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [retryCount, setRetryCount] = useState(0)
 
   const clearError = useCallback(() => {
     setError(null)
   }, [])
 
-  const fetchData = useCallback(async (forceRefresh = false) => {
+  const fetchData = useCallback(async (forceRefresh = false, showToasts = false) => {
     try {
       setLoading(true)
       setError(null)
@@ -29,17 +32,36 @@ export function useDataService(): UseDataServiceResult {
         : await dataService.fetchMalls()
       
       setMalls(mallsData)
+      setRetryCount(0) // Reset retry count on success
+      
+      if (showToasts && forceRefresh) {
+        toast.success('Data refreshed successfully')
+      }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to load data'
       setError(errorMessage)
+      setRetryCount(prev => prev + 1)
       console.error('Data service error:', err)
+      
+      if (showToasts) {
+        toast.error(errorMessage)
+      }
+      
+      // Auto-retry up to 2 times with exponential backoff
+      if (retryCount < 2 && !forceRefresh) {
+        const retryDelay = Math.pow(2, retryCount) * 1000 // 1s, 2s, 4s
+        setTimeout(() => {
+          console.log(`Auto-retrying data fetch (attempt ${retryCount + 1})`)
+          fetchData(false, false)
+        }, retryDelay)
+      }
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [retryCount])
 
   const refreshData = useCallback(async () => {
-    await fetchData(true)
+    await fetchData(true, true)
   }, [fetchData])
 
   useEffect(() => {
@@ -51,7 +73,8 @@ export function useDataService(): UseDataServiceResult {
     loading,
     error,
     refreshData,
-    clearError
+    clearError,
+    retryCount
   }
 }
 

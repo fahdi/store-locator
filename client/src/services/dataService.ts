@@ -68,11 +68,26 @@ export class DataService {
       const response = await this.fetchWithAuth(`${API_BASE_URL}/malls`)
       const malls: Mall[] = await response.json()
       
+      // Validate response structure
+      if (!Array.isArray(malls)) {
+        throw new Error('Invalid response format from server')
+      }
+      
       this.setCachedData(cacheKey, malls)
       return malls
     } catch (error) {
       console.error('Failed to fetch malls:', error)
-      throw new Error('Failed to load mall data. Please try again.')
+      
+      // More specific error messages based on error type
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        throw new Error('Network error: Unable to connect to server. Please check your connection.')
+      } else if (error instanceof Error && error.message.includes('HTTP error')) {
+        throw new Error('Server error: The server is temporarily unavailable. Please try again later.')
+      } else if (error instanceof Error) {
+        throw new Error(error.message)
+      } else {
+        throw new Error('Failed to load mall data. Please try again.')
+      }
     }
   }
 
@@ -109,13 +124,33 @@ export class DataService {
     return this.fetchMalls(false)
   }
 
-  // Health check
-  async checkServerHealth(): Promise<boolean> {
+  // Health check with detailed error reporting
+  async checkServerHealth(): Promise<{ healthy: boolean; message?: string }> {
     try {
-      const response = await fetch(`${API_BASE_URL}/health`)
-      return response.ok
-    } catch {
-      return false
+      const response = await fetch(`${API_BASE_URL}/health`, {
+        timeout: 5000
+      } as RequestInit)
+      
+      if (response.ok) {
+        return { healthy: true }
+      } else {
+        return { 
+          healthy: false, 
+          message: `Server returned ${response.status}: ${response.statusText}` 
+        }
+      }
+    } catch (error) {
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        return { 
+          healthy: false, 
+          message: 'Network error: Unable to connect to server' 
+        }
+      } else {
+        return { 
+          healthy: false, 
+          message: 'Unknown connection error' 
+        }
+      }
     }
   }
 }

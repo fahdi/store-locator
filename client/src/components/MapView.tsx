@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { MapContainer, TileLayer, Marker, Popup, Tooltip } from 'react-leaflet'
 import { Icon } from 'leaflet'
+import toast from 'react-hot-toast'
 import 'leaflet/dist/leaflet.css'
 import { Mall, Store } from '../types'
 import { DOHA_CENTER } from '../utils/constants'
@@ -57,7 +58,7 @@ function generateStoreCoordinates(mallLat: number, mallLng: number, storeId: num
 }
 
 export default function MapView({ malls: propMalls }: MapViewProps) {
-  const { malls: fetchedMalls, loading, error, refreshData } = useDataService()
+  const { malls: fetchedMalls, loading, error, refreshData, clearError, retryCount } = useDataService()
   const [modalState, setModalState] = useState<{
     isOpen: boolean
     loading: boolean
@@ -77,12 +78,24 @@ export default function MapView({ malls: propMalls }: MapViewProps) {
     
     try {
       // Simulate API call to fetch detailed mall data
-      await new Promise(resolve => setTimeout(resolve, 500))
+      await new Promise((resolve, reject) => {
+        setTimeout(() => {
+          // Simulate random failures (10% chance)
+          if (Math.random() < 0.1) {
+            reject(new Error('Failed to load mall details'))
+          } else {
+            resolve(undefined)
+          }
+        }, 500)
+      })
       
       // Set the mall data after "loading"
       setModalState({ isOpen: true, loading: false, mall, store: undefined })
+      toast.success(`${mall.name} details loaded successfully`)
     } catch (error) {
       // Handle error case
+      const errorMessage = error instanceof Error ? error.message : 'Failed to load mall details'
+      toast.error(errorMessage)
       setModalState({ isOpen: false, loading: false })
     }
   }
@@ -93,7 +106,16 @@ export default function MapView({ malls: propMalls }: MapViewProps) {
     
     try {
       // Simulate API call to fetch detailed store data
-      await new Promise(resolve => setTimeout(resolve, 300))
+      await new Promise((resolve, reject) => {
+        setTimeout(() => {
+          // Simulate random failures (10% chance)
+          if (Math.random() < 0.1) {
+            reject(new Error('Failed to load store details'))
+          } else {
+            resolve(undefined)
+          }
+        }, 300)
+      })
       
       // Set the store data after "loading"
       setModalState({ 
@@ -102,8 +124,11 @@ export default function MapView({ malls: propMalls }: MapViewProps) {
         mall: undefined, 
         store: { ...store, mallName } 
       })
+      toast.success(`${store.name} details loaded successfully`)
     } catch (error) {
       // Handle error case
+      const errorMessage = error instanceof Error ? error.message : 'Failed to load store details'
+      toast.error(errorMessage)
       setModalState({ isOpen: false, loading: false })
     }
   }
@@ -116,15 +141,31 @@ export default function MapView({ malls: propMalls }: MapViewProps) {
   if (error) {
     return (
       <div className="h-full w-full flex items-center justify-center bg-gray-50">
-        <div className="text-center p-6">
-          <div className="text-red-600 text-lg font-medium mb-2">Failed to Load Map Data</div>
+        <div className="text-center p-6 max-w-md">
+          <div className="text-red-600 text-lg font-medium mb-2">
+            {retryCount > 0 ? 'Still Having Trouble Loading Map' : 'Failed to Load Map Data'}
+          </div>
           <div className="text-gray-600 text-sm mb-4">{error}</div>
-          <button 
-            onClick={refreshData}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm transition-colors"
-          >
-            Try Again
-          </button>
+          {retryCount > 0 && (
+            <div className="text-xs text-gray-500 mb-3">
+              Attempted {retryCount} time{retryCount > 1 ? 's' : ''}
+            </div>
+          )}
+          <div className="flex gap-2 justify-center">
+            <button 
+              onClick={refreshData}
+              disabled={loading}
+              className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg text-sm transition-colors"
+            >
+              {loading ? 'Retrying...' : 'Try Again'}
+            </button>
+            <button 
+              onClick={clearError}
+              className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg text-sm transition-colors"
+            >
+              Dismiss
+            </button>
+          </div>
         </div>
       </div>
     )

@@ -1,6 +1,7 @@
 import { useAuth } from '../hooks/useAuth'
 import { ROUTES } from '../utils/constants'
 import MapView from '../components/MapView'
+import { ErrorBoundary } from '../components/ErrorBoundary'
 
 export default function MapPage() {
   const { isAuthenticated, user, logout } = useAuth()
@@ -78,7 +79,9 @@ export default function MapPage() {
           </div>
         )}
         <div className={!isAuthenticated ? "h-[calc(100vh-7rem)]" : "h-[calc(100vh-4rem)]"}>
-          <MapView />
+          <ErrorBoundary>
+            <MapView />
+          </ErrorBoundary>
         </div>
       </main>
     </div>
