@@ -167,11 +167,13 @@ npm run clean               # Clean all node_modules
 
 ### 🔄 In Progress  
 - **Phase 3: Map Integration** (70% Complete)
-  - ✅ Leaflet + React-Leaflet configured and working
-  - ✅ Doha-centered interactive map (25.2854°N, 51.5310°E)
-  - ✅ Custom mall markers with status-based colors (green=open, red=closed)
+  - ✅ Interactive Leaflet map with Doha coordinates (25.2854°N, 51.5310°E)
+  - ✅ Custom mall markers with status-based colors (green=open, red=closed)  
+  - ✅ Public map access - no authentication required (map-first approach)
+  - ✅ Interactive popups with mall details and store information
   - ✅ Fixed dark background styling + shadcn/ui theming system
-  - 🔄 **Currently working on**: Store markers with status indicators
+  - ✅ Public API endpoint for unauthenticated access
+  - 🔄 **Currently working on**: Store markers with individual status indicators (30% remaining)
 
 ### ⏳ Coming Next
 - **Phase 4**: Data Display Components (modals, cards, details)

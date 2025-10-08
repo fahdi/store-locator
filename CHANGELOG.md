@@ -7,15 +7,45 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 
 ### In Progress
-- Phase 3: Interactive map integration using Leaflet
-- Mall and store markers with geographic positioning
-- Responsive map design for mobile devices
+- Phase 3: Store markers with individual status indicators (30% remaining)
+- Enhanced marker hover effects and animations
+- Advanced click handlers for detailed store information
+- Mobile-optimized responsive design
 
-### Planned
+### Planned  
 - Phase 4: Data display components with modal interactions
-- Phase 5: Role-based CRUD operations 
-- Phase 6: UI/UX polish and responsive design enhancements
+- Phase 5: Role-based CRUD operations
+- Phase 6: UI/UX polish and responsive design enhancements  
 - Phase 7: Final testing and deployment preparation
+
+---
+
+## [0.5.0] - 2025-10-08
+
+### Added - Phase 3: Map Integration (70% Complete)
+- **Interactive Leaflet Map**: Full map integration with Doha, Qatar coordinates (25.2854°N, 51.5310°E)
+- **Custom Mall Markers**: Status-based visual indicators (green=open, red=closed) with SVG icons
+- **Public Map Access**: Map is now the default public view - no authentication required
+- **Public API Endpoint**: `/api/malls/public` for unauthenticated map data access
+- **Authentication-Aware UI**: Different navigation and features for public vs authenticated users
+- **Interactive Popups**: Click mall markers to view details, store counts, and status information
+- **shadcn/ui Integration**: Modern component library with proper theming system
+
+### Fixed
+- **Dark Background Issue**: Implemented proper light theme with CSS variables
+- **Data Structure Compatibility**: Handles both nested and direct coordinate data formats
+- **Error Handling**: Graceful handling of invalid/missing coordinate data
+
+### Changed
+- **Architecture**: Map-first approach - `localhost:5173` defaults to public map view
+- **Navigation**: Seamless flow between public map and authenticated dashboard
+- **User Experience**: Public store discovery without authentication barriers
+
+### Technical
+- **Test Coverage**: Comprehensive TDD with MapView and MapPage test suites (18 tests)
+- **Component Architecture**: Reusable MapView component with proper prop interfaces
+- **API Design**: Separate public/authenticated endpoints for security and performance
+- **Modern Tooling**: Updated Tailwind config for shadcn/ui integration
 
 ---
 
