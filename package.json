@@ -1,0 +1,63 @@
+{
+  "name": "bluesky-store-locator",
+  "version": "1.0.0",
+  "description": "BlueSky Store Locator & Management System - A comprehensive web application for managing malls and stores in Doha, Qatar",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "cd server && npm run dev",
+    "dev:client": "cd client && npm run dev",
+    "start:server": "cd server && npm start",
+    "build": "npm run build:client",
+    "build:client": "cd client && npm run build",
+    "test": "npm run test:client && npm run test:server",
+    "test:client": "cd client && npm run test",
+    "test:server": "cd server && npm run test",
+    "validate-data": "ts-node scripts/validate-data.ts",
+    "lint": "npm run lint:client",
+    "lint:client": "cd client && npm run lint",
+    "install:all": "npm install && cd client && npm install && cd ../server && npm install",
+    "clean": "rm -rf client/dist client/node_modules server/node_modules node_modules",
+    "setup": "npm run install:all"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "ts-node": "^10.9.1",
+    "@types/node": "^20.10.0",
+    "typescript": "^5.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "keywords": [
+    "store-locator",
+    "react",
+    "express",
+    "typescript",
+    "maps",
+    "authentication",
+    "doha",
+    "qatar",
+    "role-based",
+    "jwt"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fahdi/store-locator.git"
+  },
+  "author": {
+    "name": "Fahad Murtaza",
+    "email": "fahad@example.com"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fahdi/store-locator/issues"
+  },
+  "homepage": "https://github.com/fahdi/store-locator#readme"
+}
