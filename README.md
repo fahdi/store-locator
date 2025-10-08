@@ -6,6 +6,21 @@ A comprehensive web application for managing malls and stores in Doha, Qatar, fe
 
 This is a take-home technical assessment project that demonstrates modern web development skills including React, TypeScript, map integration, and role-based access control.
 
+## ⚡ Quick Start
+
+```bash
+# Clone and install
+git clone https://github.com/fahdi/store-locator.git
+cd store-locator
+npm run install:all
+
+# Start unified server (http://localhost:5001)
+npm run start:server
+
+# For development with hot reload
+npm run dev:server
+```
+
 ### Key Features
 - **Interactive Map**: Full-screen map centered on Doha with mall and store markers
 - **Role-Based Authentication**: Three user roles with different permissions
@@ -50,7 +65,7 @@ This is a take-home technical assessment project that demonstrates modern web de
 
 ```
 store-locator/
-├── client/                 # React frontend application
+├── client/                 # React frontend application (planned)
 │   ├── src/
 │   │   ├── components/     # Reusable UI components
 │   │   ├── pages/          # Page components
@@ -58,19 +73,24 @@ store-locator/
 │   │   ├── types/          # TypeScript interfaces
 │   │   ├── context/        # React contexts
 │   │   ├── hooks/          # Custom hooks
-│   │   ├── utils/          # Utility functions
-│   │   └── styles/         # Global styles
+│   │   └── utils/          # Utility functions
 │   ├── public/             # Static assets
 │   └── package.json
-├── server/                 # Express backend
-│   ├── data/               # JSON data files
-│   ├── routes/             # API routes
-│   ├── middleware/         # Express middleware
-│   └── authServer.js       # Main server file
-├── tests/                  # Test files
-├── docs/                   # Documentation
-│   ├── PRD.md             # Product Requirements Document
+├── server/                 # Unified Express backend
+│   ├── index.js           # Main unified API server
+│   ├── authServer.js      # Legacy auth server (reference)
+│   ├── data/              # JSON data files
+│   │   └── malls.json     # Mall and store data
+│   ├── utils/             # Server utilities
+│   │   ├── validate-data.js    # Data validation
+│   │   ├── spatial-utils.ts    # Geographic calculations
+│   │   └── spatial-utils.test.ts # Spatial tests
+│   ├── package.json       # Server dependencies
+│   └── tsconfig.json      # TypeScript configuration
+├── docs/                  # Documentation
+│   ├── PRD.md            # Product Requirements Document
 │   └── initial-requirements.md
+├── CHANGELOG.md          # Project change history
 └── README.md
 ```
 
@@ -89,50 +109,63 @@ store-locator/
    cd store-locator
    ```
 
-2. **Install dependencies**
+2. **Install all dependencies**
    ```bash
-   # Install server dependencies
-   cd server
-   npm install express cors jsonwebtoken
-   
-   # Install client dependencies
-   cd ../client
-   npm install
+   npm run install:all
    ```
 
-3. **Start the development servers**
+3. **Start the unified server**
    ```bash
-   # Terminal 1: Start backend server
-   cd server
-   node authServer.js
-   # Server runs on http://localhost:5000
+   # Production mode
+   npm run start:server
    
-   # Terminal 2: Start frontend development server
-   cd client
-   npm run dev
-   # Client runs on http://localhost:5173
+   # Development mode (with hot reload)
+   npm run dev:server
    ```
 
-4. **Access the application**
-   - Open http://localhost:5173 in your browser
-   - Use the login credentials above to test different roles
+4. **Access the API**
+   - **Server**: http://localhost:5001
+   - **Health Check**: http://localhost:5001/api/health
+   - **API Documentation**: See endpoints section below
+
+### Available Scripts
+
+```bash
+# Server management
+npm run start:server          # Start unified server
+npm run dev:server           # Development mode with hot reload
+
+# Data management  
+npm run validate-data        # Validate mall and store data
+
+# Development utilities
+npm run install:all          # Install all dependencies
+npm run clean               # Clean all node_modules
+```
 
 ## 🔧 Development Status
 
 ### ✅ Completed
-- [x] Project repository setup
-- [x] Product Requirements Document (PRD)
+- [x] Project repository setup and monorepo structure
+- [x] Unified server architecture with consolidated API
+- [x] JWT-based authentication system
+- [x] Role-based access control (Admin/Manager/Store)
+- [x] Mall and store data management
+- [x] Data validation utilities
+- [x] Spatial calculation utilities
 - [x] GitHub project and issue tracking
-- [x] Initial project structure planning
+- [x] Comprehensive documentation (PRD, README, CHANGELOG)
 
-### 🚧 In Progress
-- [ ] Project foundation setup (Phase 1)
-- [ ] Authentication system (Phase 2)
-- [ ] Map integration (Phase 3)
-- [ ] Data display components (Phase 4)
-- [ ] Role-based features (Phase 5)
-- [ ] UI/UX polish (Phase 6)
-- [ ] Testing & documentation (Phase 7)
+### 🚧 In Progress  
+- [ ] React frontend development (Phase 1)
+- [ ] Interactive map integration (Phase 2)
+- [ ] UI components and design system (Phase 3)
+
+### ⏳ Planned
+- [ ] Responsive design implementation
+- [ ] Testing suite completion
+- [ ] Performance optimization
+- [ ] Optional bonus features
 
 ## 📋 Development Phases
 
@@ -180,13 +213,33 @@ npm test spatial.test.ts
 
 ## 📚 API Endpoints
 
+### Authentication
 | Method | Endpoint | Role | Description |
 |--------|----------|------|-------------|
 | POST | `/api/login` | Any | Authenticate user and return JWT |
-| GET | `/api/malls` | All | Get list of malls and stores |
-| PATCH | `/api/malls/:id/toggle` | Admin | Toggle mall open/close |
-| PATCH | `/api/malls/:mallId/stores/:storeId/toggle` | Manager | Toggle store open/close |
+
+**Request Body:**
+```json
+{
+  "username": "admin",
+  "password": "a"
+}
+```
+
+### Mall Management  
+| Method | Endpoint | Role | Description |
+|--------|----------|------|-------------|
+| GET | `/api/malls` | All Authenticated | Get list of malls and stores |
+| PATCH | `/api/malls/:id/toggle` | Admin | Toggle mall open/close (cascades to stores) |
+| PATCH | `/api/malls/:mallId/stores/:storeId/toggle` | Manager | Toggle individual store open/close |
 | PUT | `/api/malls/:mallId/stores/:storeId` | Store | Update store details |
+
+### Testing & Utilities
+| Method | Endpoint | Role | Description |
+|--------|----------|------|-------------|
+| GET | `/api/stores` | None | Get flattened stores list (mock endpoint) |
+| PATCH | `/api/stores/:id` | None | Update store with simulated delays/failures |
+| GET | `/api/health` | None | Server health check and status |
 
 ## 🔗 Resources
 
@@ -235,6 +288,7 @@ For questions about this project, please refer to the PRD or create an issue in 
 
 ---
 
-**Project Status**: 🚧 In Development  
-**Last Updated**: December 2024  
-**Next Milestone**: Complete Phase 1 - Foundation Setup
+**Project Status**: 🚧 Backend Complete - Frontend Development Ready  
+**Last Updated**: October 2025  
+**Next Milestone**: React Frontend Implementation  
+**Current Version**: See [CHANGELOG.md](./CHANGELOG.md) for detailed changes
