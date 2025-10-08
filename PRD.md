@@ -4,8 +4,8 @@
 **Version:** 1.0  
 **Date:** October 8, 2025  
 **Project Type:** Take-Home Technical Assessment  
-**Submission Deadline:** TBD  
-**Progress Update:** TBD
+**Submission Deadline:** Wednesday Morning (October 9, 2025)  
+**Progress Update:** Sunday Evening (October 6, 2025)
 
 ---
 
