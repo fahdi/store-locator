@@ -1,5 +1,5 @@
 /**
- * api/mockServer.ts
+ * api/mockServer.js
  * Lightweight Express server to mock store API behavior
  */
 
@@ -12,22 +12,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-interface Store {
-  id: number;
-  name: string;
-  type: string;
-  description?: string;
-  opening_hours?: string;
-  latitude: number;
-  longitude: number;
-  website?: string;
-  picture?: string;
-}
-
 // Load stores from malls data and flatten them
-const mallsData = JSON.parse(readFileSync(join(process.cwd(), "src/data/malls.json"), "utf-8"));
-let stores: Store[] = mallsData.flatMap((mall: any) => 
-  mall.stores.map((store: any) => ({
+const mallsData = JSON.parse(readFileSync(join(process.cwd(), "../src/data/malls.json"), "utf-8"));
+let stores = mallsData.flatMap((mall) => 
+  mall.stores.map((store) => ({
     ...store,
     latitude: mall.latitude + (Math.random() - 0.5) * 0.01, // Slight offset from mall
     longitude: mall.longitude + (Math.random() - 0.5) * 0.01,
@@ -39,7 +27,7 @@ let stores: Store[] = mallsData.flatMap((mall: any) =>
 // Track if store id=3 has failed once
 let forcedFailure = false;
 
-function randomDelay(min = 400, max = 1500): Promise<void> {
+function randomDelay(min = 400, max = 1500) {
   return new Promise((resolve) => setTimeout(resolve, Math.random() * (max - min) + min));
 }
 

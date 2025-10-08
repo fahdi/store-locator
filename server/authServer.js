@@ -46,7 +46,7 @@ function auth(requiredRoles = []) {
 }
 
 // Load mall data
-const DATA_PATH = "./server/data/malls.json";
+const DATA_PATH = "./data/malls.json";
 let malls = JSON.parse(fs.readFileSync(DATA_PATH, "utf-8"));
 
 // 🔹 Get all malls (any logged in user)
@@ -87,4 +87,4 @@ app.put("/api/malls/:mallId/stores/:storeId", auth(["store"]), (req, res) => {
   res.json(store);
 });
 
-app.listen(5000, () => console.log("Auth + Store API running on http://localhost:5000"));
+app.listen(5001, () => console.log("Auth + Store API running on http://localhost:5001"));
