@@ -132,52 +132,18 @@ export default function MapView({ malls }: MapViewProps) {
               <div className="text-center">
                 <div className="font-bold text-sm">🏬 {mall.name}</div>
                 <div className="text-xs text-gray-600">
-                  {mall.stores.filter(store => store.isOpen).length} of {mall.stores.length} stores open
+                  <span className="text-sm font-medium text-gray-600 mr-2">Stores:</span>
+                  <span className="text-sm text-gray-900">
+                    {mall.stores.length} {mall.stores.length === 1 ? 'store' : 'stores'}
+                  </span>
                 </div>
+                {mall.stores.length > 0 && (
+                  <div className="text-xs text-gray-600">
+                    Active Stores: {mall.stores.filter(store => store.isOpen).length} open
+                  </div>
+                )}
               </div>
             </Tooltip>
-            <Popup>
-              <div className="p-2 min-w-[200px]">
-                <h3 className="font-bold text-lg text-gray-900 mb-2">
-                  🏬 {mall.name}
-                </h3>
-                
-                <div className="space-y-2">
-                  <div className="flex items-center">
-                    <span className="text-sm font-medium text-gray-600 mr-2">Status:</span>
-                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                      mall.isOpen 
-                        ? 'bg-green-100 text-green-800' 
-                        : 'bg-red-100 text-red-800'
-                    }`}>
-                      {mall.isOpen ? 'Open' : 'Closed'}
-                    </span>
-                  </div>
-                  
-                  <div className="flex items-center">
-                    <span className="text-sm font-medium text-gray-600 mr-2">Stores:</span>
-                    <span className="text-sm text-gray-900">
-                      {mall.stores.length} {mall.stores.length === 1 ? 'store' : 'stores'}
-                    </span>
-                  </div>
-                  
-                  {mall.stores.length > 0 && (
-                    <div className="mt-2 pt-2 border-t border-gray-200">
-                      <span className="text-xs font-medium text-gray-600">Active Stores:</span>
-                      <div className="mt-1 text-xs text-gray-900">
-                        {mall.stores.filter(store => store.isOpen).length} open
-                      </div>
-                    </div>
-                  )}
-                  
-                  {mall.description && (
-                    <div className="mt-2 pt-2 border-t border-gray-200">
-                      <p className="text-sm text-gray-700">{mall.description}</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </Popup>
             </Marker>
           )
         }).filter(Boolean)}
@@ -222,49 +188,6 @@ export default function MapView({ malls }: MapViewProps) {
                     </div>
                   </div>
                 </Tooltip>
-                <Popup>
-                  <div className="p-2 min-w-[180px]">
-                    <h3 className="font-bold text-base text-gray-900 mb-2">
-                      🏪 {store.name}
-                    </h3>
-                    
-                    <div className="space-y-2">
-                      <div className="flex items-center">
-                        <span className="text-sm font-medium text-gray-600 mr-2">Status:</span>
-                        <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                          store.isOpen 
-                            ? 'bg-blue-100 text-blue-800' 
-                            : 'bg-red-100 text-red-800'
-                        }`}>
-                          {store.isOpen ? 'Open' : 'Closed'}
-                        </span>
-                      </div>
-                      
-                      <div className="flex items-center">
-                        <span className="text-sm font-medium text-gray-600 mr-2">Type:</span>
-                        <span className="text-sm text-gray-900">{store.type}</span>
-                      </div>
-                      
-                      <div className="flex items-center">
-                        <span className="text-sm font-medium text-gray-600 mr-2">Mall:</span>
-                        <span className="text-sm text-gray-900">{mall.name}</span>
-                      </div>
-                      
-                      {store.opening_hours && (
-                        <div className="mt-2 pt-2 border-t border-gray-200">
-                          <span className="text-xs font-medium text-gray-600">Hours:</span>
-                          <div className="mt-1 text-xs text-gray-900">{store.opening_hours}</div>
-                        </div>
-                      )}
-                      
-                      {store.description && (
-                        <div className="mt-2 pt-2 border-t border-gray-200">
-                          <p className="text-sm text-gray-700">{store.description}</p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </Popup>
               </Marker>
             )
           })
