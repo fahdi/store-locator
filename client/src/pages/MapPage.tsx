@@ -1,13 +1,23 @@
+import { useState } from 'react'
 import { useAuth } from '../hooks/useAuth'
 import { ROUTES } from '../utils/constants'
 import MapView from '../components/MapView'
+import SearchFilter from '../components/SearchFilter'
 import { ErrorBoundary } from '../components/ErrorBoundary'
+import { useDataService } from '../hooks/useDataService'
+import { Mall } from '../types'
 
 export default function MapPage() {
   const { isAuthenticated, user, logout } = useAuth()
+  const { malls, loading, error } = useDataService()
+  const [filteredMalls, setFilteredMalls] = useState<Mall[]>([])
+
+  const handleFilteredResults = (filtered: Mall[]) => {
+    setFilteredMalls(filtered)
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col">
       {/* Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -64,8 +74,8 @@ export default function MapPage() {
         </div>
       </header>
 
-      {/* Map */}
-      <main className="h-[calc(100vh-4rem)]">
+      {/* Main Content */}
+      <main className="flex-1 flex flex-col">
         {!isAuthenticated && (
           <div className="bg-blue-50 border-b border-blue-200 px-4 py-3">
             <div className="max-w-7xl mx-auto">
@@ -78,9 +88,24 @@ export default function MapPage() {
             </div>
           </div>
         )}
-        <div className={!isAuthenticated ? "h-[calc(100vh-7rem)]" : "h-[calc(100vh-4rem)]"}>
+        
+        {/* Search and Filter Section */}
+        <div className="bg-white border-b px-4 py-3">
+          <div className="max-w-7xl mx-auto">
+            <ErrorBoundary>
+              <SearchFilter
+                malls={malls}
+                onFilteredResults={handleFilteredResults}
+                className="shadow-sm"
+              />
+            </ErrorBoundary>
+          </div>
+        </div>
+
+        {/* Map Section */}
+        <div className="flex-1 relative">
           <ErrorBoundary>
-            <MapView />
+            <MapView malls={filteredMalls.length > 0 ? filteredMalls : malls} />
           </ErrorBoundary>
         </div>
       </main>
