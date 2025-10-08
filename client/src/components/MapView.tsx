@@ -60,29 +60,56 @@ export default function MapView({ malls: propMalls }: MapViewProps) {
   const { malls: fetchedMalls, loading, error, refreshData } = useDataService()
   const [modalState, setModalState] = useState<{
     isOpen: boolean
+    loading: boolean
     mall?: Mall
     store?: Store & { mallName?: string }
   }>({
-    isOpen: false
+    isOpen: false,
+    loading: false
   })
 
   // Use prop malls if provided, otherwise use fetched malls
   const malls = propMalls || fetchedMalls
 
-  const openMallModal = (mall: Mall) => {
-    setModalState({ isOpen: true, mall, store: undefined })
+  const openMallModal = async (mall: Mall) => {
+    // Show loading state immediately
+    setModalState({ isOpen: true, loading: true })
+    
+    try {
+      // Simulate API call to fetch detailed mall data
+      await new Promise(resolve => setTimeout(resolve, 500))
+      
+      // Set the mall data after "loading"
+      setModalState({ isOpen: true, loading: false, mall, store: undefined })
+    } catch (error) {
+      // Handle error case
+      setModalState({ isOpen: false, loading: false })
+    }
   }
 
-  const openStoreModal = (store: Store, mallName: string) => {
-    setModalState({ 
-      isOpen: true, 
-      mall: undefined, 
-      store: { ...store, mallName } 
-    })
+  const openStoreModal = async (store: Store, mallName: string) => {
+    // Show loading state immediately
+    setModalState({ isOpen: true, loading: true })
+    
+    try {
+      // Simulate API call to fetch detailed store data
+      await new Promise(resolve => setTimeout(resolve, 300))
+      
+      // Set the store data after "loading"
+      setModalState({ 
+        isOpen: true, 
+        loading: false,
+        mall: undefined, 
+        store: { ...store, mallName } 
+      })
+    } catch (error) {
+      // Handle error case
+      setModalState({ isOpen: false, loading: false })
+    }
   }
 
   const closeModal = () => {
-    setModalState({ isOpen: false })
+    setModalState({ isOpen: false, loading: false })
   }
 
   // Show error state
@@ -233,6 +260,7 @@ export default function MapView({ malls: propMalls }: MapViewProps) {
       {/* Detail Modal */}
       <DetailModal 
         isOpen={modalState.isOpen}
+        loading={modalState.loading}
         onClose={closeModal}
         mall={modalState.mall}
         store={modalState.store}
