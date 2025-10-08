@@ -4,6 +4,7 @@ import { AuthProvider } from './context/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
 import LoginPage from './pages/LoginPage'
 import DashboardPage from './pages/DashboardPage'
+import MapPage from './pages/MapPage'
 import { ROUTES } from './utils/constants'
 import './App.css'
 
@@ -26,11 +27,24 @@ function App() {
               } 
             />
             
-            {/* Default redirect */}
-            <Route path={ROUTES.HOME} element={<Navigate to={ROUTES.DASHBOARD} replace />} />
+            {/* Public Map Route */}
+            <Route path={ROUTES.MALLS} element={<MapPage />} />
             
-            {/* Catch all - redirect to dashboard */}
-            <Route path="*" element={<Navigate to={ROUTES.DASHBOARD} replace />} />
+            {/* Protected Map Route (for authenticated users) */}
+            <Route 
+              path="/malls/admin" 
+              element={
+                <ProtectedRoute>
+                  <MapPage />
+                </ProtectedRoute>
+              } 
+            />
+            
+            {/* Default redirect - public map view */}
+            <Route path={ROUTES.HOME} element={<Navigate to={ROUTES.MALLS} replace />} />
+            
+            {/* Catch all - redirect to public map */}
+            <Route path="*" element={<Navigate to={ROUTES.MALLS} replace />} />
           </Routes>
           
           {/* Toast notifications */}
