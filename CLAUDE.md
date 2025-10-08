@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 BlueSky Store Locator & Management System - A comprehensive web application for managing malls and stores in Doha, Qatar, featuring role-based authentication, interactive maps, and CRUD operations based on user permissions.
 
-**Current Status**: Backend Complete (100%) - Frontend Foundation Ready for Phase 2
+**Current Status**: Phase 2 Authentication System Complete (100%) - Ready for Phase 3: Map Integration
 
 ## Development Environment
 
@@ -127,11 +127,17 @@ npm run typecheck:client    # TypeScript strict mode validation
 - Development tooling (ESLint, Prettier, Vitest) ✅
 - Documentation and task tracking ✅
 
-**Phase 2: Authentication System (🔄 NEXT)**
-- Login page UI with form validation
-- AuthContext for state management  
-- Protected route components
-- JWT token management
+**Phase 2: Authentication System (✅ COMPLETE)**
+- Login page UI with form validation ✅
+- AuthContext for state management ✅
+- Protected route components ✅
+- JWT token management ✅
+
+**Phase 3: Map Integration (🔄 NEXT)**
+- Install and configure Leaflet + React-Leaflet
+- Center map on Doha coordinates
+- Create mall and store markers
+- Implement marker interactions
 
 **Client Development (Foundation Ready):**
 - Vite with HMR and TypeScript strict mode ✅
@@ -198,8 +204,74 @@ interface User {
 - **TypeScript**: Strict mode enforced across all code
 - **Code Quality**: ESLint + Prettier with zero warnings policy
 - **Testing**: Comprehensive test coverage for utilities and spatial calculations
+- **Test-Driven Development (TDD)**: MANDATORY for all new features and components
 - **Documentation**: Transparent AI-assisted development approach
 - **Git Workflow**: Feature branches with descriptive commit messages
+
+### Test-Driven Development (TDD) Requirements
+**MANDATORY RULE**: All new features, components, and functionality MUST follow TDD approach:
+
+1. **Write Tests First**: Before implementing any new feature or component:
+   - Write failing tests that describe the expected behavior
+   - Define test cases for happy path, edge cases, and error scenarios
+   - Use Vitest for React components and utility functions
+   - Create comprehensive test suites for API endpoints
+
+2. **Implementation Cycle**:
+   - 🔴 **Red**: Write a failing test
+   - 🟢 **Green**: Write minimal code to make the test pass
+   - 🔄 **Refactor**: Clean up code while keeping tests passing
+   - Repeat for each piece of functionality
+
+3. **Test Coverage Requirements**:
+   - **Components**: Test rendering, user interactions, props, and state changes
+   - **Hooks**: Test all return values, side effects, and edge cases
+   - **API Services**: Test all endpoints, error handling, and response parsing
+   - **Utilities**: Test all functions with various inputs and edge cases
+   - **Integration**: Test authentication flows, protected routes, and role-based access
+
+4. **Testing Tools & Patterns**:
+   - **Vitest** for unit and integration tests
+   - **React Testing Library** for component testing
+   - **MSW (Mock Service Worker)** for API mocking
+   - **User-centric testing** focusing on behavior over implementation
+   - **Accessibility testing** with screen readers and keyboard navigation
+
+5. **Test Organization**:
+   - Co-locate tests with components: `Component.test.tsx`
+   - Separate test utilities in `src/test/` directory
+   - Mock external dependencies and API calls
+   - Use descriptive test names that explain the behavior
+
+6. **Before Any PR**:
+   - All tests must pass: `npm run test:client`
+   - Achieve minimum 80% code coverage
+   - Include tests for new functionality in commit messages
+   - Review tests as part of code review process
+
+**Example TDD Workflow for New Feature**:
+```bash
+# 1. Write failing test
+touch src/components/NewFeature.test.tsx
+# Write test cases for expected behavior
+
+# 2. Run tests (should fail)
+npm run test:client
+
+# 3. Implement minimal code to pass tests
+touch src/components/NewFeature.tsx
+# Write just enough code to make tests pass
+
+# 4. Refactor and improve while tests stay green
+# 5. Add more test cases and repeat cycle
+```
+
+This TDD approach ensures:
+- **Higher code quality** with fewer bugs
+- **Better design** through test-first thinking
+- **Confidence in refactoring** with comprehensive test coverage
+- **Documentation** through test cases that explain expected behavior
+- **Faster debugging** when tests pinpoint exact failures
 
 ## Project Context & Next Steps
 
