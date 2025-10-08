@@ -1,4 +1,4 @@
-import { X, Clock, MapPin, Phone, Globe, Store } from 'lucide-react'
+import { X, Clock, MapPin, Phone, Globe, Store, Image as ImageIcon } from 'lucide-react'
 import { Mall, Store as StoreType } from '../types'
 
 interface DetailModalProps {
@@ -52,6 +52,15 @@ export default function DetailModal({ isOpen, onClose, mall, store }: DetailModa
 
         {/* Content */}
         <div className="p-4 sm:p-6 space-y-4 overflow-y-auto">
+          {/* Image Display */}
+          <div className="relative">
+            <div className="w-full h-32 bg-gradient-to-r from-gray-100 to-gray-200 rounded-lg flex items-center justify-center">
+              <div className="text-center">
+                <ImageIcon className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                <span className="text-xs text-gray-500">Image placeholder</span>
+              </div>
+            </div>
+          </div>
           {/* Status */}
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium text-gray-600">Status:</span>
@@ -73,12 +82,18 @@ export default function DetailModal({ isOpen, onClose, mall, store }: DetailModa
               </div>
 
               {store.opening_hours && (
-                <div className="space-y-2">
+                <div className="space-y-2 bg-gray-50 p-3 rounded-lg">
                   <div className="flex items-center space-x-2">
                     <Clock className="w-4 h-4 text-gray-500" />
                     <span className="text-sm font-medium text-gray-600">Opening Hours</span>
                   </div>
-                  <p className="text-sm text-gray-900 ml-6">{store.opening_hours}</p>
+                  <div className="ml-6">
+                    {store.opening_hours.split(',').map((hours, index) => (
+                      <div key={index} className="text-sm text-gray-900 py-0.5">
+                        {hours.trim()}
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
 
@@ -89,22 +104,32 @@ export default function DetailModal({ isOpen, onClose, mall, store }: DetailModa
                 </div>
               )}
 
-              {/* Mock contact info */}
-              <div className="space-y-3 pt-2 border-t border-gray-200">
+              {/* Contact Information */}
+              <div className="space-y-3 pt-3 border-t border-gray-200 bg-blue-50 p-3 rounded-lg">
+                <h4 className="text-sm font-semibold text-gray-700 mb-2">Contact Information</h4>
                 <div className="flex items-center space-x-3">
-                  <Phone className="w-4 h-4 text-gray-500" />
-                  <span className="text-sm text-gray-900">+974 4444 {store.id.toString().padStart(4, '0')}</span>
+                  <Phone className="w-4 h-4 text-blue-500" />
+                  <a 
+                    href={`tel:+97444440${store.id.toString().padStart(3, '0')}`}
+                    className="text-sm text-gray-900 hover:text-blue-600 transition-colors"
+                  >
+                    +974 4444 {store.id.toString().padStart(4, '0')}
+                  </a>
                 </div>
                 <div className="flex items-center space-x-3">
-                  <Globe className="w-4 h-4 text-gray-500" />
+                  <Globe className="w-4 h-4 text-blue-500" />
                   <a 
                     href={`https://${store.name.toLowerCase().replace(/\s+/g, '')}.com`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm text-blue-600 hover:text-blue-800 hover:underline"
+                    className="text-sm text-blue-600 hover:text-blue-800 hover:underline transition-colors"
                   >
-                    Visit Website
+                    Visit Website →
                   </a>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <MapPin className="w-4 h-4 text-blue-500" />
+                  <span className="text-sm text-gray-700">Located in {store.mallName}</span>
                 </div>
               </div>
             </>
@@ -113,17 +138,17 @@ export default function DetailModal({ isOpen, onClose, mall, store }: DetailModa
           {/* Mall-specific details */}
           {!isStoreDetail && mall && (
             <>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-gray-600">Total Stores:</span>
-                  <span className="text-sm text-gray-900 font-medium">{mall.stores.length}</span>
+              {/* Mall Statistics */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-gray-50 p-3 rounded-lg text-center">
+                  <div className="text-2xl font-bold text-gray-900">{mall.stores.length}</div>
+                  <div className="text-xs text-gray-600">Total Stores</div>
                 </div>
-                
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-gray-600">Open Stores:</span>
-                  <span className="text-sm text-green-600 font-medium">
+                <div className="bg-green-50 p-3 rounded-lg text-center">
+                  <div className="text-2xl font-bold text-green-600">
                     {mall.stores.filter(store => store.isOpen).length}
-                  </span>
+                  </div>
+                  <div className="text-xs text-gray-600">Currently Open</div>
                 </div>
               </div>
 
@@ -144,16 +169,28 @@ export default function DetailModal({ isOpen, onClose, mall, store }: DetailModa
 
               {/* Store list */}
               <div className="space-y-2">
-                <span className="text-sm font-medium text-gray-600">Stores ({mall.stores.length})</span>
-                <div className="space-y-1 max-h-32 overflow-y-auto">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-gray-600">Stores in Mall</span>
+                  <span className="text-xs text-gray-500">({mall.stores.length} total)</span>
+                </div>
+                <div className="space-y-1 max-h-40 overflow-y-auto border rounded-lg">
                   {mall.stores.map(store => (
-                    <div key={store.id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
-                      <div>
-                        <span className="text-sm font-medium text-gray-900">{store.name}</span>
-                        <span className="text-xs text-gray-500 ml-2">({store.type})</span>
+                    <div key={store.id} className="flex items-center justify-between p-3 hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0">
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-2">
+                          <span className="text-sm font-medium text-gray-900">{store.name}</span>
+                          <span className={`px-2 py-0.5 text-xs rounded-full ${
+                            store.isOpen 
+                              ? 'bg-green-100 text-green-700' 
+                              : 'bg-red-100 text-red-700'
+                          }`}>
+                            {store.isOpen ? 'Open' : 'Closed'}
+                          </span>
+                        </div>
+                        <span className="text-xs text-gray-500">{store.type}</span>
                       </div>
-                      <span className={`w-2 h-2 rounded-full ${
-                        store.isOpen ? 'bg-green-500' : 'bg-red-500'
+                      <Store className={`w-4 h-4 ${
+                        store.isOpen ? 'text-green-500' : 'text-red-500'
                       }`} />
                     </div>
                   ))}
@@ -172,12 +209,34 @@ export default function DetailModal({ isOpen, onClose, mall, store }: DetailModa
 
         {/* Footer */}
         <div className="p-4 sm:p-6 border-t bg-gray-50">
-          <button
-            onClick={onClose}
-            className="w-full bg-gray-600 hover:bg-gray-700 text-white font-medium py-3 sm:py-2 px-4 rounded-lg transition-colors text-base sm:text-sm"
-          >
-            Close
-          </button>
+          <div className="flex flex-col sm:flex-row gap-3">
+            {/* Primary Actions */}
+            {isStoreDetail && store ? (
+              <>
+                <button className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors text-sm flex items-center justify-center">
+                  <MapPin className="w-4 h-4 mr-2" />
+                  Get Directions
+                </button>
+                <button className="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition-colors text-sm flex items-center justify-center">
+                  <Phone className="w-4 h-4 mr-2" />
+                  Call Store
+                </button>
+              </>
+            ) : (
+              <button className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors text-sm flex items-center justify-center">
+                <MapPin className="w-4 h-4 mr-2" />
+                View All Stores
+              </button>
+            )}
+            
+            {/* Close Button */}
+            <button
+              onClick={onClose}
+              className="sm:w-auto w-full bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-6 rounded-lg transition-colors text-sm"
+            >
+              Close
+            </button>
+          </div>
         </div>
       </div>
     </div>
