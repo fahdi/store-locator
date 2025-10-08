@@ -56,6 +56,12 @@ export const mallAPI = {
     return response.data
   },
 
+  // Public endpoint for unauthenticated users
+  getAllPublic: async (): Promise<Mall[]> => {
+    const response = await axios.get<Mall[]>(`${API_BASE_URL}/api/malls/public`)
+    return response.data
+  },
+
   toggleMall: async (mallId: number): Promise<Mall> => {
     const response = await api.patch<Mall>(`/api/malls/${mallId}/toggle`)
     return response.data

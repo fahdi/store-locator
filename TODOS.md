@@ -2,34 +2,30 @@
 
 This document tracks all todo items and tasks for the BlueSky Store Locator project.
 
-## 🚀 Current Sprint: Phase 2 - Authentication System
+## 🚀 Current Sprint: Phase 3 - Map Integration
 
 ### 🔄 In Progress
-*No items currently in progress*
+- [ ] Create store markers with status indicators
 
 ### ⏳ Todo - High Priority
 
-#### Authentication System (Phase 2)
-- [ ] Create login page UI with form validation
-- [ ] Implement AuthContext for state management
-- [ ] Set up protected route components  
-- [ ] Add JWT token management (localStorage)
-- [ ] Create auth service for API calls
-- [ ] Implement logout functionality
-- [ ] Add token expiration handling
-- [ ] Test all three user roles (admin/manager/store)
-
-### 📋 Todo - Medium Priority
-
-#### Map Integration (Phase 3)
-- [ ] Install and configure Leaflet + React-Leaflet
-- [ ] Center map on Doha coordinates (25.2854°N, 51.5310°E)
-- [ ] Create mall markers with custom icons
-- [ ] Create store markers with status indicators
+#### Map Integration (Phase 3) - NEARLY COMPLETE
+- [x] ✅ Install and configure Leaflet + React-Leaflet
+- [x] ✅ Center map on Doha coordinates (25.2854°N, 51.5310°E)
+- [x] ✅ Create mall markers with custom icons (open=green, closed=red)
+- [x] ✅ Fix dark background styling and implement shadcn/ui theming
+- [ ] 🔄 Create store markers with status indicators
 - [ ] Implement marker hover effects
 - [ ] Add marker click handlers for details
 - [ ] Make map responsive for mobile
 - [ ] Add map controls (zoom, pan)
+
+### 📋 Todo - Medium Priority
+
+#### Map Integration (Phase 3) - Additional Features
+- [ ] Add clustering for multiple stores in same location
+- [ ] Implement custom popup animations
+- [ ] Add map legend for marker types
 
 #### Data Display Components (Phase 4)
 - [ ] Create mall detail modal/card component
@@ -128,6 +124,20 @@ This document tracks all todo items and tasks for the BlueSky Store Locator proj
 - [x] ✅ Set up testing environment (Vitest)
 - [x] ✅ Verify dev server runs (`npm run dev`)
 
+### Phase 2: Authentication System (COMPLETED ✅)
+- [x] ✅ Create login page UI with form validation
+- [x] ✅ Implement AuthContext for state management
+- [x] ✅ Set up protected route components  
+- [x] ✅ Add JWT token management (localStorage)
+- [x] ✅ Create auth service for API calls
+- [x] ✅ Implement logout functionality
+- [x] ✅ Add token expiration handling
+- [x] ✅ Test all three user roles (admin/manager/store)
+- [x] ✅ Implement comprehensive TDD methodology
+- [x] ✅ Create complete test suite with 48+ tests
+- [x] ✅ Role-based dashboard with capabilities display
+- [x] ✅ Responsive design with modern UI
+
 ### Backend Infrastructure (COMPLETED ✅)
 - [x] ✅ Unified server architecture with consolidated API
 - [x] ✅ JWT-based authentication system
@@ -145,17 +155,22 @@ This document tracks all todo items and tasks for the BlueSky Store Locator proj
 ### Overall Project Status
 - **Backend**: ✅ 100% Complete
 - **Phase 1 (Foundation)**: ✅ 100% Complete  
-- **Phase 2 (Authentication)**: ⏳ 0% Complete
-- **Phase 3 (Map Integration)**: ⏳ 0% Complete
+- **Phase 2 (Authentication + TDD)**: ✅ 100% Complete
+- **Phase 3 (Map Integration)**: 🔄 70% Complete (In Progress - Major components done!)
+  - ✅ Leaflet + React-Leaflet configured
+  - ✅ Doha-centered map with proper coordinates  
+  - ✅ Custom mall markers (status-based colors)
+  - ✅ Fixed dark background + shadcn/ui theming
+  - 🔄 Working on store markers with status indicators
 - **Phase 4 (Data Display)**: ⏳ 0% Complete
 - **Phase 5 (Role-Based Features)**: ⏳ 0% Complete
 - **Phase 6 (UI/UX Polish)**: ⏳ 0% Complete
 - **Phase 7 (Testing & Docs)**: ⏳ 0% Complete
 
 ### Next Immediate Actions
-1. 🎯 **Start Phase 2**: Begin authentication system implementation
-2. 🔑 **Login Form**: Create login page with user role selection
-3. 🛡️ **Protected Routes**: Set up route protection based on authentication
+1. 🎯 **Continue Phase 3**: Add store markers with status indicators
+2. 🏪 **Store Markers**: Show individual stores within/near malls
+3. 🎨 **Hover Effects**: Add interactive marker hover states
 
 ---
 
@@ -186,5 +201,5 @@ npm run test:client   # Run frontend tests
 ---
 
 **Last Updated**: October 8, 2025  
-**Current Phase**: Phase 2 - Authentication System  
-**Project Status**: Backend Complete, Frontend Foundation Ready
+**Current Phase**: Phase 3 - Map Integration (70% Complete)  
+**Project Status**: Backend Complete, Authentication System Live, Map Integration Nearly Done

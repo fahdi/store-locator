@@ -90,6 +90,11 @@ app.post("/api/login", (req, res) => {
 
 // ===== MALL MANAGEMENT ENDPOINTS =====
 
+// Public: Get all malls and stores (read-only for map display)
+app.get("/api/malls/public", (req, res) => {
+  res.json(malls);
+});
+
 // Get all malls and stores (authenticated users)
 app.get("/api/malls", auth(["admin", "manager", "store"]), (req, res) => {
   res.json(malls);
