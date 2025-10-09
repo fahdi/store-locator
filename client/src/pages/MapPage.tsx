@@ -1,133 +1,47 @@
-import { useState, useEffect } from 'react'
-import { Navigate } from 'react-router-dom'
+import { useState, useCallback, useEffect } from 'react'
 import { useAuth } from '../hooks/useAuth'
-import { mallAPI } from '../services/api'
-import { Mall } from '../types'
 import { ROUTES } from '../utils/constants'
 import MapView from '../components/MapView'
+import HeaderSearch from '../components/HeaderSearch'
+import FiltersDropdown, { FilterState } from '../components/FiltersDropdown'
+import { ErrorBoundary } from '../components/ErrorBoundary'
+import { useDataService } from '../hooks/useDataService'
+import { Mall } from '../types'
+import toast from 'react-hot-toast'
 
 export default function MapPage() {
   const { isAuthenticated, user, logout } = useAuth()
-  const [malls, setMalls] = useState<Mall[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const { malls, loading, error } = useDataService()
+  const [filteredMalls, setFilteredMalls] = useState<Mall[]>([])
+  const [showFilters, setShowFilters] = useState(false)
+  const [showMobileSearch, setShowMobileSearch] = useState(false)
+  const [dropdownFilters, setDropdownFilters] = useState<FilterState>({
+    statusFilter: 'all',
+    storeTypeFilter: '',
+    mallFilter: ''
+  })
 
-  const fetchMalls = async () => {
-    setIsLoading(true)
-    setError(null)
-    try {
-      // Use public endpoint if not authenticated, authenticated endpoint if logged in
-      const mallsData = isAuthenticated 
-        ? await mallAPI.getAll()
-        : await mallAPI.getAllPublic()
-      setMalls(mallsData)
-    } catch (err) {
-      console.error('Failed to fetch malls:', err)
-      setError('Failed to load map data. Please try again.')
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    fetchMalls()
+  const handleFilteredResults = useCallback((filtered: Mall[]) => {
+    setFilteredMalls(filtered)
   }, [])
 
-  const handleRetry = () => {
-    fetchMalls()
-  }
+  const handleDropdownFilters = useCallback((filters: FilterState) => {
+    setDropdownFilters(filters)
+  }, [])
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-        {/* Header */}
-        <header className="bg-white shadow-sm border-b">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center h-16">
-              <div className="flex items-center">
-                <h1 className="text-xl font-semibold text-gray-900">
-                  BlueSky Store Locator
-                </h1>
-              </div>
-              <div className="flex items-center space-x-4">
-                <span className="text-sm text-gray-600">Welcome, {user?.username}</span>
-                <button
-                  onClick={logout}
-                  className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded text-sm transition duration-200"
-                >
-                  Logout
-                </button>
-              </div>
-            </div>
-          </div>
-        </header>
-
-        {/* Loading State */}
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading map...</p>
-          </div>
-        </main>
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-        {/* Header */}
-        <header className="bg-white shadow-sm border-b">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center h-16">
-              <div className="flex items-center">
-                <h1 className="text-xl font-semibold text-gray-900">
-                  BlueSky Store Locator
-                </h1>
-              </div>
-              <div className="flex items-center space-x-4">
-                <span className="text-sm text-gray-600">Welcome, {user?.username}</span>
-                <button
-                  onClick={logout}
-                  className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded text-sm transition duration-200"
-                >
-                  Logout
-                </button>
-              </div>
-            </div>
-          </div>
-        </header>
-
-        {/* Error State */}
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="text-center">
-            <div className="text-red-500 text-6xl mb-4">⚠️</div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Unable to Load Map</h2>
-            <p className="text-gray-600 mb-6">{error}</p>
-            <button
-              onClick={handleRetry}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200"
-            >
-              Retry
-            </button>
-          </div>
-        </main>
-      </div>
-    )
-  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col overflow-hidden">
       {/* Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
+          <div className="flex justify-between items-center h-16 gap-4">
             <div className="flex items-center space-x-8">
               <h1 className="text-xl font-semibold text-gray-900">
                 BlueSky Store Locator
               </h1>
               {isAuthenticated && (
-                <nav className="flex space-x-4">
+                <nav className="hidden md:flex space-x-4">
                   <span className="text-blue-600 font-medium px-3 py-2 text-sm">
                     🗺️ Map
                   </span>
@@ -140,10 +54,23 @@ export default function MapPage() {
                 </nav>
               )}
             </div>
+
+            {/* Search Section - Center (Hidden on Mobile) */}
+            <div className="hidden md:flex flex-1 max-w-2xl mx-4">
+              <HeaderSearch
+                malls={malls}
+                onFilteredResults={handleFilteredResults}
+                onToggleFilters={() => setShowFilters(!showFilters)}
+                showFilters={showFilters}
+                dropdownFilters={dropdownFilters}
+              />
+            </div>
+
+            {/* Right Side - User Info */}
             <div className="flex items-center space-x-4">
               {isAuthenticated ? (
                 <>
-                  <div className="flex items-center space-x-2">
+                  <div className="hidden md:flex items-center space-x-2">
                     <span className="text-sm text-gray-600">Welcome,</span>
                     <span className="font-medium text-gray-900">{user?.username}</span>
                     <span className={`px-2 py-1 text-xs font-medium rounded-full border ${
@@ -174,24 +101,103 @@ export default function MapPage() {
         </div>
       </header>
 
-      {/* Map */}
-      <main className="h-[calc(100vh-4rem)]">
-        {!isAuthenticated && (
-          <div className="bg-blue-50 border-b border-blue-200 px-4 py-3">
-            <div className="max-w-7xl mx-auto">
-              <p className="text-sm text-blue-800">
-                📍 <strong>Public Store Locator</strong> - Explore Doha mall locations and store information. 
-                <a href={ROUTES.LOGIN} className="underline hover:no-underline ml-2">
-                  Login for management features
-                </a>
-              </p>
-            </div>
-          </div>
+      {/* Main Content */}
+      <main className="flex-1 flex flex-col overflow-hidden">
+        
+        {/* Filters Dropdown */}
+        {showFilters && (
+          <ErrorBoundary>
+            <FiltersDropdown
+              malls={malls}
+              onFiltersChange={handleDropdownFilters}
+            />
+          </ErrorBoundary>
         )}
-        <div className={!isAuthenticated ? "h-[calc(100vh-7rem)]" : "h-[calc(100vh-4rem)]"}>
-          <MapView malls={malls} />
+
+        {/* Map Section */}
+        <div className="flex-1 relative overflow-hidden">
+          <ErrorBoundary>
+            <MapView malls={filteredMalls.length > 0 ? filteredMalls : malls} />
+          </ErrorBoundary>
         </div>
       </main>
+
+      {/* Mobile Search Button - Floating */}
+      <button
+        onClick={() => {
+          setShowMobileSearch(true)
+          setShowFilters(true) // Automatically show filters on mobile
+        }}
+        className="block md:hidden fixed bottom-6 right-6 bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-lg z-[9999] transition-colors"
+        aria-label="Open search"
+      >
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+      </button>
+
+      {/* Mobile Search Overlay */}
+      {showMobileSearch && (
+        <div className="md:hidden fixed inset-0 bg-white z-50 flex flex-col">
+          {/* Mobile Search Header */}
+          <div className="bg-white border-b px-4 py-3 flex items-center gap-3 flex-shrink-0">
+            <button
+              onClick={() => {
+                setShowMobileSearch(false)
+                setShowFilters(false) // Reset filters when closing mobile search
+              }}
+              className="p-2 hover:bg-gray-100 rounded-full"
+              aria-label="Close search"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            <h2 className="text-lg font-semibold text-gray-900">Search & Filters</h2>
+          </div>
+
+          {/* Mobile Search Content */}
+          <div className="flex-1 overflow-y-auto min-h-0 mobile-search-content">
+            <div className="p-4 space-y-6 pb-40">
+              {/* Search Input - Always visible */}
+              <div className="space-y-3">
+                <HeaderSearch
+                  malls={malls}
+                  onFilteredResults={handleFilteredResults}
+                  onToggleFilters={() => setShowFilters(!showFilters)}
+                  showFilters={showFilters}
+                  dropdownFilters={dropdownFilters}
+                  className="w-full"
+                />
+              </div>
+              
+              {/* Filters - Always show on mobile overlay */}
+              <div className="space-y-4">
+                <ErrorBoundary>
+                  <FiltersDropdown
+                    malls={malls}
+                    onFiltersChange={handleDropdownFilters}
+                    className="mobile-filters"
+                  />
+                </ErrorBoundary>
+              </div>
+            </div>
+          </div>
+
+          {/* Mobile Search Actions - Fixed at bottom */}
+          <div className="bg-white border-t px-4 py-8 flex-shrink-0 safe-area-padding-bottom">
+            <button
+              onClick={() => {
+                setShowMobileSearch(false)
+                setShowFilters(false) // Reset filters when closing mobile search
+              }}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg text-sm font-medium transition-colors"
+            >
+              Apply Filters & Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

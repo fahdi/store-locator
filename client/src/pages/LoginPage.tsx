@@ -6,7 +6,7 @@ import { Navigate } from 'react-router-dom'
 import { toast } from 'react-hot-toast'
 import { useAuth } from '../hooks/useAuth'
 import { authAPI } from '../services/api'
-import { DEFAULT_CREDENTIALS, USER_ROLES, ROUTES } from '../utils/constants'
+import { USER_ROLES, ROUTES } from '../utils/constants'
 
 const loginSchema = z.object({
   username: z.string().min(1, 'Username is required'),
@@ -57,11 +57,6 @@ export default function LoginPage() {
     }
   }
 
-  const handleQuickLogin = (role: keyof typeof DEFAULT_CREDENTIALS) => {
-    const credentials = DEFAULT_CREDENTIALS[role]
-    setValue('username', credentials.username)
-    setValue('password', credentials.password)
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
@@ -124,38 +119,9 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <div className="mt-8 pt-6 border-t border-gray-200">
-          <p className="text-sm text-gray-600 text-center mb-4">
-            Quick login for demo:
-          </p>
-          <div className="grid grid-cols-3 gap-2">
-            <button
-              onClick={() => handleQuickLogin(USER_ROLES.ADMIN)}
-              className="text-xs bg-red-50 hover:bg-red-100 text-red-700 px-3 py-2 rounded border border-red-200 transition duration-200"
-            >
-              Admin
-              <br />
-              <span className="text-xs opacity-75">admin/a</span>
-            </button>
-            <button
-              onClick={() => handleQuickLogin(USER_ROLES.MANAGER)}
-              className="text-xs bg-yellow-50 hover:bg-yellow-100 text-yellow-700 px-3 py-2 rounded border border-yellow-200 transition duration-200"
-            >
-              Manager
-              <br />
-              <span className="text-xs opacity-75">manager/m</span>
-            </button>
-            <button
-              onClick={() => handleQuickLogin(USER_ROLES.STORE)}
-              className="text-xs bg-green-50 hover:bg-green-100 text-green-700 px-3 py-2 rounded border border-green-200 transition duration-200"
-            >
-              Store
-              <br />
-              <span className="text-xs opacity-75">store/s</span>
-            </button>
-          </div>
-          <p className="text-xs text-gray-500 text-center mt-3">
-            Click any role above to auto-fill credentials
+        <div className="mt-6 pt-4 border-t border-gray-200">
+          <p className="text-xs text-gray-500 text-center">
+            Demo credentials: admin/a, manager/m, store/s
           </p>
         </div>
       </div>

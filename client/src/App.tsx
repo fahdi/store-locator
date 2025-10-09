@@ -14,10 +14,13 @@ function App() {
       <Router>
         <div className="App">
           <Routes>
-            {/* Public Routes */}
+            {/* Home page - Show map directly */}
+            <Route path={ROUTES.HOME} element={<MapPage />} />
+            
+            {/* Login Route */}
             <Route path={ROUTES.LOGIN} element={<LoginPage />} />
             
-            {/* Protected Routes */}
+            {/* Protected Dashboard Route */}
             <Route 
               path={ROUTES.DASHBOARD} 
               element={
@@ -27,24 +30,8 @@ function App() {
               } 
             />
             
-            {/* Public Map Route */}
-            <Route path={ROUTES.MALLS} element={<MapPage />} />
-            
-            {/* Protected Map Route (for authenticated users) */}
-            <Route 
-              path="/malls/admin" 
-              element={
-                <ProtectedRoute>
-                  <MapPage />
-                </ProtectedRoute>
-              } 
-            />
-            
-            {/* Default redirect - public map view */}
-            <Route path={ROUTES.HOME} element={<Navigate to={ROUTES.MALLS} replace />} />
-            
-            {/* Catch all - redirect to public map */}
-            <Route path="*" element={<Navigate to={ROUTES.MALLS} replace />} />
+            {/* Catch all - redirect to home */}
+            <Route path="*" element={<Navigate to={ROUTES.HOME} replace />} />
           </Routes>
           
           {/* Toast notifications */}

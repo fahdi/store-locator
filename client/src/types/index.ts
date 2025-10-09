@@ -26,7 +26,8 @@ export interface Mall {
   id: number
   name: string
   location?: string
-  coordinates: Coordinates
+  latitude: number
+  longitude: number
   isOpen: boolean
   image?: string
   description?: string

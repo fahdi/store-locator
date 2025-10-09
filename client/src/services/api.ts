@@ -32,10 +32,10 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Clear auth data on unauthorized
+      // Clear auth data on unauthorized but don't redirect
+      // Let components handle the auth state gracefully
       localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN)
       localStorage.removeItem(STORAGE_KEYS.USER_DATA)
-      window.location.href = '/login'
     }
     return Promise.reject(error)
   }
@@ -58,7 +58,7 @@ export const mallAPI = {
 
   // Public endpoint for unauthenticated users
   getAllPublic: async (): Promise<Mall[]> => {
-    const response = await axios.get<Mall[]>(`${API_BASE_URL}/api/malls/public`)
+    const response = await axios.get<Mall[]>('/api/malls/public')
     return response.data
   },
 

@@ -95,8 +95,8 @@ app.get("/api/malls/public", (req, res) => {
   res.json(malls);
 });
 
-// Get all malls and stores (authenticated users)
-app.get("/api/malls", auth(["admin", "manager", "store"]), (req, res) => {
+// Get all malls and stores (public access for map display)
+app.get("/api/malls", (req, res) => {
   res.json(malls);
 });
 
