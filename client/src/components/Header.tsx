@@ -33,10 +33,10 @@ export default function Header({ currentPage, showSearch = false, searchComponen
         <div className="flex justify-between items-center h-14 sm:h-16 gap-2 sm:gap-4">
           <div className="flex items-center space-x-4 sm:space-x-8">
             <div className="flex items-center space-x-2 sm:space-x-3">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">BS</span>
+              <div className="w-8 h-8 bg-gray-900 rounded-md flex items-center justify-center">
+                <span className="text-white font-bold text-sm">B</span>
               </div>
-              <h1 className="text-lg sm:text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+              <h1 className="text-lg sm:text-xl font-bold text-gray-900">
                 <span className="hidden sm:inline">BlueSky Store Locator</span>
                 <span className="sm:hidden">BlueSky</span>
               </h1>

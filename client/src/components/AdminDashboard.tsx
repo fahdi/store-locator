@@ -104,58 +104,62 @@ export default function AdminDashboard() {
       value: stats.totalMalls,
       subtitle: `${stats.openMalls} currently open`,
       icon: Building2,
-      color: 'bg-gradient-to-br from-blue-500 to-blue-600',
-      textColor: 'text-white',
-      progress: (stats.openMalls / stats.totalMalls) * 100
+      iconColor: 'text-blue-600',
+      iconBg: 'bg-blue-50',
+      progress: (stats.openMalls / stats.totalMalls) * 100,
+      progressColor: 'bg-blue-600'
     },
     {
       title: 'Total Stores', 
       value: stats.totalStores,
       subtitle: `${stats.openStores} currently open`,
       icon: Store,
-      color: 'bg-gradient-to-br from-emerald-500 to-emerald-600',
-      textColor: 'text-white',
-      progress: (stats.openStores / stats.totalStores) * 100
+      iconColor: 'text-emerald-600',
+      iconBg: 'bg-emerald-50',
+      progress: (stats.openStores / stats.totalStores) * 100,
+      progressColor: 'bg-emerald-600'
     },
     {
       title: 'Operational Rate',
       value: `${Math.round((stats.openStores / stats.totalStores) * 100)}%`,
       subtitle: 'Stores currently operational',
       icon: TrendingUp,
-      color: 'bg-gradient-to-br from-purple-500 to-purple-600',
-      textColor: 'text-white',
-      progress: (stats.openStores / stats.totalStores) * 100
+      iconColor: 'text-violet-600',
+      iconBg: 'bg-violet-50',
+      progress: (stats.openStores / stats.totalStores) * 100,
+      progressColor: 'bg-violet-600'
     },
     {
       title: 'System Status',
       value: 'Healthy',
       subtitle: 'All systems operational',
       icon: Activity,
-      color: 'bg-gradient-to-br from-green-500 to-green-600',
-      textColor: 'text-white',
-      progress: 100
+      iconColor: 'text-green-600',
+      iconBg: 'bg-green-50',
+      progress: 100,
+      progressColor: 'bg-green-600'
     }
   ]
 
   return (
-    <div className="p-4 md:p-6 space-y-6 md:space-y-8 bg-gray-50 min-h-screen">
+    <div className="p-4 md:p-6 space-y-6 md:space-y-8">
       {/* Welcome Section */}
       <section 
-        className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-xl md:rounded-2xl p-4 md:p-6 lg:p-8 text-white"
+        className="bg-white border border-gray-200 rounded-lg p-4 md:p-6 lg:p-8"
         aria-labelledby="welcome-heading"
       >
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 id="welcome-heading" className="text-2xl md:text-3xl font-bold mb-2">
+            <h1 id="welcome-heading" className="text-2xl md:text-3xl font-bold mb-2 text-gray-900">
               Welcome back, {user?.username}
             </h1>
-            <p className="text-indigo-100 text-base md:text-lg">
+            <p className="text-gray-600 text-base md:text-lg">
               Admin Dashboard - BlueSky Store Locator Management
             </p>
           </div>
           <div className="hidden lg:flex items-center space-x-4" aria-hidden="true">
-            <div className="bg-white/20 backdrop-blur-sm rounded-xl p-4">
-              <Users className="w-8 h-8" />
+            <div className="bg-gray-50 rounded-lg p-4">
+              <Users className="w-8 h-8 text-gray-600" />
             </div>
           </div>
         </div>
@@ -168,30 +172,34 @@ export default function AdminDashboard() {
           {statsCards.map((stat, index) => (
             <div
               key={index}
-              className="stagger-item group relative overflow-hidden bg-white rounded-xl md:rounded-2xl shadow-sm hover-lift card-hover gpu-accelerated"
+              className="stagger-item group relative overflow-hidden bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200"
               role="article"
               aria-labelledby={`stat-${index}-title`}
             >
-              <div className={`${stat.color} p-4 md:p-6 ${stat.textColor}`}>
-                <div className="flex items-center justify-between mb-4">
-                  <stat.icon className="w-6 h-6 md:w-8 md:h-8 opacity-80" aria-hidden="true" />
-                  <div className="text-right">
-                    <div className="text-xl md:text-2xl font-bold" aria-label={`${stat.title}: ${stat.value}`}>
-                      {stat.value}
+              <div className="p-4 md:p-6">
+                <div className="flex items-center space-x-4 mb-4">
+                  <div className={`${stat.iconBg} p-3 rounded-lg`}>
+                    <stat.icon className={`w-5 h-5 ${stat.iconColor}`} aria-hidden="true" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="text-right">
+                      <div className="text-2xl md:text-3xl font-bold text-gray-900" aria-label={`${stat.title}: ${stat.value}`}>
+                        {stat.value}
+                      </div>
                     </div>
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <h3 id={`stat-${index}-title`} className="font-semibold text-white/90">
+                  <h3 id={`stat-${index}-title`} className="font-medium text-gray-900">
                     {stat.title}
                   </h3>
-                  <p className="text-sm text-white/70">{stat.subtitle}</p>
+                  <p className="text-sm text-gray-600">{stat.subtitle}</p>
                   
                   {/* Progress Bar */}
-                  <div className="w-full bg-white/20 rounded-full h-2 mt-3" role="progressbar" aria-valuenow={stat.progress} aria-valuemin={0} aria-valuemax={100} aria-label={`${stat.title} progress: ${stat.progress}%`}>
+                  <div className="w-full bg-gray-100 rounded-full h-1.5 mt-3" role="progressbar" aria-valuenow={stat.progress} aria-valuemin={0} aria-valuemax={100} aria-label={`${stat.title} progress: ${stat.progress}%`}>
                     <div 
-                      className="bg-white h-2 rounded-full animate-progress"
-                      style={{ '--progress-width': `${stat.progress}%`, width: `${stat.progress}%` } as React.CSSProperties}
+                      className={`${stat.progressColor} h-1.5 rounded-full transition-all duration-300`}
+                      style={{ width: `${stat.progress}%` }}
                     ></div>
                   </div>
                 </div>
@@ -212,14 +220,14 @@ export default function AdminDashboard() {
               <Settings className="w-4 h-4 md:w-5 md:h-5 text-gray-400" aria-hidden="true" />
             </div>
             
-            <nav className="space-y-3 md:space-y-4" aria-label="Quick actions navigation">
+            <nav className="space-y-3" aria-label="Quick actions navigation">
               <button 
-                className="w-full flex items-center justify-between p-3 md:p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg md:rounded-xl hover:from-blue-100 hover:to-indigo-100 transition-colors group focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                className="w-full flex items-center justify-between p-4 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 transition-colors group focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
                 aria-describedby="view-map-desc"
               >
                 <div className="flex items-center space-x-3">
-                  <div className="p-2 bg-blue-500 rounded-lg" aria-hidden="true">
-                    <MapPin className="w-5 h-5 text-white" />
+                  <div className="p-2 bg-blue-50 border border-blue-200 rounded-lg" aria-hidden="true">
+                    <MapPin className="w-5 h-5 text-blue-600" />
                   </div>
                   <div className="text-left">
                     <div className="font-medium text-gray-900">View Live Map</div>
@@ -230,12 +238,12 @@ export default function AdminDashboard() {
               </button>
 
               <button 
-                className="w-full flex items-center justify-between p-3 md:p-4 bg-gradient-to-r from-emerald-50 to-green-50 rounded-lg md:rounded-xl hover:from-emerald-100 hover:to-green-100 transition-colors group focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
+                className="w-full flex items-center justify-between p-4 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 transition-colors group focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
                 aria-describedby="view-analytics-desc"
               >
                 <div className="flex items-center space-x-3">
-                  <div className="p-2 bg-emerald-500 rounded-lg" aria-hidden="true">
-                    <BarChart3 className="w-5 h-5 text-white" />
+                  <div className="p-2 bg-emerald-50 border border-emerald-200 rounded-lg" aria-hidden="true">
+                    <BarChart3 className="w-5 h-5 text-emerald-600" />
                   </div>
                   <div className="text-left">
                     <div className="font-medium text-gray-900">View Analytics</div>
@@ -246,12 +254,12 @@ export default function AdminDashboard() {
               </button>
 
               <button 
-                className="w-full flex items-center justify-between p-3 md:p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg md:rounded-xl hover:from-purple-100 hover:to-pink-100 transition-colors group focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
+                className="w-full flex items-center justify-between p-4 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 transition-colors group focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
                 aria-describedby="manage-users-desc"
               >
                 <div className="flex items-center space-x-3">
-                  <div className="p-2 bg-purple-500 rounded-lg" aria-hidden="true">
-                    <Users className="w-5 h-5 text-white" />
+                  <div className="p-2 bg-violet-50 border border-violet-200 rounded-lg" aria-hidden="true">
+                    <Users className="w-5 h-5 text-violet-600" />
                   </div>
                   <div className="text-left">
                     <div className="font-medium text-gray-900">Manage Users</div>

@@ -62,7 +62,7 @@ export default function ManagerDashboard() {
   }
 
   return (
-    <div className="p-6 space-y-8 bg-gray-50 min-h-screen">
+    <div className="p-6 space-y-8">
       {/* Welcome Section */}
       <div className="bg-gradient-to-r from-orange-500 via-yellow-500 to-amber-500 rounded-2xl p-8 text-white">
         <div className="flex items-center justify-between">

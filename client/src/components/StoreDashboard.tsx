@@ -67,7 +67,7 @@ export default function StoreDashboard() {
   }
 
   return (
-    <div className="p-6 space-y-8 bg-gray-50 min-h-screen">
+    <div className="p-6 space-y-8">
       {/* Welcome Section */}
       <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-8">
         <div className="flex items-center justify-between">
