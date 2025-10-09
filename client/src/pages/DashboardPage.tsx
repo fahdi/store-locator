@@ -30,12 +30,14 @@ export default function DashboardPage() {
 
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="bg-gray-50">
       {/* Header */}
       <Header currentPage="dashboard" />
 
       {/* Role-specific Dashboard Content */}
-      {renderDashboard()}
+      <main className="pb-8">
+        {renderDashboard()}
+      </main>
     </div>
   )
 }

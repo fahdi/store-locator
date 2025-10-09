@@ -32,7 +32,11 @@ export default function Header({ currentPage, showSearch = false, searchComponen
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-14 sm:h-16 gap-2 sm:gap-4">
           <div className="flex items-center space-x-4 sm:space-x-8">
-            <div className="flex items-center space-x-2 sm:space-x-3">
+            <a 
+              href={ROUTES.HOME} 
+              className="flex items-center space-x-2 sm:space-x-3 hover:opacity-80 transition-opacity duration-200"
+              aria-label="Go to home page"
+            >
               <div className="w-8 h-8 bg-gray-900 rounded-md flex items-center justify-center">
                 <span className="text-white font-bold text-sm">B</span>
               </div>
@@ -40,7 +44,7 @@ export default function Header({ currentPage, showSearch = false, searchComponen
                 <span className="hidden sm:inline">BlueSky Store Locator</span>
                 <span className="sm:hidden">BlueSky</span>
               </h1>
-            </div>
+            </a>
             {isAuthenticated && (
               <nav 
                 className="hidden md:flex space-x-4" 
@@ -57,18 +61,6 @@ export default function Header({ currentPage, showSearch = false, searchComponen
                   aria-current={currentPage === 'dashboard' ? 'page' : undefined}
                 >
                   Dashboard
-                </a>
-                <a 
-                  href={ROUTES.HOME}
-                  className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:bg-gray-100 flex items-center space-x-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                    currentPage === 'map' 
-                      ? 'text-blue-600 bg-blue-50 font-semibold' 
-                      : 'text-gray-600 hover:text-gray-900'
-                  }`}
-                  aria-current={currentPage === 'map' ? 'page' : undefined}
-                >
-                  <span role="img" aria-label="Map icon">🗺️</span>
-                  <span>Interactive Map</span>
                 </a>
               </nav>
             )}
