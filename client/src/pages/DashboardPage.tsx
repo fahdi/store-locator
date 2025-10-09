@@ -1,6 +1,7 @@
 import { useAuth } from '../hooks/useAuth'
-import { Navigate, Link } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
 import { ROUTES } from '../utils/constants'
+import Header from '../components/Header'
 
 export default function DashboardPage() {
   const { user, logout, isAuthenticated } = useAuth()
@@ -54,46 +55,7 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-8">
-              <h1 className="text-xl font-semibold text-gray-900">
-                BlueSky Store Locator
-              </h1>
-              <nav className="flex space-x-4">
-                <Link 
-                  to={ROUTES.DASHBOARD}
-                  className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition duration-200"
-                >
-                  Dashboard
-                </Link>
-                <Link 
-                  to={ROUTES.MALLS}
-                  className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition duration-200"
-                >
-                  🗺️ Map
-                </Link>
-              </nav>
-            </div>
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2">
-                <span className="text-sm text-gray-600">Welcome,</span>
-                <span className="font-medium text-gray-900">{user?.username}</span>
-                <span className={`px-2 py-1 text-xs font-medium rounded-full border ${getRoleColor(user?.role || '')}`}>
-                  {user?.role}
-                </span>
-              </div>
-              <button
-                onClick={logout}
-                className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded text-sm transition duration-200"
-              >
-                Logout
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Header currentPage="dashboard" />
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -118,16 +80,16 @@ export default function DashboardPage() {
               </div>
 
               <div className="mt-8 p-4 bg-green-50 rounded-lg border border-green-200">
-                <h3 className="font-medium text-green-900 mb-2">🗺️ Map Available Now!</h3>
-                <p className="text-green-700 text-sm mb-3">
-                  The interactive map with Doha mall locations is now live. View mall markers with status indicators.
-                </p>
-                <Link 
-                  to={ROUTES.MALLS}
+                <h3 className="font-medium text-green-900 mb-2">✅ Full Application Ready!</h3>
+                <div className="text-green-700 text-sm mb-3">
+                  The complete BlueSky Store Locator with role-based management is now live. All CRUD operations, authentication, and interactive features are functional.
+                </div>
+                <a 
+                  href={ROUTES.HOME}
                   className="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition duration-200"
                 >
-                  🗺️ View Map
-                </Link>
+                  🗺️ Access Full Application
+                </a>
               </div>
             </div>
           </div>
@@ -187,7 +149,7 @@ export default function DashboardPage() {
           <h3 className="text-lg font-semibold text-gray-900 mb-4">
             Development Progress
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
             <div className="flex items-center p-3 bg-green-50 rounded-lg border border-green-200">
               <div className="flex-shrink-0 w-3 h-3 bg-green-500 rounded-full mr-3"></div>
               <div>
@@ -202,11 +164,56 @@ export default function DashboardPage() {
                 <p className="text-xs text-green-700">Complete ✅</p>
               </div>
             </div>
-            <div className="flex items-center p-3 bg-blue-50 rounded-lg border border-blue-200">
-              <div className="flex-shrink-0 w-3 h-3 bg-blue-500 rounded-full mr-3"></div>
+            <div className="flex items-center p-3 bg-green-50 rounded-lg border border-green-200">
+              <div className="flex-shrink-0 w-3 h-3 bg-green-500 rounded-full mr-3"></div>
               <div>
-                <p className="text-sm font-medium text-blue-900">Phase 3: Map Integration</p>
-                <p className="text-xs text-blue-700">70% Complete 🔄</p>
+                <p className="text-sm font-medium text-green-900">Phase 3: Map Integration</p>
+                <p className="text-xs text-green-700">Complete ✅</p>
+              </div>
+            </div>
+            <div className="flex items-center p-3 bg-green-50 rounded-lg border border-green-200">
+              <div className="flex-shrink-0 w-3 h-3 bg-green-500 rounded-full mr-3"></div>
+              <div>
+                <p className="text-sm font-medium text-green-900">Phase 4: Data Display</p>
+                <p className="text-xs text-green-700">Complete ✅</p>
+              </div>
+            </div>
+            <div className="flex items-center p-3 bg-green-50 rounded-lg border border-green-200">
+              <div className="flex-shrink-0 w-3 h-3 bg-green-500 rounded-full mr-3"></div>
+              <div>
+                <p className="text-sm font-medium text-green-900">Phase 5: Role-Based CRUD</p>
+                <p className="text-xs text-green-700">Complete ✅</p>
+              </div>
+            </div>
+          </div>
+          
+          {/* Phase 5 Completion Details */}
+          <div className="mt-4 p-4 bg-green-50 rounded-lg border border-green-200">
+            <h4 className="text-sm font-semibold text-green-900 mb-2">✅ Completed: Phase 5 - Role-Based CRUD Operations</h4>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+              <div className="flex items-center">
+                <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                <span className="text-green-800">Admin mall toggle with confirmation</span>
+              </div>
+              <div className="flex items-center">
+                <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                <span className="text-green-800">Manager store toggle with validation</span>
+              </div>
+              <div className="flex items-center">
+                <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                <span className="text-green-800">Store edit forms with validation</span>
+              </div>
+              <div className="flex items-center">
+                <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                <span className="text-green-800">Real-time updates & error handling</span>
+              </div>
+              <div className="flex items-center">
+                <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                <span className="text-green-800">Comprehensive confirmation dialogs</span>
+              </div>
+              <div className="flex items-center">
+                <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                <span className="text-green-800">Role-based UI hints and feedback</span>
               </div>
             </div>
           </div>

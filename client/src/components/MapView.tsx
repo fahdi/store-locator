@@ -30,7 +30,7 @@ const openMallIcon = new L.Icon({
 
 // Custom icon for closed malls
 const closedMallIcon = new L.Icon({
-  iconUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8Y2lyY2xlIGN4PSIxNiIgY3k9IjE2IiByPSIxNSIgZmlsbD0iI0VGNDQ0NCIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiLz4KICA8cGF0aCBkPSJNMTYgNkM5LjM3IDYgNCA5LjM3IDQgMTNDNCAyMC4yNSAxNiAyOCAxNiAyOEMxNiAyOCAyOCAyMC4yNSAyOCAxM0MyOCA5LjM3IDIyLjYzIDYgMTYgNlpNMTYgMTVDMTQuMzQgMTUgMTMgMTMuNjYgMTMgMTJDMTMgMTAuMzQgMTQuMzQgOSAxNiA5QzE3LjY2IDkgMTkgMTAuMzQgMTkgMTJDMTkgMTMuNjYgMTcuNjYgMTUgMTY MTVaIiBmaWxsPSIjZmZmIi8+Cjwvc3ZnPg==',
+  iconUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8Y2lyY2xlIGN4PSIxNiIgY3k9IjE2IiByPSIxNSIgZmlsbD0iI0RDMjYyNiIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiLz4KICA8cGF0aCBkPSJNMTYgNkM5LjM3IDYgNCA5LjM3IDQgMTNDNCAyMC4yNSAxNiAyOCAxNiAyOEMxNiAyOCAyOCAyMC4yNSAyOCAxM0MyOCA5LjM3IDIyLjYzIDYgMTYgNloiIGZpbGw9IiNmZmYiLz4KICA8bGluZSB4MT0iMTAiIHkxPSIxMCIgeDI9IjIyIiB5Mj0iMjIiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSIyLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDxsaW5lIHgxPSIyMiIgeTE9IjEwIiB4Mj0iMTAiIHkyPSIyMiIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+Cjwvc3ZnPg==',
   iconSize: [32, 32],
   iconAnchor: [16, 32],
   popupAnchor: [0, -32],
@@ -78,9 +78,61 @@ export default function MapView({ malls: propMalls }: MapViewProps) {
     isOpen: false,
     loading: false
   })
+  const [localMalls, setLocalMalls] = useState<Mall[]>([])
 
   // Use prop malls if provided, otherwise use fetched malls
-  const malls = propMalls || fetchedMalls
+  // localMalls will override for real-time updates
+  const malls = localMalls.length > 0 ? localMalls : (propMalls || fetchedMalls)
+  
+  // Update local malls when fetched malls change
+  useEffect(() => {
+    if (fetchedMalls.length > 0) {
+      setLocalMalls(fetchedMalls)
+    }
+  }, [fetchedMalls])
+  
+  // Handle mall updates from DetailModal
+  const handleMallUpdate = (updatedMall: { id: number; name: string; isOpen: boolean }) => {
+    setLocalMalls(prevMalls => 
+      prevMalls.map(mall => 
+        mall.id === updatedMall.id 
+          ? { 
+              ...mall, 
+              isOpen: updatedMall.isOpen,
+              // Update all stores in the mall to match mall status (cascading)
+              stores: mall.stores.map(store => ({ 
+                ...store, 
+                isOpen: updatedMall.isOpen 
+              }))
+            }
+          : mall
+      )
+    )
+    
+    // Show success toast
+    toast.success(`${updatedMall.name} has been ${updatedMall.isOpen ? 'opened' : 'closed'}`)
+  }
+  
+  // Handle store updates from DetailModal
+  const handleStoreUpdate = (updatedStore: { id: number; name: string; isOpen: boolean; mallId: number }) => {
+    setLocalMalls(prevMalls => 
+      prevMalls.map(mall => 
+        mall.id === updatedStore.mallId
+          ? {
+              ...mall,
+              stores: mall.stores.map(store => 
+                store.id === updatedStore.id
+                  ? { ...store, isOpen: updatedStore.isOpen }
+                  : store
+              )
+            }
+          : mall
+      )
+    )
+    
+    // Show success toast
+    toast.success(`${updatedStore.name} has been ${updatedStore.isOpen ? 'opened' : 'closed'}`)
+  }
 
   const openMallModal = async (mall: Mall) => {
     // Show loading state immediately
@@ -109,7 +161,7 @@ export default function MapView({ malls: propMalls }: MapViewProps) {
     }
   }
 
-  const openStoreModal = async (store: Store, mallName: string) => {
+  const openStoreModal = async (store: Store, mallName: string, mallId: number) => {
     // Show loading state immediately
     setModalState({ isOpen: true, loading: true })
     
@@ -126,12 +178,12 @@ export default function MapView({ malls: propMalls }: MapViewProps) {
         }, 300)
       })
       
-      // Set the store data after "loading"
+      // Set the store data after "loading" with mallId included
       setModalState({ 
         isOpen: true, 
         loading: false,
         mall: undefined, 
-        store: { ...store, mallName } 
+        store: { ...store, mallName, mallId } 
       })
     } catch (error) {
       // Handle error case
@@ -293,7 +345,7 @@ export default function MapView({ malls: propMalls }: MapViewProps) {
                     e.target.getElement()?.classList.remove('marker-hover-store')
                   },
                   click: () => {
-                    openStoreModal(store, mall.name)
+                    openStoreModal(store, mall.name, mall.id)
                   }
                 }}
               >
@@ -320,6 +372,8 @@ export default function MapView({ malls: propMalls }: MapViewProps) {
         onClose={closeModal}
         mall={modalState.mall}
         store={modalState.store}
+        onMallUpdate={handleMallUpdate}
+        onStoreUpdate={handleStoreUpdate}
       />
     </>
   )

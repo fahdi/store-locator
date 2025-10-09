@@ -1,17 +1,16 @@
-import { useState, useCallback, useEffect } from 'react'
-import { useAuth } from '../hooks/useAuth'
-import { ROUTES } from '../utils/constants'
+import { useState, useCallback } from 'react'
 import MapView from '../components/MapView'
 import HeaderSearch from '../components/HeaderSearch'
 import FiltersDropdown, { FilterState } from '../components/FiltersDropdown'
 import { ErrorBoundary } from '../components/ErrorBoundary'
 import { useDataService } from '../hooks/useDataService'
+import { useAuth } from '../hooks/useAuth'
 import { Mall } from '../types'
-import toast from 'react-hot-toast'
+import Header from '../components/Header'
 
 export default function MapPage() {
-  const { isAuthenticated, user, logout } = useAuth()
   const { malls, loading, error } = useDataService()
+  const { user } = useAuth()
   const [filteredMalls, setFilteredMalls] = useState<Mall[]>([])
   const [showFilters, setShowFilters] = useState(false)
   const [showMobileSearch, setShowMobileSearch] = useState(false)
@@ -30,76 +29,24 @@ export default function MapPage() {
   }, [])
 
 
+  const searchComponent = (
+    <HeaderSearch
+      malls={malls}
+      onFilteredResults={handleFilteredResults}
+      onToggleFilters={() => setShowFilters(!showFilters)}
+      showFilters={showFilters}
+      dropdownFilters={dropdownFilters}
+    />
+  )
+
   return (
     <div className="h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col overflow-hidden">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16 gap-4">
-            <div className="flex items-center space-x-8">
-              <h1 className="text-xl font-semibold text-gray-900">
-                BlueSky Store Locator
-              </h1>
-              {isAuthenticated && (
-                <nav className="hidden md:flex space-x-4">
-                  <span className="text-blue-600 font-medium px-3 py-2 text-sm">
-                    🗺️ Map
-                  </span>
-                  <a 
-                    href={ROUTES.DASHBOARD}
-                    className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition duration-200"
-                  >
-                    Dashboard
-                  </a>
-                </nav>
-              )}
-            </div>
-
-            {/* Search Section - Center (Hidden on Mobile) */}
-            <div className="hidden md:flex flex-1 max-w-2xl mx-4">
-              <HeaderSearch
-                malls={malls}
-                onFilteredResults={handleFilteredResults}
-                onToggleFilters={() => setShowFilters(!showFilters)}
-                showFilters={showFilters}
-                dropdownFilters={dropdownFilters}
-              />
-            </div>
-
-            {/* Right Side - User Info */}
-            <div className="flex items-center space-x-4">
-              {isAuthenticated ? (
-                <>
-                  <div className="hidden md:flex items-center space-x-2">
-                    <span className="text-sm text-gray-600">Welcome,</span>
-                    <span className="font-medium text-gray-900">{user?.username}</span>
-                    <span className={`px-2 py-1 text-xs font-medium rounded-full border ${
-                      user?.role === 'admin' ? 'bg-red-100 text-red-800 border-red-200' :
-                      user?.role === 'manager' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' :
-                      'bg-green-100 text-green-800 border-green-200'
-                    }`}>
-                      {user?.role}
-                    </span>
-                  </div>
-                  <button
-                    onClick={logout}
-                    className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded text-sm transition duration-200"
-                  >
-                    Logout
-                  </button>
-                </>
-              ) : (
-                <a
-                  href={ROUTES.LOGIN}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm transition duration-200"
-                >
-                  Login
-                </a>
-              )}
-            </div>
-          </div>
-        </div>
-      </header>
+      <Header 
+        currentPage="map" 
+        showSearch={true} 
+        searchComponent={searchComponent}
+      />
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col overflow-hidden">
@@ -119,6 +66,22 @@ export default function MapPage() {
           <ErrorBoundary>
             <MapView malls={filteredMalls.length > 0 ? filteredMalls : malls} />
           </ErrorBoundary>
+          
+          {/* Role-based hints overlay */}
+          {user && (
+            <div className="absolute top-4 right-4 z-[1000] max-w-xs">
+              <div className="bg-white/90 backdrop-blur-sm rounded-lg shadow-lg p-3 border border-gray-200">
+                <div className="text-xs font-medium text-gray-700 mb-1">
+                  {user.role.charAt(0).toUpperCase() + user.role.slice(1)} Mode
+                </div>
+                <div className="text-xs text-gray-600">
+                  {user.role === 'admin' && 'Click malls to toggle open/close status'}
+                  {user.role === 'manager' && 'Click stores to toggle open/close status'}
+                  {user.role === 'store' && 'Click stores to edit details'}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </main>
 

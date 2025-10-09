@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { Search, Filter, X } from 'lucide-react'
 import { Mall, Store } from '../types'
 import { FilterState } from './FiltersDropdown'
@@ -26,16 +26,16 @@ export default function HeaderSearch({
 }: HeaderSearchProps) {
   const [searchQuery, setSearchQuery] = useState('')
 
-  // Merge search query with dropdown filters
-  const effectiveFilters = {
+  // Merge search query with dropdown filters - memoized to prevent infinite re-renders
+  const effectiveFilters = useMemo(() => ({
     searchQuery,
     statusFilter: dropdownFilters?.statusFilter || 'all',
     storeTypeFilter: dropdownFilters?.storeTypeFilter || '',
     mallFilter: dropdownFilters?.mallFilter || ''
-  }
+  }), [searchQuery, dropdownFilters?.statusFilter, dropdownFilters?.storeTypeFilter, dropdownFilters?.mallFilter])
 
-  // Filter logic
-  const filterResults = useCallback(() => {
+  // Apply filters whenever they change
+  useEffect(() => {
     let filteredMalls = malls.filter(mall => {
       // Mall name filter
       if (effectiveFilters.mallFilter && mall.id !== parseInt(effectiveFilters.mallFilter)) {
@@ -105,10 +105,6 @@ export default function HeaderSearch({
     onFilteredResults(filteredMalls)
   }, [malls, effectiveFilters, onFilteredResults])
 
-  // Apply filters whenever they change
-  useEffect(() => {
-    filterResults()
-  }, [filterResults])
 
   const clearSearch = () => {
     setSearchQuery('')
