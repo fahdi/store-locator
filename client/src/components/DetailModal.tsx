@@ -1,5 +1,6 @@
-import { X, Clock, MapPin, Phone, Globe, Store, Image as ImageIcon } from 'lucide-react'
+import { X, Clock, MapPin, Phone, Store, Image as ImageIcon, Settings, ToggleLeft, ToggleRight } from 'lucide-react'
 import { Mall, Store as StoreType } from '../types'
+import { useAuth } from '../hooks/useAuth'
 
 interface DetailModalProps {
   isOpen: boolean
@@ -10,11 +11,37 @@ interface DetailModalProps {
 }
 
 export default function DetailModal({ isOpen, loading = false, onClose, mall, store }: DetailModalProps) {
+  const { user, isAuthenticated } = useAuth()
+  
   if (!isOpen) return null
 
   const isStoreDetail = !!store
   const title = isStoreDetail ? store.name : mall?.name
   const subtitle = isStoreDetail ? store.mallName : `${mall?.stores.length} stores`
+  
+  // Role-based permissions
+  const canToggleMall = isAuthenticated && user?.role === 'admin' && !isStoreDetail && mall
+  const canToggleStore = isAuthenticated && user?.role === 'manager' && isStoreDetail && store
+  const canEditStore = isAuthenticated && user?.role === 'store' && isStoreDetail && store
+  
+  // Action handlers
+  const handleMallToggle = () => {
+    if (!canToggleMall) return
+    console.log('Toggle mall:', mall?.name, mall?.isOpen ? 'Close' : 'Open')
+    // TODO: Implement API call
+  }
+  
+  const handleStoreToggle = () => {
+    if (!canToggleStore) return
+    console.log('Toggle store:', store?.name, store?.isOpen ? 'Close' : 'Open')
+    // TODO: Implement API call
+  }
+  
+  const handleStoreEdit = () => {
+    if (!canEditStore) return
+    console.log('Edit store:', store?.name)
+    // TODO: Implement edit form
+  }
 
   return (
     <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 sm:p-6">
@@ -179,33 +206,111 @@ export default function DetailModal({ isOpen, loading = false, onClose, mall, st
 
         {/* Footer */}
         <div className="p-4 sm:p-6 border-t bg-gray-50">
-          <div className="flex flex-col sm:flex-row gap-3">
-            {/* Primary Actions */}
-            {isStoreDetail && store ? (
-              <>
-                <button className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors text-sm flex items-center justify-center">
-                  <MapPin className="w-4 h-4 mr-2" />
-                  Get Directions
-                </button>
-                <button className="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition-colors text-sm flex items-center justify-center">
-                  <Phone className="w-4 h-4 mr-2" />
-                  Call Store
-                </button>
-              </>
-            ) : (
-              <button className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors text-sm flex items-center justify-center">
-                <MapPin className="w-4 h-4 mr-2" />
-                View All Stores
-              </button>
+          <div className="flex flex-col gap-3">
+            
+            {/* Role-Based Action Buttons */}
+            {(canToggleMall || canToggleStore || canEditStore) && (
+              <div className="flex flex-col sm:flex-row gap-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <div className="flex-1">
+                  <div className="text-xs font-medium text-blue-700 mb-1">
+                    {user?.role.charAt(0).toUpperCase() + user?.role.slice(1)} Actions
+                  </div>
+                  <div className="text-xs text-blue-600">
+                    {canToggleMall && `Toggle mall status and all stores`}
+                    {canToggleStore && `Toggle store status`}
+                    {canEditStore && `Edit store information`}
+                  </div>
+                </div>
+                
+                {/* Admin: Mall Toggle */}
+                {canToggleMall && (
+                  <button
+                    onClick={handleMallToggle}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-colors ${
+                      mall?.isOpen
+                        ? 'bg-red-600 hover:bg-red-700 text-white'
+                        : 'bg-green-600 hover:bg-green-700 text-white'
+                    }`}
+                  >
+                    {mall?.isOpen ? (
+                      <>
+                        <ToggleLeft className="w-4 h-4" />
+                        Close Mall
+                      </>
+                    ) : (
+                      <>
+                        <ToggleRight className="w-4 h-4" />
+                        Open Mall
+                      </>
+                    )}
+                  </button>
+                )}
+                
+                {/* Manager: Store Toggle */}
+                {canToggleStore && (
+                  <button
+                    onClick={handleStoreToggle}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-colors ${
+                      store?.isOpen
+                        ? 'bg-red-600 hover:bg-red-700 text-white'
+                        : 'bg-green-600 hover:bg-green-700 text-white'
+                    }`}
+                  >
+                    {store?.isOpen ? (
+                      <>
+                        <ToggleLeft className="w-4 h-4" />
+                        Close Store
+                      </>
+                    ) : (
+                      <>
+                        <ToggleRight className="w-4 h-4" />
+                        Open Store
+                      </>
+                    )}
+                  </button>
+                )}
+                
+                {/* Store: Edit Button */}
+                {canEditStore && (
+                  <button
+                    onClick={handleStoreEdit}
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium text-sm transition-colors"
+                  >
+                    <Settings className="w-4 h-4" />
+                    Edit Store
+                  </button>
+                )}
+              </div>
             )}
             
-            {/* Close Button */}
-            <button
-              onClick={onClose}
-              className="sm:w-auto w-full bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-6 rounded-lg transition-colors text-sm"
-            >
-              Close
-            </button>
+            {/* Primary Actions */}
+            <div className="flex flex-col sm:flex-row gap-3">
+              {isStoreDetail && store ? (
+                <>
+                  <button className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors text-sm flex items-center justify-center">
+                    <MapPin className="w-4 h-4 mr-2" />
+                    Get Directions
+                  </button>
+                  <button className="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition-colors text-sm flex items-center justify-center">
+                    <Phone className="w-4 h-4 mr-2" />
+                    Call Store
+                  </button>
+                </>
+              ) : (
+                <button className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors text-sm flex items-center justify-center">
+                  <MapPin className="w-4 h-4 mr-2" />
+                  View All Stores
+                </button>
+              )}
+              
+              {/* Close Button */}
+              <button
+                onClick={onClose}
+                className="sm:w-auto w-full bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-6 rounded-lg transition-colors text-sm"
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
       </div>

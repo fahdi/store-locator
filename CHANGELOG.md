@@ -6,11 +6,53 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### In Progress - Phase 5: Role-Based CRUD Operations
+- **Role-Based DetailModal Actions**: Admin/Manager/Store specific action buttons
+- Mall toggle functionality for admins (cascading store updates)
+- Store toggle functionality for managers
+- Store edit forms for store users
+- Confirmation dialogs and real-time UI updates
+
 ### Planned
-- Phase 4: Data display components with modal interactions
-- Phase 5: Role-based CRUD operations 
 - Phase 6: UI/UX polish and responsive design enhancements
 - Phase 7: Final testing and deployment preparation
+
+---
+
+## [0.6.0] - 2025-10-09
+
+### Added - Phase 4: Enhanced Data Display & Mobile Experience Complete
+- **Mobile-First Search Interface**: Comprehensive search and filter system optimized for all devices
+  - Header-integrated search with real-time filtering
+  - Dedicated mobile overlay with full-screen search experience
+  - Touch-friendly controls with 44px minimum targets
+  - Safe area support for devices with notches
+- **Advanced Filtering System**: Multi-criteria filtering with instant map updates
+  - Status filters (Open/Closed) with real-time updates
+  - Store type filtering with dynamic categories
+  - Mall location filtering with comprehensive options
+  - Search query across mall names and store types
+- **Enhanced Data Service**: Robust API integration with error handling
+  - Automatic retry mechanisms with exponential backoff
+  - Comprehensive error boundaries and user feedback
+  - Real-time data synchronization and updates
+- **Improved User Experience**: Smooth interactions and animations
+  - Enhanced DetailModal with loading states and error handling
+  - Smooth map zoom with cubic-bezier easing and optimal parameters
+  - Toast notification system with essential feedback only
+  - Mobile-responsive design with generous spacing
+
+### Fixed
+- Infinite re-render loop in HeaderSearch component causing performance issues
+- Map zoom smoothness with proper animation timing and easing
+- Mobile dropdown visibility with aggressive bottom padding (10rem)
+- Toast notification cleanup - removed unnecessary welcome and success messages
+
+### Technical Improvements
+- Memoized filter objects to prevent unnecessary re-renders
+- Consolidated useEffect structure for better performance
+- Enhanced mobile CSS with safe area padding and device compatibility
+- Optimized search algorithm with efficient filtering logic
 
 ---
 
