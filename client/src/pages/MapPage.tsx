@@ -124,8 +124,11 @@ export default function MapPage() {
 
       {/* Mobile Search Button - Floating */}
       <button
-        onClick={() => setShowMobileSearch(true)}
-        className="md:hidden fixed bottom-6 right-6 bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-lg z-50 transition-colors"
+        onClick={() => {
+          setShowMobileSearch(true)
+          setShowFilters(true) // Automatically show filters on mobile
+        }}
+        className="block md:hidden fixed bottom-6 right-6 bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-lg z-[9999] transition-colors"
         aria-label="Open search"
       >
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -137,9 +140,12 @@ export default function MapPage() {
       {showMobileSearch && (
         <div className="md:hidden fixed inset-0 bg-white z-50 flex flex-col">
           {/* Mobile Search Header */}
-          <div className="bg-white border-b px-4 py-3 flex items-center gap-3">
+          <div className="bg-white border-b px-4 py-3 flex items-center gap-3 flex-shrink-0">
             <button
-              onClick={() => setShowMobileSearch(false)}
+              onClick={() => {
+                setShowMobileSearch(false)
+                setShowFilters(false) // Reset filters when closing mobile search
+              }}
               className="p-2 hover:bg-gray-100 rounded-full"
               aria-label="Close search"
             >
@@ -151,32 +157,40 @@ export default function MapPage() {
           </div>
 
           {/* Mobile Search Content */}
-          <div className="flex-1 overflow-y-auto">
-            <div className="p-4 space-y-4">
-              <HeaderSearch
-                malls={malls}
-                onFilteredResults={handleFilteredResults}
-                onToggleFilters={() => setShowFilters(!showFilters)}
-                showFilters={showFilters}
-                dropdownFilters={dropdownFilters}
-                className="w-full"
-              />
+          <div className="flex-1 overflow-y-auto min-h-0 mobile-search-content">
+            <div className="p-4 space-y-6 pb-40">
+              {/* Search Input - Always visible */}
+              <div className="space-y-3">
+                <HeaderSearch
+                  malls={malls}
+                  onFilteredResults={handleFilteredResults}
+                  onToggleFilters={() => setShowFilters(!showFilters)}
+                  showFilters={showFilters}
+                  dropdownFilters={dropdownFilters}
+                  className="w-full"
+                />
+              </div>
               
-              {showFilters && (
+              {/* Filters - Always show on mobile overlay */}
+              <div className="space-y-4">
                 <ErrorBoundary>
                   <FiltersDropdown
                     malls={malls}
                     onFiltersChange={handleDropdownFilters}
+                    className="mobile-filters"
                   />
                 </ErrorBoundary>
-              )}
+              </div>
             </div>
           </div>
 
-          {/* Mobile Search Actions */}
-          <div className="bg-white border-t px-4 py-3">
+          {/* Mobile Search Actions - Fixed at bottom */}
+          <div className="bg-white border-t px-4 py-8 flex-shrink-0 safe-area-padding-bottom">
             <button
-              onClick={() => setShowMobileSearch(false)}
+              onClick={() => {
+                setShowMobileSearch(false)
+                setShowFilters(false) // Reset filters when closing mobile search
+              }}
               className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg text-sm font-medium transition-colors"
             >
               Apply Filters & Close

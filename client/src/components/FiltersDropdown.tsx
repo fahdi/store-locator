@@ -38,9 +38,9 @@ export default function FiltersDropdown({ malls, onFiltersChange, className = ''
   }
 
   return (
-    <div className={`bg-white border-b border-gray-200 shadow-sm ${className}`}>
-      <div className="max-w-7xl mx-auto px-4 py-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className={`bg-white ${className?.includes('mobile-filters') ? '' : 'border-b border-gray-200 shadow-sm'} ${className}`}>
+      <div className={`${className?.includes('mobile-filters') ? 'px-0 py-0' : 'max-w-7xl mx-auto px-4 py-4'}`}>
+        <div className={`grid gap-4 ${className?.includes('mobile-filters') ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-3'}`}>
           
           {/* Status Filter */}
           <div>

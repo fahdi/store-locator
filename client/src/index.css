@@ -237,5 +237,46 @@
       margin-right: 8px !important;
       margin-bottom: 60px !important;
     }
+    
+    /* Ensure mobile search button stays visible */
+    button[aria-label="Open search"] {
+      display: block !important;
+      position: fixed !important;
+      bottom: 1.5rem !important;
+      right: 1.5rem !important;
+      z-index: 9999 !important;
+    }
+  }
+  
+  /* Mobile search overlay improvements */
+  .safe-area-padding-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 1rem);
+  }
+  
+  /* Mobile filters improvements */
+  .mobile-filters select {
+    appearance: menulist !important;
+    -webkit-appearance: menulist !important;
+    -moz-appearance: menulist !important;
+    min-height: 44px !important;
+    font-size: 16px !important; /* Prevents zoom on iOS */
+    margin-bottom: 3rem !important; /* Extra space for dropdown */
+  }
+  
+  .mobile-filters {
+    margin-bottom: 4rem !important;
+  }
+  
+  /* Ensure dropdown options have enough space */
+  .mobile-filters > div > div:last-child {
+    margin-bottom: 4rem !important;
+  }
+  
+  /* Mobile overlay scroll area */
+  @media (max-width: 768px) {
+    .mobile-search-content {
+      max-height: calc(100vh - 140px) !important;
+      overflow-y: auto !important;
+    }
   }
 }
