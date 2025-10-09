@@ -7,6 +7,7 @@ import DashboardPage from './pages/DashboardPage'
 import MapPage from './pages/MapPage'
 import { ROUTES } from './utils/constants'
 import './App.css'
+import './styles/animations.css'
 
 function App() {
   return (
