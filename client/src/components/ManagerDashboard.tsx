@@ -64,19 +64,19 @@ export default function ManagerDashboard() {
   return (
     <div className="p-6 space-y-8">
       {/* Welcome Section */}
-      <div className="bg-gradient-to-r from-orange-500 via-yellow-500 to-amber-500 rounded-2xl p-8 text-white">
+      <div className="bg-white border border-gray-200 rounded-lg p-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold mb-2">
+            <h1 className="text-3xl font-bold mb-2 text-gray-900">
               Manager Dashboard
             </h1>
-            <p className="text-orange-100 text-lg">
+            <p className="text-gray-600 text-lg">
               Store Operations Management - {user?.username}
             </p>
           </div>
           <div className="hidden md:flex items-center space-x-4">
-            <div className="bg-white/20 backdrop-blur-sm rounded-xl p-4">
-              <Store className="w-8 h-8" />
+            <div className="bg-gray-50 rounded-lg p-4">
+              <Store className="w-8 h-8 text-gray-600" />
             </div>
           </div>
         </div>
@@ -84,37 +84,49 @@ export default function ManagerDashboard() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-6 text-white">
-          <div className="flex items-center justify-between mb-4">
-            <Store className="w-8 h-8 opacity-80" />
-            <div className="text-right">
-              <div className="text-2xl font-bold">{stats.assignedStores}</div>
+        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
+          <div className="flex items-center space-x-4 mb-4">
+            <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
+              <Store className="w-5 h-5 text-blue-600" />
+            </div>
+            <div className="flex-1">
+              <div className="text-right">
+                <div className="text-2xl font-bold text-gray-900">{stats.assignedStores}</div>
+              </div>
             </div>
           </div>
-          <h3 className="font-semibold text-white/90">Assigned Stores</h3>
-          <p className="text-sm text-white/70">{stats.openStores} currently open</p>
+          <h3 className="font-medium text-gray-900">Assigned Stores</h3>
+          <p className="text-sm text-gray-600">{stats.openStores} currently open</p>
         </div>
 
-        <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl p-6 text-white">
-          <div className="flex items-center justify-between mb-4">
-            <TrendingUp className="w-8 h-8 opacity-80" />
-            <div className="text-right">
-              <div className="text-2xl font-bold">{stats.operationalRate}%</div>
+        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
+          <div className="flex items-center space-x-4 mb-4">
+            <div className="bg-emerald-50 p-3 rounded-lg border border-emerald-200">
+              <TrendingUp className="w-5 h-5 text-emerald-600" />
+            </div>
+            <div className="flex-1">
+              <div className="text-right">
+                <div className="text-2xl font-bold text-gray-900">{stats.operationalRate}%</div>
+              </div>
             </div>
           </div>
-          <h3 className="font-semibold text-white/90">Operational Rate</h3>
-          <p className="text-sm text-white/70">Stores currently operational</p>
+          <h3 className="font-medium text-gray-900">Operational Rate</h3>
+          <p className="text-sm text-gray-600">Stores currently operational</p>
         </div>
 
-        <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl p-6 text-white">
-          <div className="flex items-center justify-between mb-4">
-            <Building2 className="w-8 h-8 opacity-80" />
-            <div className="text-right">
-              <div className="text-2xl font-bold">{stats.totalMalls}</div>
+        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
+          <div className="flex items-center space-x-4 mb-4">
+            <div className="bg-violet-50 p-3 rounded-lg border border-violet-200">
+              <Building2 className="w-5 h-5 text-violet-600" />
+            </div>
+            <div className="flex-1">
+              <div className="text-right">
+                <div className="text-2xl font-bold text-gray-900">{stats.totalMalls}</div>
+              </div>
             </div>
           </div>
-          <h3 className="font-semibold text-white/90">Active Malls</h3>
-          <p className="text-sm text-white/70">Locations managed</p>
+          <h3 className="font-medium text-gray-900">Active Malls</h3>
+          <p className="text-sm text-gray-600">Locations managed</p>
         </div>
       </div>
 
