@@ -1,6 +1,10 @@
+import { useState } from 'react'
 import { X, Clock, MapPin, Phone, Store, Image as ImageIcon, Settings, ToggleLeft, ToggleRight } from 'lucide-react'
 import { Mall, Store as StoreType } from '../types'
 import { useAuth } from '../hooks/useAuth'
+import { mallService, StoreToggleResponse } from '../services/mallService'
+import ConfirmationDialog from './ConfirmationDialog'
+import StoreEditForm from './StoreEditForm'
 
 interface DetailModalProps {
   isOpen: boolean
@@ -8,10 +12,17 @@ interface DetailModalProps {
   onClose: () => void
   mall?: Mall
   store?: StoreType & { mallName?: string }
+  onMallUpdate?: (mall: { id: number; name: string; isOpen: boolean }) => void
+  onStoreUpdate?: (store: { id: number; name: string; isOpen: boolean; mallId: number }) => void
 }
 
-export default function DetailModal({ isOpen, loading = false, onClose, mall, store }: DetailModalProps) {
+export default function DetailModal({ isOpen, loading = false, onClose, mall, store, onMallUpdate, onStoreUpdate }: DetailModalProps) {
   const { user, isAuthenticated } = useAuth()
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false)
+  const [confirmationType, setConfirmationType] = useState<'mall' | 'store'>('mall')
+  const [isToggling, setIsToggling] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [showEditForm, setShowEditForm] = useState(false)
   
   if (!isOpen) return null
 
@@ -26,21 +37,78 @@ export default function DetailModal({ isOpen, loading = false, onClose, mall, st
   
   // Action handlers
   const handleMallToggle = () => {
-    if (!canToggleMall) return
-    console.log('Toggle mall:', mall?.name, mall?.isOpen ? 'Close' : 'Open')
-    // TODO: Implement API call
+    if (!canToggleMall || !mall) return
+    setError(null)
+    setConfirmationType('mall')
+    setShowConfirmDialog(true)
+  }
+
+  const confirmToggle = async () => {
+    setIsToggling(true)
+    setError(null)
+    
+    try {
+      if (confirmationType === 'mall' && mall) {
+        const result = await mallService.toggleMall(mall.id)
+        
+        // Notify parent component of the update
+        if (onMallUpdate) {
+          onMallUpdate(result.mall)
+        }
+      } else if (confirmationType === 'store' && store) {
+        // Find the mall ID for this store
+        const mallId = store.mallId || (store as any).mallId
+        if (!mallId) {
+          throw new Error('Cannot determine mall ID for store')
+        }
+        
+        const result = await mallService.toggleStore(mallId, store.id)
+        
+        // Notify parent component of the update
+        if (onStoreUpdate) {
+          onStoreUpdate(result.store)
+        }
+      }
+      
+      // Close confirmation dialog
+      setShowConfirmDialog(false)
+      
+      // Show success message briefly then close modal
+      setTimeout(() => {
+        onClose()
+      }, 1000)
+      
+    } catch (error: any) {
+      setError(error.message)
+      console.error(`${confirmationType} toggle failed:`, error)
+    } finally {
+      setIsToggling(false)
+    }
   }
   
   const handleStoreToggle = () => {
-    if (!canToggleStore) return
-    console.log('Toggle store:', store?.name, store?.isOpen ? 'Close' : 'Open')
-    // TODO: Implement API call
+    if (!canToggleStore || !store) return
+    setError(null)
+    setConfirmationType('store')
+    setShowConfirmDialog(true)
   }
   
   const handleStoreEdit = () => {
-    if (!canEditStore) return
-    console.log('Edit store:', store?.name)
-    // TODO: Implement edit form
+    if (!canEditStore || !store) return
+    setError(null)
+    setShowEditForm(true)
+  }
+  
+  const handleStoreEditUpdate = (updatedStore: any) => {
+    // Update local store data if needed
+    if (onStoreUpdate) {
+      onStoreUpdate(updatedStore)
+    }
+    setShowEditForm(false)
+    // Close detail modal after successful edit
+    setTimeout(() => {
+      onClose()
+    }, 500)
   }
 
   return (
@@ -76,6 +144,27 @@ export default function DetailModal({ isOpen, loading = false, onClose, mall, st
 
         {/* Content */}
         <div className="p-4 sm:p-6 space-y-4 overflow-y-auto">
+          {/* Error Display */}
+          {error && (
+            <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+              <div className="flex items-start">
+                <div className="flex-shrink-0">
+                  <X className="w-5 h-5 text-red-400" />
+                </div>
+                <div className="ml-3">
+                  <h3 className="text-sm font-medium text-red-800">Operation Failed</h3>
+                  <p className="text-sm text-red-700 mt-1">{error}</p>
+                </div>
+                <button
+                  onClick={() => setError(null)}
+                  className="ml-auto flex-shrink-0 text-red-400 hover:text-red-600"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          )}
+          
           {loading ? (
             <div className="flex items-center justify-center py-8">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
@@ -226,13 +315,19 @@ export default function DetailModal({ isOpen, loading = false, onClose, mall, st
                 {canToggleMall && (
                   <button
                     onClick={handleMallToggle}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-colors ${
+                    disabled={isToggling}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
                       mall?.isOpen
                         ? 'bg-red-600 hover:bg-red-700 text-white'
                         : 'bg-green-600 hover:bg-green-700 text-white'
                     }`}
                   >
-                    {mall?.isOpen ? (
+                    {isToggling ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
+                        Processing...
+                      </>
+                    ) : mall?.isOpen ? (
                       <>
                         <ToggleLeft className="w-4 h-4" />
                         Close Mall
@@ -250,13 +345,19 @@ export default function DetailModal({ isOpen, loading = false, onClose, mall, st
                 {canToggleStore && (
                   <button
                     onClick={handleStoreToggle}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-colors ${
+                    disabled={isToggling}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
                       store?.isOpen
                         ? 'bg-red-600 hover:bg-red-700 text-white'
                         : 'bg-green-600 hover:bg-green-700 text-white'
                     }`}
                   >
-                    {store?.isOpen ? (
+                    {isToggling && confirmationType === 'store' ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
+                        Processing...
+                      </>
+                    ) : store?.isOpen ? (
                       <>
                         <ToggleLeft className="w-4 h-4" />
                         Close Store
@@ -274,7 +375,8 @@ export default function DetailModal({ isOpen, loading = false, onClose, mall, st
                 {canEditStore && (
                   <button
                     onClick={handleStoreEdit}
-                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium text-sm transition-colors"
+                    disabled={isToggling}
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <Settings className="w-4 h-4" />
                     Edit Store
@@ -314,6 +416,45 @@ export default function DetailModal({ isOpen, loading = false, onClose, mall, st
           </div>
         </div>
       </div>
+      
+      {/* Confirmation Dialog */}
+      <ConfirmationDialog
+        isOpen={showConfirmDialog}
+        onClose={() => {
+          if (!isToggling) {
+            setShowConfirmDialog(false)
+            setError(null)
+          }
+        }}
+        onConfirm={confirmToggle}
+        title={confirmationType === 'mall' 
+          ? `${mall?.isOpen ? 'Close' : 'Open'} Mall`
+          : `${store?.isOpen ? 'Close' : 'Open'} Store`
+        }
+        message={confirmationType === 'mall'
+          ? `Are you sure you want to ${mall?.isOpen ? 'close' : 'open'} ${mall?.name}? This will ${mall?.isOpen ? 'close' : 'open'} all ${mall?.stores.length} stores in this mall.`
+          : `Are you sure you want to ${store?.isOpen ? 'close' : 'open'} ${store?.name}?${!store?.isOpen ? ' Note: The store can only be opened if the parent mall is open.' : ''}`
+        }
+        confirmText={confirmationType === 'mall'
+          ? (mall?.isOpen ? 'Close Mall' : 'Open Mall')
+          : (store?.isOpen ? 'Close Store' : 'Open Store')
+        }
+        confirmVariant={confirmationType === 'mall'
+          ? (mall?.isOpen ? 'danger' : 'primary')
+          : (store?.isOpen ? 'danger' : 'primary')
+        }
+        isLoading={isToggling}
+      />
+      
+      {/* Store Edit Form */}
+      {showEditForm && store && store.mallId && (
+        <StoreEditForm
+          isOpen={showEditForm}
+          onClose={() => setShowEditForm(false)}
+          store={store as any}
+          onStoreUpdate={handleStoreEditUpdate}
+        />
+      )}
     </div>
   )
 }

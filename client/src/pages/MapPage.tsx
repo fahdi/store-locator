@@ -4,11 +4,13 @@ import HeaderSearch from '../components/HeaderSearch'
 import FiltersDropdown, { FilterState } from '../components/FiltersDropdown'
 import { ErrorBoundary } from '../components/ErrorBoundary'
 import { useDataService } from '../hooks/useDataService'
+import { useAuth } from '../hooks/useAuth'
 import { Mall } from '../types'
 import Header from '../components/Header'
 
 export default function MapPage() {
   const { malls, loading, error } = useDataService()
+  const { user } = useAuth()
   const [filteredMalls, setFilteredMalls] = useState<Mall[]>([])
   const [showFilters, setShowFilters] = useState(false)
   const [showMobileSearch, setShowMobileSearch] = useState(false)
@@ -64,6 +66,22 @@ export default function MapPage() {
           <ErrorBoundary>
             <MapView malls={filteredMalls.length > 0 ? filteredMalls : malls} />
           </ErrorBoundary>
+          
+          {/* Role-based hints overlay */}
+          {user && (
+            <div className="absolute top-4 right-4 z-[1000] max-w-xs">
+              <div className="bg-white/90 backdrop-blur-sm rounded-lg shadow-lg p-3 border border-gray-200">
+                <div className="text-xs font-medium text-gray-700 mb-1">
+                  {user.role.charAt(0).toUpperCase() + user.role.slice(1)} Mode
+                </div>
+                <div className="text-xs text-gray-600">
+                  {user.role === 'admin' && 'Click malls to toggle open/close status'}
+                  {user.role === 'manager' && 'Click stores to toggle open/close status'}
+                  {user.role === 'store' && 'Click stores to edit details'}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </main>
 

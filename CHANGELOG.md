@@ -6,16 +6,90 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
-### In Progress - Phase 5: Role-Based CRUD Operations
-- **Role-Based DetailModal Actions**: Admin/Manager/Store specific action buttons
-- Mall toggle functionality for admins (cascading store updates)
-- Store toggle functionality for managers
-- Store edit forms for store users
-- Confirmation dialogs and real-time UI updates
+### Planned Enhancements (Optional Bonus Features)
+- **Audit Logs System**: Track all administrative actions for compliance
+- **Nearest Store Finder**: Geolocation-based store discovery with distance calculation
+- **Animated Map Transitions**: Smooth visual feedback for status changes
+- **Enhanced Role-Based UI**: More granular permission controls and themes
+- **Advanced Search & Filtering**: Full-text search with multiple criteria
+- **Offline Support/PWA**: Progressive Web App with offline capabilities
+- **Multi-language Support**: Arabic/English with RTL layout support
+- **Data Export & Reporting**: CSV/PDF exports and analytics dashboard
 
-### Planned
-- Phase 6: UI/UX polish and responsive design enhancements
-- Phase 7: Final testing and deployment preparation
+> **Note**: See [FUTURE_ENHANCEMENTS.md](./FUTURE_ENHANCEMENTS.md) for detailed specifications
+
+---
+
+## [0.7.0] - 2025-10-09
+
+### Added - Phase 5: Role-Based CRUD Operations Complete ✅
+- **Complete Admin Functionality**: Mall toggle operations with cascading store updates
+  - Confirmation dialogs with impact warnings (affects all X stores)
+  - Real-time map marker updates (green ↔ red with status icons)
+  - API integration with comprehensive error handling
+  - Success notifications and optimistic UI updates
+- **Manager Store Controls**: Individual store status management
+  - Store-level toggle with business logic validation
+  - Cannot open store if parent mall is closed (API enforced)
+  - Real-time store marker updates with immediate visual feedback
+  - Confirmation dialogs with context-aware messaging
+- **Store User Edit Interface**: Comprehensive store management forms
+  - Full store details editing (name, description, hours, contact)
+  - Form validation with email/phone format checking
+  - Contact information management (phone, email, website)
+  - Required field validation and user-friendly error messages
+- **Enhanced UI/UX**: Role-based interface improvements
+  - Role-specific action buttons with proper permission checks
+  - Confirmation dialogs with variant styles (danger/primary)
+  - Loading states with spinners during API operations
+  - Error boundaries with technical details and recovery options
+  - Role-based hints overlay showing user capabilities
+  - Console warning fixes (DOM nesting, React Router deprecations)
+- **API Service Integration**: Complete CRUD operations
+  - mallService.toggleMall() for admin operations
+  - mallService.toggleStore() for manager operations  
+  - mallService.updateStore() for store user operations
+  - Proper error handling for 403, 404, 400, and 500 responses
+  - JWT authentication with role validation
+- **Technical Improvements**: Code quality and reliability
+  - Fixed import errors (authAxios → api)
+  - Resolved DOM nesting warnings (p → div structure)
+  - Added React Router v7 future flags
+  - Enhanced TypeScript interfaces for all API responses
+  - Comprehensive error logging and user feedback
+  - Real-time state management with optimistic updates
+
+### Fixed
+- **Closed Mall Icons**: Fixed corrupted SVG data causing invisible markers
+  - Proper red background with white X marks for closed status
+  - Consistent 32x32 size with proper anchor positioning
+- **Console Warnings**: Clean development environment
+  - Fixed "<div> cannot appear as descendant of <p>" HTML validation
+  - Suppressed React Router v7 deprecation warnings with future flags
+  - Resolved mallService import errors for proper API integration
+- **Navigation Links**: Fixed dashboard routing to use correct home route
+
+### Technical Implementation
+- **New Components**: 
+  - `ConfirmationDialog.tsx` - Reusable confirmation modal with variants
+  - `StoreEditForm.tsx` - Comprehensive store editing interface
+- **Enhanced Components**:
+  - `DetailModal.tsx` - Added role-based actions and API integration
+  - `MapView.tsx` - Real-time updates and local state management
+  - `MapPage.tsx` - Role-based UI hints and user experience improvements
+- **Service Layer**: Complete API integration with error handling
+  - `mallService.ts` - Unified service for all CRUD operations
+  - Response type interfaces for type-safe API communication
+- **State Management**: Optimistic updates with rollback on failure
+- **Development Quality**: Zero console warnings, TypeScript strict compliance
+
+### Project Status Update
+- **Phase 1**: Foundation Setup ✅ Complete
+- **Phase 2**: Authentication System ✅ Complete  
+- **Phase 3**: Interactive Map Integration ✅ Complete
+- **Phase 4**: Enhanced Data Display & Mobile Experience ✅ Complete
+- **Phase 5**: Role-Based CRUD Operations ✅ Complete
+- **Bonus Features**: Available for future implementation (see FUTURE_ENHANCEMENTS.md)
 
 ---
 

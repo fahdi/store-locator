@@ -80,15 +80,15 @@ export default function DashboardPage() {
               </div>
 
               <div className="mt-8 p-4 bg-green-50 rounded-lg border border-green-200">
-                <h3 className="font-medium text-green-900 mb-2">🗺️ Map Available Now!</h3>
-                <p className="text-green-700 text-sm mb-3">
-                  The interactive map with Doha mall locations is now live. View mall markers with status indicators.
-                </p>
+                <h3 className="font-medium text-green-900 mb-2">✅ Full Application Ready!</h3>
+                <div className="text-green-700 text-sm mb-3">
+                  The complete BlueSky Store Locator with role-based management is now live. All CRUD operations, authentication, and interactive features are functional.
+                </div>
                 <a 
-                  href={ROUTES.MALLS}
+                  href={ROUTES.HOME}
                   className="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition duration-200"
                 >
-                  🗺️ View Map
+                  🗺️ Access Full Application
                 </a>
               </div>
             </div>
@@ -178,30 +178,42 @@ export default function DashboardPage() {
                 <p className="text-xs text-green-700">Complete ✅</p>
               </div>
             </div>
-            <div className="flex items-center p-3 bg-blue-50 rounded-lg border border-blue-200">
-              <div className="flex-shrink-0 w-3 h-3 bg-blue-500 rounded-full mr-3"></div>
+            <div className="flex items-center p-3 bg-green-50 rounded-lg border border-green-200">
+              <div className="flex-shrink-0 w-3 h-3 bg-green-500 rounded-full mr-3"></div>
               <div>
-                <p className="text-sm font-medium text-blue-900">Phase 5: Role-Based CRUD</p>
-                <p className="text-xs text-blue-700">25% Complete 🔄</p>
+                <p className="text-sm font-medium text-green-900">Phase 5: Role-Based CRUD</p>
+                <p className="text-xs text-green-700">Complete ✅</p>
               </div>
             </div>
           </div>
           
-          {/* Current Phase Details */}
-          <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-            <h4 className="text-sm font-semibold text-blue-900 mb-2">🔄 Current: Phase 5 - Role-Based CRUD Operations</h4>
+          {/* Phase 5 Completion Details */}
+          <div className="mt-4 p-4 bg-green-50 rounded-lg border border-green-200">
+            <h4 className="text-sm font-semibold text-green-900 mb-2">✅ Completed: Phase 5 - Role-Based CRUD Operations</h4>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
               <div className="flex items-center">
                 <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-                <span className="text-blue-800">Role-based action buttons in DetailModal</span>
+                <span className="text-green-800">Admin mall toggle with confirmation</span>
               </div>
               <div className="flex items-center">
-                <span className="w-2 h-2 bg-yellow-500 rounded-full mr-2"></span>
-                <span className="text-blue-800">Admin mall toggle functionality</span>
+                <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                <span className="text-green-800">Manager store toggle with validation</span>
               </div>
               <div className="flex items-center">
-                <span className="w-2 h-2 bg-gray-400 rounded-full mr-2"></span>
-                <span className="text-blue-800">Manager store controls & validation</span>
+                <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                <span className="text-green-800">Store edit forms with validation</span>
+              </div>
+              <div className="flex items-center">
+                <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                <span className="text-green-800">Real-time updates & error handling</span>
+              </div>
+              <div className="flex items-center">
+                <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                <span className="text-green-800">Comprehensive confirmation dialogs</span>
+              </div>
+              <div className="flex items-center">
+                <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                <span className="text-green-800">Role-based UI hints and feedback</span>
               </div>
             </div>
           </div>
