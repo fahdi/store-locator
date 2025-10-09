@@ -2,20 +2,38 @@
 
 This document tracks all todo items and tasks for the BlueSky Store Locator project.
 
-## 🚀 Current Sprint: Phase 4 - Data Display Components
+## 🚀 Current Sprint: Phase 5 - Role-Based CRUD Operations
 
 ### ⏳ Todo - High Priority
 
-#### Data Display Components (Phase 4)
-- [ ] Enhance DetailModal with additional features
-- [ ] Add loading states for map interactions
-- [ ] Implement error handling with toast notifications
-- [ ] Create data fetching service for real-time updates
-- [ ] Add image display with fallbacks
-- [ ] Format opening hours and descriptions
-- [ ] Add search and filter functionality
+#### Role-Based CRUD Operations (Phase 5)
+- [ ] Add mall toggle button (Admin only)
+- [ ] Implement mall open/close API calls
+- [ ] Handle cascading store status updates
+- [ ] Add confirmation dialogs
+- [ ] Add store toggle button (Manager only)
+- [ ] Implement store open/close API calls
+- [ ] Validate mall is open before opening store
+- [ ] Add success/error notifications
+- [ ] Create store edit form (Store users only)
+- [ ] Implement form validation with Zod
+- [ ] Add store update API calls
+- [ ] Real-time UI updates after changes
 
 ### 📋 Recently Completed
+
+#### Data Display Components (Phase 4) - COMPLETED ✅
+- [x] ✅ Enhance DetailModal with comprehensive features
+- [x] ✅ Add loading states for map interactions and API calls
+- [x] ✅ Implement error handling with toast notifications
+- [x] ✅ Create data fetching service for real-time updates
+- [x] ✅ Add search and filter functionality with mobile optimization
+- [x] ✅ Implement HeaderSearch component with real-time filtering
+- [x] ✅ Create FiltersDropdown with status, store type, mall filters
+- [x] ✅ Mobile-responsive search overlay with proper spacing
+- [x] ✅ Smooth map animations and enhanced user experience
+- [x] ✅ Error boundaries and comprehensive error handling
+- [x] ✅ Remove unnecessary toast notifications, keep essential feedback
 
 #### Map Integration (Phase 3) - COMPLETED ✅
 - [x] ✅ Install and configure Leaflet + React-Leaflet
@@ -175,15 +193,21 @@ This document tracks all todo items and tasks for the BlueSky Store Locator proj
   - ✅ Interactive hover effects and click handlers
   - ✅ DetailModal component with comprehensive information
   - ✅ Mobile-responsive design
-- **Phase 4 (Data Display)**: ⏳ 0% Complete
+- **Phase 4 (Data Display)**: ✅ 100% Complete
+  - ✅ Enhanced DetailModal with loading states and error handling
+  - ✅ Real-time data fetching service with retry mechanisms
+  - ✅ Comprehensive search and filter functionality
+  - ✅ Mobile-optimized interface with responsive overlay
+  - ✅ Smooth animations and user experience improvements
 - **Phase 5 (Role-Based Features)**: ⏳ 0% Complete
 - **Phase 6 (UI/UX Polish)**: ⏳ 0% Complete
 - **Phase 7 (Testing & Docs)**: ⏳ 0% Complete
 
 ### Next Immediate Actions
-1. 🎯 **Begin Phase 4**: Enhance data display components and user experience
-2. 🔧 **API Integration**: Connect map to live data with real-time updates
-3. 🎨 **UI Enhancement**: Improve DetailModal and add advanced features
+1. 🎯 **Begin Phase 5**: Implement role-based CRUD operations
+2. 🔧 **Admin Features**: Add mall toggle functionality with cascading updates
+3. 🎨 **Manager Features**: Implement store toggle controls
+4. 📝 **Store Features**: Create store edit forms with validation
 
 ---
 
@@ -213,6 +237,6 @@ npm run test:client   # Run frontend tests
 
 ---
 
-**Last Updated**: October 8, 2025  
-**Current Phase**: Phase 4 - Data Display Components (Ready to Start)  
-**Project Status**: Backend Complete, Authentication System Live, Map Integration Complete
+**Last Updated**: October 9, 2025  
+**Current Phase**: Phase 5 - Role-Based CRUD Operations (In Progress)  
+**Project Status**: Backend Complete, Authentication Live, Map & Data Display Complete
