@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { Search, Filter, X, MapPin, Clock, ChevronDown } from 'lucide-react'
 import { Mall, Store } from '../types'
 

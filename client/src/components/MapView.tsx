@@ -1,8 +1,16 @@
 import { useState, useEffect } from 'react'
 import { MapContainer, TileLayer, Marker, Popup, Tooltip } from 'react-leaflet'
-import { Icon } from 'leaflet'
+import L from 'leaflet'
 import toast from 'react-hot-toast'
 import 'leaflet/dist/leaflet.css'
+
+// Fix Leaflet default icons in Vite
+delete (L.Icon.Default.prototype as any)._getIconUrl
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+})
 import { Mall, Store } from '../types'
 import { DOHA_CENTER } from '../utils/constants'
 import { useDataService } from '../hooks/useDataService'
@@ -13,7 +21,7 @@ interface MapViewProps {
 }
 
 // Custom icon for open malls
-const openMallIcon = new Icon({
+const openMallIcon = new L.Icon({
   iconUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8Y2lyY2xlIGN4PSIxNiIgY3k9IjE2IiByPSIxNSIgZmlsbD0iIzEwQjk4MSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiLz4KICA8cGF0aCBkPSJNMTYgNkM5LjM3IDYgNCA5LjM3IDQgMTNDNCAyMC4yNSAxNiAyOCAxNiAyOEMxNiAyOCAyOCAyMC4yNSAyOCAxM0MyOCA5LjM3IDIyLjYzIDYgMTYgNlpNMTYgMTVDMTQuMzQgMTUgMTMgMTMuNjYgMTMgMTJDMTMgMTAuMzQgMTQuMzQgOSAxNiA5QzE3LjY2IDkgMTkgMTAuMzQgMTkgMTJDMTkgMTMuNjYgMTcuNjYgMTUgMTYgMTVaIiBmaWxsPSIjZmZmIi8+Cjwvc3ZnPg==',
   iconSize: [32, 32],
   iconAnchor: [16, 32],
@@ -21,15 +29,15 @@ const openMallIcon = new Icon({
 })
 
 // Custom icon for closed malls
-const closedMallIcon = new Icon({
-  iconUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8Y2lyY2xlIGN4PSIxNiIgY3k9IjE2IiByPSIxNSIgZmlsbD0iI0VGNDQ0NCIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiLz4KICA8cGF0aCBkPSJNMTYgNkM5LjM3IDYgNCA5LjM3IDQgMTNDNCAyMC4yNSAxNiAyOCAxNiAyOEMxNiAyOCAyOCAyMC4yNSAyOCAxM0MyOCA5LjM3IDIyLjYzIDYgMTYgNlpNMTYgMTVDMTQuMzQgMTUgMTMgMTMuNjYgMTMgMTJDMTMgMTAuMzQgMTQuMzQgOSAxNiA5QzE3LjY2IDkgMTkgMTAuMzQgMTkgMTJDMTkgMTMuNjYgMTcuNjYgMTUgMTYgMTVaIiBmaWxsPSIjZmZmIi8+Cjwvc3ZnPg==',
+const closedMallIcon = new L.Icon({
+  iconUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8Y2lyY2xlIGN4PSIxNiIgY3k9IjE2IiByPSIxNSIgZmlsbD0iI0VGNDQ0NCIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiLz4KICA8cGF0aCBkPSJNMTYgNkM5LjM3IDYgNCA5LjM3IDQgMTNDNCAyMC4yNSAxNiAyOCAxNiAyOEMxNiAyOCAyOCAyMC4yNSAyOCAxM0MyOCA5LjM3IDIyLjYzIDYgMTYgNlpNMTYgMTVDMTQuMzQgMTUgMTMgMTMuNjYgMTMgMTJDMTMgMTAuMzQgMTQuMzQgOSAxNiA5QzE3LjY2IDkgMTkgMTAuMzQgMTkgMTJDMTkgMTMuNjYgMTcuNjYgMTUgMTY MTVaIiBmaWxsPSIjZmZmIi8+Cjwvc3ZnPg==',
   iconSize: [32, 32],
   iconAnchor: [16, 32],
   popupAnchor: [0, -32],
 })
 
 // Custom icon for open stores (smaller, different color)
-const openStoreIcon = new Icon({
+const openStoreIcon = new L.Icon({
   iconUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxMSIgZmlsbD0iIzA2ODhCMCIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiLz4KICA8cGF0aCBkPSJNMTIgNEMxMS40NSA0IDExIDQuNDUgMTEgNVYxMUg1QzQuNDUgMTEgNCAxMS40NSA0IDEyQzQgMTIuNTUgNC40NSAxMyA1IDEzSDExVjE5QzExIDE5LjU1IDExLjQ1IDIwIDEyIDIwQzEyLjU1IDIwIDEzIDE5LjU1IDEzIDE5VjEzSDE5QzE5LjU1IDEzIDIwIDEyLjU1IDIwIDEyQzIwIDExLjQ1IDE5LjU1IDExIDE5IDExSDEzVjVDMTMgNC40NSAxMi41NSA0IDEyIDRaIiBmaWxsPSIjZmZmIi8+Cjwvc3ZnPg==',
   iconSize: [24, 24],
   iconAnchor: [12, 24],
@@ -37,7 +45,7 @@ const openStoreIcon = new Icon({
 })
 
 // Custom icon for closed stores (smaller, different color)
-const closedStoreIcon = new Icon({
+const closedStoreIcon = new L.Icon({
   iconUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxMSIgZmlsbD0iI0RDMjYyNiIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiLz4KICA8cGF0aCBkPSJNOSA5TDE1IDE1TTkgMTVMMTUgOSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4=',
   iconSize: [24, 24],
   iconAnchor: [12, 24],
@@ -45,11 +53,13 @@ const closedStoreIcon = new Icon({
 })
 
 // Helper function to generate store coordinates (mimics server logic)
-function generateStoreCoordinates(mallLat: number, mallLng: number, storeId: number) {
-  // Use store ID as seed for consistent positioning
-  const seed = storeId * 0.001
-  const offsetLat = (Math.sin(seed) * 0.01) // Slight offset from mall
-  const offsetLng = (Math.cos(seed) * 0.01)
+function generateStoreCoordinates(mallLat: number, mallLng: number, storeId: number, storeIndex: number) {
+  // Create a more spread out pattern for stores around the mall
+  const angle = (storeIndex * 90) + (storeId * 30) // Different angles for each store
+  const distance = 0.002 + (storeIndex * 0.001) // Varying distances
+  
+  const offsetLat = Math.sin(angle * Math.PI / 180) * distance
+  const offsetLng = Math.cos(angle * Math.PI / 180) * distance
   
   return {
     latitude: mallLat + offsetLat,
@@ -185,10 +195,11 @@ export default function MapView({ malls: propMalls }: MapViewProps) {
 
   return (
     <>
-      <div className="h-full w-full relative">
+      <div className="h-full w-full relative overflow-hidden">
       <MapContainer
         center={[DOHA_CENTER.latitude, DOHA_CENTER.longitude]}
         zoom={11}
+        style={{ height: '100%', width: '100%', minHeight: 'calc(100vh - 140px)' }}
         className="h-full w-full rounded-lg"
         zoomControl={true}
         scrollWheelZoom={true}
@@ -202,11 +213,11 @@ export default function MapView({ malls: propMalls }: MapViewProps) {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         
+        
         {/* Mall Markers */}
         {malls.map((mall) => {
-          // Handle both data structures: direct lat/lng props and nested coordinates object
-          const lat = mall.coordinates?.latitude || (mall as any).latitude
-          const lng = mall.coordinates?.longitude || (mall as any).longitude
+          const lat = mall.latitude
+          const lng = mall.longitude
           
           // Skip malls without valid coordinates
           if (typeof lat !== 'number' || typeof lng !== 'number') {
@@ -253,17 +264,16 @@ export default function MapView({ malls: propMalls }: MapViewProps) {
 
         {/* Store Markers */}
         {malls.flatMap((mall) => {
-          // Handle both data structures: direct lat/lng props and nested coordinates object
-          const mallLat = mall.coordinates?.latitude || (mall as any).latitude
-          const mallLng = mall.coordinates?.longitude || (mall as any).longitude
+          const mallLat = mall.latitude
+          const mallLng = mall.longitude
           
           // Skip malls without valid coordinates
           if (typeof mallLat !== 'number' || typeof mallLng !== 'number') {
             return []
           }
           
-          return mall.stores.map((store) => {
-            const storeCoords = generateStoreCoordinates(mallLat, mallLng, store.id)
+          return mall.stores.map((store, storeIndex) => {
+            const storeCoords = generateStoreCoordinates(mallLat, mallLng, store.id, storeIndex)
             
             return (
               <Marker

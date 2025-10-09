@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import toast from 'react-hot-toast'
 import { dataService } from '../services/dataService'
 import { Mall, Store } from '../types'
@@ -17,30 +17,43 @@ export function useDataService(): UseDataServiceResult {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [retryCount, setRetryCount] = useState(0)
+  const retryTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const mountedRef = useRef(true)
 
   const clearError = useCallback(() => {
     setError(null)
   }, [])
 
   const fetchData = useCallback(async (forceRefresh = false, showToasts = false) => {
+    if (!mountedRef.current) return
+
     try {
       setLoading(true)
       setError(null)
+      
+      // Clear any pending retry
+      if (retryTimeoutRef.current) {
+        clearTimeout(retryTimeoutRef.current)
+        retryTimeoutRef.current = null
+      }
       
       const mallsData = forceRefresh 
         ? await dataService.refreshData()
         : await dataService.fetchMalls()
       
+      if (!mountedRef.current) return
+      
       setMalls(mallsData)
-      setRetryCount(0) // Reset retry count on success
+      setRetryCount(0)
       
       if (showToasts && forceRefresh) {
         toast.success('Data refreshed successfully')
       }
     } catch (err) {
+      if (!mountedRef.current) return
+      
       const errorMessage = err instanceof Error ? err.message : 'Failed to load data'
       setError(errorMessage)
-      setRetryCount(prev => prev + 1)
       console.error('Data service error:', err)
       
       if (showToasts) {
@@ -48,24 +61,40 @@ export function useDataService(): UseDataServiceResult {
       }
       
       // Auto-retry up to 2 times with exponential backoff
-      if (retryCount < 2 && !forceRefresh) {
-        const retryDelay = Math.pow(2, retryCount) * 1000 // 1s, 2s, 4s
-        setTimeout(() => {
-          console.log(`Auto-retrying data fetch (attempt ${retryCount + 1})`)
-          fetchData(false, false)
-        }, retryDelay)
-      }
+      setRetryCount(prev => {
+        const newRetryCount = prev + 1
+        if (newRetryCount <= 2 && !forceRefresh && mountedRef.current) {
+          const retryDelay = Math.pow(2, prev) * 1000 // 1s, 2s, 4s
+          retryTimeoutRef.current = setTimeout(() => {
+            if (mountedRef.current) {
+              console.log(`Auto-retrying data fetch (attempt ${newRetryCount})`)
+              fetchData(false, false)
+            }
+          }, retryDelay)
+        }
+        return newRetryCount
+      })
     } finally {
-      setLoading(false)
+      if (mountedRef.current) {
+        setLoading(false)
+      }
     }
-  }, [retryCount])
+  }, [])
 
   const refreshData = useCallback(async () => {
     await fetchData(true, true)
   }, [fetchData])
 
   useEffect(() => {
+    mountedRef.current = true
     fetchData()
+    
+    return () => {
+      mountedRef.current = false
+      if (retryTimeoutRef.current) {
+        clearTimeout(retryTimeoutRef.current)
+      }
+    }
   }, [fetchData])
 
   return {

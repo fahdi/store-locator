@@ -1,6 +1,5 @@
 import { Mall, Store } from '../types'
-
-const API_BASE_URL = 'http://localhost:5001/api'
+import { mallAPI, utilityAPI } from './api'
 
 export interface ApiResponse<T> {
   data: T
@@ -20,27 +19,6 @@ export class DataService {
       DataService.instance = new DataService()
     }
     return DataService.instance
-  }
-
-  private async fetchWithAuth(url: string, options: RequestInit = {}): Promise<Response> {
-    const token = localStorage.getItem('token')
-    
-    const headers = {
-      'Content-Type': 'application/json',
-      ...(token && { Authorization: `Bearer ${token}` }),
-      ...options.headers,
-    }
-
-    const response = await fetch(url, {
-      ...options,
-      headers,
-    })
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
-    }
-
-    return response
   }
 
   private getCachedData<T>(key: string): T | null {
@@ -65,8 +43,7 @@ export class DataService {
     }
 
     try {
-      const response = await this.fetchWithAuth(`${API_BASE_URL}/malls`)
-      const malls: Mall[] = await response.json()
+      const malls = await mallAPI.getAll()
       
       // Validate response structure
       if (!Array.isArray(malls)) {
@@ -78,12 +55,17 @@ export class DataService {
     } catch (error) {
       console.error('Failed to fetch malls:', error)
       
-      // More specific error messages based on error type
-      if (error instanceof TypeError && error.message.includes('fetch')) {
+      // Handle error types
+      if (error && typeof error === 'object' && 'code' in error && error.code === 'ECONNREFUSED') {
         throw new Error('Network error: Unable to connect to server. Please check your connection.')
-      } else if (error instanceof Error && error.message.includes('HTTP error')) {
-        throw new Error('Server error: The server is temporarily unavailable. Please try again later.')
-      } else if (error instanceof Error) {
+      } else if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as any
+        if (axiosError.response?.status >= 500) {
+          throw new Error('Server error: The server is temporarily unavailable. Please try again later.')
+        }
+      }
+      
+      if (error instanceof Error) {
         throw new Error(error.message)
       } else {
         throw new Error('Failed to load mall data. Please try again.')
@@ -127,23 +109,19 @@ export class DataService {
   // Health check with detailed error reporting
   async checkServerHealth(): Promise<{ healthy: boolean; message?: string }> {
     try {
-      const response = await fetch(`${API_BASE_URL}/health`, {
-        timeout: 5000
-      } as RequestInit)
-      
-      if (response.ok) {
-        return { healthy: true }
-      } else {
-        return { 
-          healthy: false, 
-          message: `Server returned ${response.status}: ${response.statusText}` 
-        }
-      }
+      await utilityAPI.healthCheck()
+      return { healthy: true }
     } catch (error) {
-      if (error instanceof TypeError && error.message.includes('fetch')) {
+      if (error && typeof error === 'object' && 'code' in error && error.code === 'ECONNREFUSED') {
         return { 
           healthy: false, 
           message: 'Network error: Unable to connect to server' 
+        }
+      } else if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as any
+        return { 
+          healthy: false, 
+          message: `Server returned ${axiosError.response?.status}: ${axiosError.response?.statusText}` 
         }
       } else {
         return { 
