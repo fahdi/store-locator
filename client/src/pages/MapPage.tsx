@@ -14,6 +14,7 @@ export default function MapPage() {
   const { malls, loading, error } = useDataService()
   const [filteredMalls, setFilteredMalls] = useState<Mall[]>([])
   const [showFilters, setShowFilters] = useState(false)
+  const [showMobileSearch, setShowMobileSearch] = useState(false)
   const [dropdownFilters, setDropdownFilters] = useState<FilterState>({
     statusFilter: 'all',
     storeTypeFilter: '',
@@ -28,19 +29,6 @@ export default function MapPage() {
     setDropdownFilters(filters)
   }, [])
 
-  // Show welcome toast for non-authenticated users
-  useEffect(() => {
-    if (!isAuthenticated && malls.length > 0) {
-      toast('📍 Welcome to BlueSky Store Locator! Explore Doha malls and stores.', {
-        duration: 4000,
-        position: 'top-center',
-        style: {
-          background: '#3B82F6',
-          color: 'white',
-        },
-      })
-    }
-  }, [isAuthenticated, malls.length])
 
   return (
     <div className="h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col overflow-hidden">
@@ -67,8 +55,8 @@ export default function MapPage() {
               )}
             </div>
 
-            {/* Search Section - Center */}
-            <div className="flex-1 max-w-2xl mx-4">
+            {/* Search Section - Center (Hidden on Mobile) */}
+            <div className="hidden md:flex flex-1 max-w-2xl mx-4">
               <HeaderSearch
                 malls={malls}
                 onFilteredResults={handleFilteredResults}
@@ -133,6 +121,69 @@ export default function MapPage() {
           </ErrorBoundary>
         </div>
       </main>
+
+      {/* Mobile Search Button - Floating */}
+      <button
+        onClick={() => setShowMobileSearch(true)}
+        className="md:hidden fixed bottom-6 right-6 bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-lg z-50 transition-colors"
+        aria-label="Open search"
+      >
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+      </button>
+
+      {/* Mobile Search Overlay */}
+      {showMobileSearch && (
+        <div className="md:hidden fixed inset-0 bg-white z-50 flex flex-col">
+          {/* Mobile Search Header */}
+          <div className="bg-white border-b px-4 py-3 flex items-center gap-3">
+            <button
+              onClick={() => setShowMobileSearch(false)}
+              className="p-2 hover:bg-gray-100 rounded-full"
+              aria-label="Close search"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            <h2 className="text-lg font-semibold text-gray-900">Search & Filters</h2>
+          </div>
+
+          {/* Mobile Search Content */}
+          <div className="flex-1 overflow-y-auto">
+            <div className="p-4 space-y-4">
+              <HeaderSearch
+                malls={malls}
+                onFilteredResults={handleFilteredResults}
+                onToggleFilters={() => setShowFilters(!showFilters)}
+                showFilters={showFilters}
+                dropdownFilters={dropdownFilters}
+                className="w-full"
+              />
+              
+              {showFilters && (
+                <ErrorBoundary>
+                  <FiltersDropdown
+                    malls={malls}
+                    onFiltersChange={handleDropdownFilters}
+                  />
+                </ErrorBoundary>
+              )}
+            </div>
+          </div>
+
+          {/* Mobile Search Actions */}
+          <div className="bg-white border-t px-4 py-3">
+            <button
+              onClick={() => setShowMobileSearch(false)}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg text-sm font-medium transition-colors"
+            >
+              Apply Filters & Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

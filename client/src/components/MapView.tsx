@@ -101,7 +101,6 @@ export default function MapView({ malls: propMalls }: MapViewProps) {
       
       // Set the mall data after "loading"
       setModalState({ isOpen: true, loading: false, mall, store: undefined })
-      toast.success(`${mall.name} details loaded successfully`)
     } catch (error) {
       // Handle error case
       const errorMessage = error instanceof Error ? error.message : 'Failed to load mall details'
@@ -134,7 +133,6 @@ export default function MapView({ malls: propMalls }: MapViewProps) {
         mall: undefined, 
         store: { ...store, mallName } 
       })
-      toast.success(`${store.name} details loaded successfully`)
     } catch (error) {
       // Handle error case
       const errorMessage = error instanceof Error ? error.message : 'Failed to load store details'
@@ -207,6 +205,13 @@ export default function MapView({ malls: propMalls }: MapViewProps) {
         doubleClickZoom={true}
         dragging={true}
         attributionControl={true}
+        zoomAnimation={true}
+        fadeAnimation={true}
+        markerZoomAnimation={true}
+        zoomSnap={0.5}
+        zoomDelta={0.5}
+        wheelDebounceTime={40}
+        wheelPxPerZoomLevel={60}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
