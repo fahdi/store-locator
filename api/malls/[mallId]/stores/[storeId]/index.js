@@ -1,10 +1,10 @@
 /**
  * Update store details - Vercel serverless function
  */
-import { authenticateToken, checkRole } from '../../../../_utils/auth.js';
-import { loadMalls, saveMalls } from '../../../../_utils/data.js';
+const { authenticateToken, checkRole } = require('../../../../_utils/auth.js');
+const { loadMalls, saveMalls } = require('../../../../_utils/data.js');
 
-export default function handler(req, res) {
+module.exports = function handler(req, res) {
   // Enable CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'PUT, OPTIONS');
@@ -79,4 +79,4 @@ export default function handler(req, res) {
     console.error('Error updating store:', error);
     res.status(500).json({ error: 'Failed to update store' });
   }
-}
+};

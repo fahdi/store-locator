@@ -1,10 +1,10 @@
 /**
  * Toggle mall status - Vercel serverless function
  */
-import { authenticateToken, checkRole } from '../../_utils/auth.js';
-import { loadMalls, saveMalls } from '../../_utils/data.js';
+const { authenticateToken, checkRole } = require('../../_utils/auth.js');
+const { loadMalls, saveMalls } = require('../../_utils/data.js');
 
-export default function handler(req, res) {
+module.exports = function handler(req, res) {
   // Enable CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'PATCH, OPTIONS');
@@ -72,4 +72,4 @@ export default function handler(req, res) {
     console.error('Error toggling mall:', error);
     res.status(500).json({ error: 'Failed to toggle mall status' });
   }
-}
+};

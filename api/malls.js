@@ -1,10 +1,10 @@
 /**
  * Malls endpoint - Vercel serverless function
  */
-import { authenticateToken } from './_utils/auth.js';
-import { loadMalls } from './_utils/data.js';
+const { authenticateToken } = require('./_utils/auth.js');
+const { loadMalls } = require('./_utils/data.js');
 
-export default function handler(req, res) {
+module.exports = function handler(req, res) {
   // Enable CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
@@ -31,4 +31,4 @@ export default function handler(req, res) {
     console.error('Error loading malls:', error);
     res.status(500).json({ error: 'Failed to load malls data' });
   }
-}
+};

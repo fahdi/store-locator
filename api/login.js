@@ -1,9 +1,9 @@
 /**
  * Login endpoint - Vercel serverless function
  */
-import { users, generateToken } from './_utils/auth.js';
+const { users, generateToken } = require('./_utils/auth.js');
 
-export default function handler(req, res) {
+module.exports = function handler(req, res) {
   // Enable CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -36,4 +36,4 @@ export default function handler(req, res) {
     role: user.role,
     username: user.username
   });
-}
+};

@@ -1,10 +1,10 @@
 /**
  * Stores endpoint (mock data) - Vercel serverless function
  */
-import { authenticateToken } from './_utils/auth.js';
-import { loadMalls, generateStores } from './_utils/data.js';
+const { authenticateToken } = require('./_utils/auth.js');
+const { loadMalls, generateStores } = require('./_utils/data.js');
 
-export default function handler(req, res) {
+module.exports = function handler(req, res) {
   // Enable CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
@@ -36,4 +36,4 @@ export default function handler(req, res) {
     console.error('Error loading stores:', error);
     res.status(500).json({ error: 'Failed to load stores data' });
   }
-}
+};

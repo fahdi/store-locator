@@ -1,15 +1,15 @@
 /**
  * Data utilities for Vercel serverless functions
  */
-import fs from "fs";
-import path from "path";
+const fs = require("fs");
+const path = require("path");
 
 // Get data path relative to the project root
 const getDataPath = () => {
   return path.join(process.cwd(), 'server/data/malls.json');
 };
 
-export function loadMalls() {
+function loadMalls() {
   try {
     const dataPath = getDataPath();
     const data = fs.readFileSync(dataPath, "utf-8");
@@ -68,7 +68,7 @@ export function loadMalls() {
   }
 }
 
-export function saveMalls(malls) {
+function saveMalls(malls) {
   try {
     const dataPath = getDataPath();
     fs.writeFileSync(dataPath, JSON.stringify(malls, null, 2));
@@ -79,7 +79,7 @@ export function saveMalls(malls) {
   }
 }
 
-export function generateStores(malls) {
+function generateStores(malls) {
   return malls.flatMap((mall) => 
     mall.stores.map((store) => ({
       ...store,
@@ -92,3 +92,9 @@ export function generateStores(malls) {
     }))
   );
 }
+
+module.exports = {
+  loadMalls,
+  saveMalls,
+  generateStores
+};

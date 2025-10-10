@@ -1,18 +1,18 @@
 /**
  * Authentication utilities for Vercel serverless functions
  */
-import jwt from "jsonwebtoken";
+const jwt = require("jsonwebtoken");
 
 const SECRET_KEY = process.env.JWT_SECRET || "demo-secret-key";
 
 // Mock users for authentication
-export const users = [
+const users = [
   { username: "admin", password: "a", role: "admin" },
   { username: "manager", password: "m", role: "manager" },
   { username: "store", password: "s", role: "store" }
 ];
 
-export function authenticateToken(req) {
+function authenticateToken(req) {
   const authHeader = req.headers.authorization;
   const token = authHeader && authHeader.split(' ')[1];
 
@@ -28,17 +28,24 @@ export function authenticateToken(req) {
   }
 }
 
-export function checkRole(user, allowedRoles) {
+function checkRole(user, allowedRoles) {
   if (!allowedRoles.includes(user.role)) {
     return { error: `Access denied. Required role: ${allowedRoles.join(' or ')}`, status: 403 };
   }
   return null;
 }
 
-export function generateToken(user) {
+function generateToken(user) {
   return jwt.sign(
     { username: user.username, role: user.role },
     SECRET_KEY,
     { expiresIn: '2h' }
   );
 }
+
+module.exports = {
+  users,
+  authenticateToken,
+  checkRole,
+  generateToken
+};
