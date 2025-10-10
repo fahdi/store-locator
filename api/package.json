@@ -2,7 +2,6 @@
   "name": "bluesky-store-locator-api",
   "version": "1.0.0",
   "description": "Serverless API for BlueSky Store Locator",
-  "type": "module",
   "dependencies": {
     "jsonwebtoken": "^9.0.2"
   },
