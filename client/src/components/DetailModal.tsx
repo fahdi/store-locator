@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { X, Clock, MapPin, Phone, Store, Image as ImageIcon, Settings, ToggleLeft, ToggleRight } from 'lucide-react'
 import { Mall, Store as StoreType } from '../types'
 import { useAuth } from '../hooks/useAuth'
-import { mallService, StoreToggleResponse } from '../services/mallService'
+import { mallService } from '../services/mallService'
 import ConfirmationDialog from './ConfirmationDialog'
 import StoreEditForm from './StoreEditForm'
 
@@ -57,7 +57,7 @@ export default function DetailModal({ isOpen, loading = false, onClose, mall, st
         }
       } else if (confirmationType === 'store' && store) {
         // Find the mall ID for this store
-        const mallId = store.mallId || (store as any).mallId
+        const mallId = store.mallId || (store as StoreType & { mallId?: number }).mallId
         if (!mallId) {
           throw new Error('Cannot determine mall ID for store')
         }
@@ -78,8 +78,8 @@ export default function DetailModal({ isOpen, loading = false, onClose, mall, st
         onClose()
       }, 1000)
       
-    } catch (error: any) {
-      setError(error.message)
+    } catch (error: unknown) {
+      setError(error instanceof Error ? error.message : 'An error occurred')
       console.error(`${confirmationType} toggle failed:`, error)
     } finally {
       setIsToggling(false)
@@ -99,7 +99,7 @@ export default function DetailModal({ isOpen, loading = false, onClose, mall, st
     setShowEditForm(true)
   }
   
-  const handleStoreEditUpdate = (updatedStore: any) => {
+  const handleStoreEditUpdate = (updatedStore: StoreType & { mallId: number }) => {
     // Update local store data if needed
     if (onStoreUpdate) {
       onStoreUpdate(updatedStore)

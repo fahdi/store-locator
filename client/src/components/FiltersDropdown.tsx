@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { MapPin, Clock, Store, ChevronDown } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { MapPin, Clock, Store } from 'lucide-react'
 import { Mall } from '../types'
 
 interface FiltersDropdownProps {

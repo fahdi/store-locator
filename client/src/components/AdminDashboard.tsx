@@ -16,7 +16,6 @@ import {
 } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import { useDataService } from '../hooks/useDataService'
-import { Mall } from '../types'
 
 interface DashboardStats {
   totalMalls: number

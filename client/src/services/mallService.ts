@@ -1,4 +1,3 @@
-import { Mall } from '../types'
 import api from './api'
 
 export interface MallToggleResponse {
