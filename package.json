@@ -1,9 +1,9 @@
 {
   "name": "bluesky-store-locator-root",
-  "version": "1.0.0",
+  "version": "1.0.0", 
   "private": true,
   "scripts": {
-    "build": "cd client && npm install && npm run build",
+    "build": "cd client && npm install && npm run build && cp -r dist/* ../",
     "dev": "cd client && npm run dev"
   }
 }
