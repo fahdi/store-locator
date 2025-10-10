@@ -284,7 +284,7 @@ interface SearchQuery {
 
 ## 🔗 Related Resources
 
-- [Spatial Utilities Documentation](./server/utils/spatial-utils.ts)
-- [API Endpoints Reference](./docs/initial-requirements.md)
-- [Current Architecture Overview](./CLAUDE.md)
-- [Phase 5 Implementation Details](./CHANGELOG.md)
+- [Spatial Utilities Documentation](../server/utils/spatial-utils.ts)
+- [API Endpoints Reference](./initial-requirements.md)
+- [Current Architecture Overview](../CLAUDE.md)
+- [Phase 5 Implementation Details](../CHANGELOG.md)

@@ -43,7 +43,7 @@ npm run typecheck:client    # TypeScript strict mode validation
   - `data/malls.json` - Mall and store data with Doha coordinates
   - `utils/` - Server utilities (validate-data.js, spatial-utils.ts)
 - `/docs/` - Project documentation (PRD.md, initial-requirements.md)
-- `TODOS.md` - Comprehensive task tracking for all development phases
+- `docs/TODOS.md` - Comprehensive task tracking for all development phases
 - `CHANGELOG.md` - Project change history and version tracking
 
 ### Backend Architecture

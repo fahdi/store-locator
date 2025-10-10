@@ -21,7 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   - Console warning elimination for cleaner development environment
   - Error handling improvements across components
 - **Documentation Updates**: Complete project documentation
-  - TODOS.md updated to reflect 100% project completion
+  - docs/TODOS.md updated to reflect 100% project completion
   - CHANGELOG.md comprehensive version history
   - Phase completion status tracking and deployment readiness
   - API endpoint documentation with authentication examples
@@ -71,7 +71,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - **Multi-language Support**: Arabic/English with RTL layout support
 - **Data Export & Reporting**: CSV/PDF exports and analytics dashboard
 
-> **Note**: See [FUTURE_ENHANCEMENTS.md](./FUTURE_ENHANCEMENTS.md) for detailed specifications
+> **Note**: See [FUTURE_ENHANCEMENTS.md](./docs/FUTURE_ENHANCEMENTS.md) for detailed specifications
 
 ---
 
@@ -144,7 +144,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - **Phase 3**: Interactive Map Integration ✅ Complete
 - **Phase 4**: Enhanced Data Display & Mobile Experience ✅ Complete
 - **Phase 5**: Role-Based CRUD Operations ✅ Complete
-- **Bonus Features**: Available for future implementation (see FUTURE_ENHANCEMENTS.md)
+- **Bonus Features**: Available for future implementation (see docs/FUTURE_ENHANCEMENTS.md)
 
 ---
 

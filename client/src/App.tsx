@@ -20,11 +20,21 @@ function App() {
       >
         <div className="App">
           <Routes>
-            {/* Home page - Show map directly */}
-            <Route path={ROUTES.HOME} element={<MapPage />} />
+            {/* Home page - Redirect to login (auth required for malls endpoint) */}
+            <Route path={ROUTES.HOME} element={<Navigate to={ROUTES.LOGIN} replace />} />
             
             {/* Login Route */}
             <Route path={ROUTES.LOGIN} element={<LoginPage />} />
+            
+            {/* Protected Map Route */}
+            <Route 
+              path={ROUTES.MAP} 
+              element={
+                <ProtectedRoute>
+                  <MapPage />
+                </ProtectedRoute>
+              } 
+            />
             
             {/* Protected Dashboard Route */}
             <Route 

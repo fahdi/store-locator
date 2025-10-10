@@ -1,6 +1,6 @@
 // Constants for BlueSky Store Locator
 
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || ''
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'
 
 export const DOHA_CENTER = {
   latitude: 25.2854,
@@ -16,6 +16,7 @@ export const USER_ROLES = {
 export const ROUTES = {
   HOME: '/',
   LOGIN: '/login',
+  MAP: '/map',
   DASHBOARD: '/dashboard',
   MALLS: '/malls',
   STORES: '/stores',
