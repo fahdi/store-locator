@@ -14,7 +14,7 @@ app.use(cors());
 app.use(express.json());
 
 const SECRET_KEY = "demo-secret-key"; // for demo use only
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 5000;
 
 // Mock users for authentication
 const users = [
@@ -95,8 +95,8 @@ app.get("/api/malls/public", (req, res) => {
   res.json(malls);
 });
 
-// Get all malls and stores (public access for map display)
-app.get("/api/malls", (req, res) => {
+// Get all malls and stores (requires authentication)
+app.get("/api/malls", auth(), (req, res) => {
   res.json(malls);
 });
 
@@ -247,4 +247,5 @@ app.listen(PORT, () => {
   console.log(`🚀 BlueSky Store Locator API running on http://localhost:${PORT}`);
   console.log(`📊 Health check available at http://localhost:${PORT}/api/health`);
   console.log(`🏬 Loaded ${malls.length} malls with ${stores.length} total stores`);
+  console.log(`🔐 Authentication required for /api/malls endpoint`);
 });

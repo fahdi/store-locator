@@ -30,7 +30,7 @@ export default function LoginPage() {
 
   // Redirect if already authenticated
   if (isAuthenticated) {
-    return <Navigate to={ROUTES.DASHBOARD} replace />
+    return <Navigate to={ROUTES.MAP} replace />
   }
 
   const onSubmit = async (data: LoginFormData) => {

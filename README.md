@@ -200,7 +200,7 @@ npm run clean               # Clean all node_modules
 **All 5 phases are now complete!** The application is fully functional and production-ready.
 
 ### 📋 Optional Enhancements Available
-See [FUTURE_ENHANCEMENTS.md](./FUTURE_ENHANCEMENTS.md) for 8 bonus features (estimated 15-20 days)
+See [FUTURE_ENHANCEMENTS.md](./docs/FUTURE_ENHANCEMENTS.md) for 8 bonus features (estimated 15-20 days)
 
 ## 📋 Development Phases
 
