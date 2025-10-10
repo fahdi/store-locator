@@ -1,14 +1,7 @@
 {
-  "version": 2,
-  "name": "bluesky-store-locator",
-  "buildCommand": "npm run build",
+  "buildCommand": "cd client && npm install && npm run build",
   "outputDirectory": "client/dist",
-  "builds": [
-    {
-      "src": "api/**/*.js",
-      "use": "@vercel/node"
-    }
-  ],
+  "installCommand": "npm install",
   "rewrites": [
     {
       "source": "/api/(.*)",
@@ -18,8 +11,5 @@
       "source": "/(.*)",
       "destination": "/index.html"
     }
-  ],
-  "env": {
-    "JWT_SECRET": "@jwt-secret"
-  }
+  ]
 }
