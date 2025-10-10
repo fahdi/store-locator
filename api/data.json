@@ -1,0 +1,60 @@
+[
+  {
+    "id": 1,
+    "name": "Doha City Center Mall",
+    "latitude": 25.3197,
+    "longitude": 51.5274,
+    "isOpen": true,
+    "stores": [
+      {
+        "id": 101,
+        "name": "Zara",
+        "type": "Fashion & Clothing",
+        "isOpen": true,
+        "opening_hours": "10:00 AM - 10:00 PM",
+        "description": "International fashion retailer offering trendy clothing for men, women, and children.",
+        "phone": "+974 4444 1001",
+        "email": "zara.doha@example.com"
+      },
+      {
+        "id": 102,
+        "name": "Apple Store",
+        "type": "Electronics & Technology",
+        "isOpen": true,
+        "opening_hours": "10:00 AM - 10:00 PM",
+        "description": "Official Apple retail store featuring the latest iPhones, iPads, Macs, and accessories.",
+        "phone": "+974 4444 1002",
+        "email": "apple.doha@example.com"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Villaggio Mall",
+    "latitude": 25.2667,
+    "longitude": 51.4497,
+    "isOpen": true,
+    "stores": [
+      {
+        "id": 201,
+        "name": "Carrefour",
+        "type": "Grocery & Supermarket",
+        "isOpen": false,
+        "opening_hours": "8:00 AM - 12:00 AM",
+        "description": "Large hypermarket offering groceries, electronics, clothing, and household items.",
+        "phone": "+974 4444 2001",
+        "email": "carrefour.villaggio@example.com"
+      },
+      {
+        "id": 202,
+        "name": "H&M",
+        "type": "Fashion & Clothing",
+        "isOpen": true,
+        "opening_hours": "10:00 AM - 10:00 PM",
+        "description": "Swedish multinational clothing retailer known for fast-fashion clothing.",
+        "phone": "+974 4444 2002", 
+        "email": "hm.villaggio@example.com"
+      }
+    ]
+  }
+]

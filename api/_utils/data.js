@@ -4,9 +4,9 @@
 const fs = require("fs");
 const path = require("path");
 
-// Get data path relative to the project root
+// Get data path relative to the API directory
 const getDataPath = () => {
-  return path.join(process.cwd(), 'server/data/malls.json');
+  return path.join(__dirname, '../data.json');
 };
 
 function loadMalls() {
