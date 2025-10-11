@@ -218,7 +218,7 @@ export default function AdminDashboard() {
           <section className="bg-white rounded-xl md:rounded-2xl shadow-sm p-4 md:p-6" aria-labelledby="quick-actions-heading">
             <div className="flex items-center justify-between mb-4 md:mb-6">
               <h3 id="quick-actions-heading" className="text-lg md:text-xl font-bold text-gray-900">Quick Actions</h3>
-              <Settings className="w-4 h-4 md:w-5 md:h-5 text-gray-400" aria-hidden="true" />
+              <Settings className="w-4 h-4 md:w-5 md:h-5 text-gray-300" aria-hidden="true" />
             </div>
             
             <nav className="space-y-3" aria-label="Quick actions navigation">
