@@ -10,7 +10,8 @@ import {
   Activity,
   BarChart3,
   MapPin,
-  Users
+  Users,
+  Settings
 } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import { useDataService } from '../hooks/useDataService'
@@ -29,7 +30,7 @@ interface ManagerStats {
 export default function ManagerDashboard() {
   const { user } = useAuth()
   const { malls, loading, refreshData } = useDataService()
-  const { refreshActivities } = useActivity()
+  const { refreshActivities, getRecentActivities } = useActivity()
   const [stats, setStats] = useState<ManagerStats | null>(null)
   const [toggleLoading, setToggleLoading] = useState<string | null>(null)
 
@@ -306,6 +307,53 @@ export default function ManagerDashboard() {
               <span className="font-bold text-purple-600">3</span>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Recent Activity */}
+      <div className="bg-white rounded-2xl shadow-sm p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-xl font-bold text-gray-900">Recent Activity</h3>
+          <button className="text-blue-600 hover:text-blue-700 font-medium text-sm">
+            View All
+          </button>
+        </div>
+        
+        <div className="space-y-4">
+          {getRecentActivities(5).length === 0 ? (
+            <div className="text-center py-8">
+              <Activity className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+              <p className="text-gray-500 text-sm">No recent activity</p>
+              <p className="text-gray-400 text-xs">Start by toggling store status</p>
+            </div>
+          ) : (
+            getRecentActivities(5).map((activity) => (
+              <div key={activity.id} className="flex items-center space-x-4 p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                <div className={`p-2 rounded-full ${
+                  activity.type === 'mall_toggle' ? 'bg-blue-100' :
+                  activity.type === 'store_toggle' ? 'bg-green-100' : 'bg-purple-100'
+                }`}>
+                  {activity.type === 'mall_toggle' ? (
+                    <Building2 className="w-4 h-4 text-blue-600" />
+                  ) : activity.type === 'store_toggle' ? (
+                    <Store className="w-4 h-4 text-green-600" />
+                  ) : (
+                    <Settings className="w-4 h-4 text-purple-600" />
+                  )}
+                </div>
+                <div className="flex-1">
+                  <div className="font-medium text-gray-900">
+                    {activity.description}
+                  </div>
+                  <div className="flex items-center space-x-2 text-sm text-gray-500">
+                    <span>{activity.user}</span>
+                    <span>•</span>
+                    <span>{activity.formattedTime}</span>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
     </div>

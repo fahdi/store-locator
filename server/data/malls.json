@@ -17,7 +17,7 @@
         "id": 102,
         "name": "Gulf Fashion",
         "type": "Clothing",
-        "isOpen": true,
+        "isOpen": false,
         "opening_hours": "Mon–Sun 10:00 AM – 9:00 PM"
       }
     ]
@@ -40,7 +40,7 @@
         "id": 202,
         "name": "Pearl Perfumes",
         "type": "Beauty",
-        "isOpen": true,
+        "isOpen": false,
         "opening_hours": "Mon–Sat 9:00 AM – 7:00 PM"
       }
     ]
