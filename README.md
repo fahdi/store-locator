@@ -2,6 +2,17 @@
 
 A comprehensive web application for managing malls and stores in Doha, Qatar, featuring role-based authentication, interactive maps, and CRUD operations based on user permissions.
 
+## 🌐 **Live Demo**
+
+**🚀 [View Live Application](https://bluesky-store-locator.up.railway.app)**
+
+**Demo Credentials:**
+- **Admin**: username: `admin`, password: `a` (Full mall management)
+- **Manager**: username: `manager`, password: `m` (Store management)
+- **Store**: username: `store`, password: `s` (Store editing)
+
+> **Ready to explore!** The application is fully deployed on Railway with all features working including interactive maps, role-based dashboards, and real-time activity tracking.
+
 ## 🚀 Project Overview
 
 This is a take-home technical assessment project that demonstrates modern web development skills including React, TypeScript, map integration, and role-based access control.
@@ -469,10 +480,14 @@ npm test spatial.test.ts
 
 ## 🚀 Deployment
 
-### Railway (Recommended - Docker Native)
-The easiest way to deploy this Docker-based application:
+### Railway (Currently Deployed!)
+
+**🌐 Live URL**: https://bluesky-store-locator.up.railway.app
+
+The application is currently deployed on Railway using our automated GitHub Actions pipeline:
 
 ```bash
+# For manual deployment (if needed):
 # Install Railway CLI
 npm install -g @railway/cli
 
@@ -484,12 +499,12 @@ railway link
 railway up
 ```
 
-**Railway Features:**
-- ✅ **Zero Config** - Detects Dockerfile automatically
+**Railway Deployment Features:**
+- ✅ **Live & Running** - Deployed from Docker image via GitHub Container Registry
+- ✅ **Auto-Deploy** - GitHub Actions builds and pushes images automatically  
 - ✅ **Persistent Storage** - Activities.json data survives restarts
-- ✅ **Auto-Deploy** - Connects to GitHub for continuous deployment
-- ✅ **Free Tier** - $5 monthly credit (plenty for demos)
-- ✅ **Professional URLs** - Perfect for portfolios
+- ✅ **Professional URLs** - Perfect for portfolios and demos
+- ✅ **Container Registry** - Uses `ghcr.io/fahdi/store-locator:latest`
 
 ### Alternative Platforms
 - **Docker-Native**: Fly.io, Render, DigitalOcean App Platform

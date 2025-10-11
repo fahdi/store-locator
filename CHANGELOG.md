@@ -6,6 +6,62 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [1.4.0] - 2025-10-11
+
+### Added - Production Deployment on Railway ✅
+- **Live Production Deployment**: Application successfully deployed to Railway cloud platform
+  - **Live URL**: https://bluesky-store-locator.up.railway.app
+  - **GitHub Actions Integration**: Automated Docker image builds and container registry push
+  - **Container Registry**: GitHub Container Registry (`ghcr.io/fahdi/store-locator:latest`)
+  - **Auto-deployment**: Railway deployment triggered by container registry updates
+- **GitHub Actions Workflow**: Automated CI/CD pipeline for production deployment
+  - **Docker Build**: Multi-stage Docker builds on every push to main branch
+  - **Registry Push**: Automatic push to GitHub Container Registry
+  - **Image Tagging**: Proper semantic versioning and latest tags
+  - **Workflow Triggers**: Manual dispatch support for on-demand builds
+- **Railway Cloud Features**: Professional production hosting
+  - **Container Deployment**: Deploy from registry with Railway-native Docker support
+  - **Persistent Storage**: Activities.json data survives deployments and restarts
+  - **Health Monitoring**: Built-in health checks and uptime monitoring
+  - **Professional URLs**: Custom subdomain for portfolio and demo purposes
+  - **Zero Configuration**: Railway auto-detects and configures the application
+
+### Enhanced - Production Ready Documentation ✅
+- **README.md Updates**: Live demo section prominently displayed at top
+  - **Live Demo Section**: Direct links to production application with demo credentials
+  - **Quick Access**: Admin/Manager/Store user credentials clearly displayed
+  - **Railway Deployment Info**: Updated deployment section with live URL and registry details
+  - **Production Status**: Clear indication of live, production-ready status
+- **Docker Registry Integration**: Complete container distribution system
+  - **GitHub Container Registry**: Public registry for easy Railway deployment
+  - **Automated Builds**: No manual intervention required for deployments
+  - **Version Management**: Proper image tagging and version control
+
+### Technical Implementation ✅
+- **GitHub Actions Workflow**: `.github/workflows/docker-build.yml`
+  - **Multi-trigger Support**: Push, PR, and manual workflow dispatch
+  - **Container Registry Login**: Automated GHCR authentication with GitHub tokens
+  - **Docker Multi-stage Build**: Optimized production builds with proper caching
+  - **Metadata Extraction**: Automatic image tagging with branch names and commit SHAs
+- **Railway Configuration**: Production deployment optimized
+  - **Container Source**: `ghcr.io/fahdi/store-locator:latest`
+  - **Port Configuration**: Consistent port 5001 across all environments
+  - **Environment Variables**: Production-ready configuration management
+  - **Health Monitoring**: `/api/health` endpoint for uptime verification
+
+### Project Status Update - 🌐 LIVE IN PRODUCTION
+- **Phase 1**: Foundation Setup ✅ Complete
+- **Phase 2**: Authentication System ✅ Complete  
+- **Phase 3**: Interactive Map Integration ✅ Complete
+- **Phase 4**: Enhanced Data Display & Mobile Experience ✅ Complete
+- **Phase 5**: Role-Based CRUD Operations ✅ Complete
+- **Phase 6**: UI/UX Polish & Responsive Design ✅ Complete
+- **Phase 7**: Testing & Documentation ✅ Complete
+- **Phase 8**: Store User Enhancement ✅ Complete
+- **Phase 9**: Production Deployment ✅ Complete
+
+**🌐 LIVE IN PRODUCTION**: Application is now live and accessible to users worldwide at https://bluesky-store-locator.up.railway.app with full functionality including interactive maps, role-based authentication, and real-time activity tracking.
+
 ## [1.3.0] - 2025-10-11
 
 ### Added - Store User Enhancement: Universal Store Management ✅
