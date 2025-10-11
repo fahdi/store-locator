@@ -484,7 +484,7 @@ npm test spatial.test.ts
 
 **🌐 Live URL**: https://bluesky-store-locator.up.railway.app
 
-The application is currently deployed on Railway using our automated GitHub Actions pipeline:
+The application is deployed on Railway using GitHub Container Registry with automated Docker builds:
 
 ```bash
 # For manual deployment (if needed):
@@ -500,8 +500,8 @@ railway up
 ```
 
 **Railway Deployment Features:**
-- ✅ **Live & Running** - Deployed from Docker image via GitHub Container Registry
-- ✅ **Auto-Deploy** - GitHub Actions builds and pushes images automatically  
+- ✅ **Live & Running** - Deployed from GitHub Container Registry
+- ✅ **Auto-Deploy** - GitHub Actions builds and pushes Docker images automatically  
 - ✅ **Persistent Storage** - Activities.json data survives restarts
 - ✅ **Professional URLs** - Perfect for portfolios and demos
 - ✅ **Container Registry** - Uses `ghcr.io/fahdi/store-locator:latest`

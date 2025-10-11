@@ -13,12 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   - **Live URL**: https://bluesky-store-locator.up.railway.app
   - **GitHub Actions Integration**: Automated Docker image builds and container registry push
   - **Container Registry**: GitHub Container Registry (`ghcr.io/fahdi/store-locator:latest`)
-  - **Auto-deployment**: Railway deployment triggered by container registry updates
-- **GitHub Actions Workflow**: Automated CI/CD pipeline for production deployment
-  - **Docker Build**: Multi-stage Docker builds on every push to main branch
-  - **Registry Push**: Automatic push to GitHub Container Registry
-  - **Image Tagging**: Proper semantic versioning and latest tags
-  - **Workflow Triggers**: Manual dispatch support for on-demand builds
+  - **Auto-deployment**: Railway deployment from GitHub Container Registry
 - **Railway Cloud Features**: Professional production hosting
   - **Container Deployment**: Deploy from registry with Railway-native Docker support
   - **Persistent Storage**: Activities.json data survives deployments and restarts
@@ -33,8 +28,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   - **Railway Deployment Info**: Updated deployment section with live URL and registry details
   - **Production Status**: Clear indication of live, production-ready status
 - **Docker Registry Integration**: Complete container distribution system
-  - **GitHub Container Registry**: Public registry for easy Railway deployment
-  - **Automated Builds**: No manual intervention required for deployments
+  - **GitHub Container Registry**: Public registry for Railway deployment
+  - **Automated Builds**: GitHub Actions builds on every push to main
   - **Version Management**: Proper image tagging and version control
 
 ### Technical Implementation ✅
