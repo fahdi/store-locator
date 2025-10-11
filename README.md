@@ -467,11 +467,34 @@ npm test spatial.test.ts
 - **Performance**: 60fps animations, <3s load time
 - **User Experience**: Intuitive navigation and clear feedback
 
-## 🚀 Deployment (Optional)
+## 🚀 Deployment
 
-The application can be deployed to:
-- **Frontend**: Vercel, Netlify, or GitHub Pages
-- **Backend**: Railway, Render, or Heroku
+### Railway (Recommended - Docker Native)
+The easiest way to deploy this Docker-based application:
+
+```bash
+# Install Railway CLI
+npm install -g @railway/cli
+
+# Login to Railway
+railway login
+
+# Deploy directly from repository
+railway link
+railway up
+```
+
+**Railway Features:**
+- ✅ **Zero Config** - Detects Dockerfile automatically
+- ✅ **Persistent Storage** - Activities.json data survives restarts
+- ✅ **Auto-Deploy** - Connects to GitHub for continuous deployment
+- ✅ **Free Tier** - $5 monthly credit (plenty for demos)
+- ✅ **Professional URLs** - Perfect for portfolios
+
+### Alternative Platforms
+- **Docker-Native**: Fly.io, Render, DigitalOcean App Platform
+- **Serverless**: Vercel, Netlify (requires modifications for Express backend)
+- **Traditional**: Heroku, AWS ECS, Google Cloud Run
 
 ## 📝 Contributing
 
