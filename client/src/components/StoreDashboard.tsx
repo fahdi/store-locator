@@ -262,6 +262,9 @@ export default function StoreDashboard() {
               <div>
                 <label className="text-sm font-medium text-gray-500">Store Name</label>
                 <p className="text-lg font-semibold text-gray-900">{selectedStore.name}</p>
+                {selectedStore.description && (
+                  <p className="text-sm text-gray-600 mt-1 italic">{selectedStore.description}</p>
+                )}
               </div>
               
               <div>
@@ -317,7 +320,14 @@ export default function StoreDashboard() {
                 {selectedStore.contact?.website && (
                   <div className="flex items-center space-x-3">
                     <Globe className="w-4 h-4 text-gray-400" />
-                    <span className="text-gray-900">{selectedStore.contact.website}</span>
+                    <a 
+                      href={selectedStore.contact.website} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:text-blue-800 transition-colors"
+                    >
+                      {selectedStore.contact.website}
+                    </a>
                   </div>
                 )}
                 {(!selectedStore.contact?.phone && !selectedStore.contact?.email && !selectedStore.contact?.website) && (
@@ -335,16 +345,6 @@ export default function StoreDashboard() {
           <div className="bg-white rounded-2xl shadow-sm p-6">
             <h3 className="text-lg font-bold text-gray-900 mb-4">Quick Actions</h3>
             <div className="space-y-3">
-              <button 
-                onClick={handleEditStore}
-                className="w-full flex items-center space-x-3 p-4 bg-gray-50 border border-gray-200 rounded-xl hover:bg-gray-100 transition-colors"
-              >
-                <Phone className="w-5 h-5 text-gray-600" />
-                <div className="text-left">
-                  <div className="font-medium text-gray-900">Update Contact Info</div>
-                  <div className="text-sm text-gray-500">Phone, email, website</div>
-                </div>
-              </button>
 
               <Link
                 to={ROUTES.HOME}
