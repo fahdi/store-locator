@@ -59,12 +59,12 @@ RUN mkdir -p ./server/data && \
 # Switch to non-root user
 USER bluesky
 
-# Expose port 5000
-EXPOSE 5000
+# Expose port 5001 (avoiding port 5000 due to macOS AirPlay conflicts)
+EXPOSE 5001
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD node -e "require('http').get('http://localhost:5000/api/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"
+    CMD node -e "require('http').get('http://localhost:5001/api/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"
 
 # Start the unified server
 CMD ["npm", "run", "start:server"]

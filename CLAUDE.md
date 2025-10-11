@@ -16,7 +16,7 @@ BlueSky Store Locator & Management System - A comprehensive web application for 
 # Docker deployment (recommended for production)
 docker-compose up --build    # Start containerized app on port 5001
 docker build -t bluesky-store-locator .  # Build Docker image
-docker run -p 5001:5000 bluesky-store-locator  # Run container
+docker run -p 5001:5001 bluesky-store-locator  # Run container
 
 # Local development
 PORT=5001 npm run start:server  # Start unified server (avoids port conflicts)
@@ -65,7 +65,7 @@ npm run typecheck:client    # TypeScript strict mode validation
 - **Base Image**: Node.js 18 Alpine (~200MB total)
 - **Security**: Non-root user (bluesky:nodejs)
 - **Health Monitoring**: Built-in health checks every 30s
-- **Port Configuration**: Internal 5000 → External 5001 (macOS compatibility)
+- **Port Configuration**: Port 5001 (avoids macOS AirPlay conflicts on port 5000)
 
 ### Key Docker Features
 - **Unified Server**: Single container serves both React frontend and Express API
@@ -81,7 +81,7 @@ docker-compose up --build
 
 # Manual Docker commands
 docker build -t bluesky-store-locator .
-docker run -p 5001:5000 bluesky-store-locator
+docker run -p 5001:5001 bluesky-store-locator
 
 # Health check
 curl http://localhost:5001/api/health

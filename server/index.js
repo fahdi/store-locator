@@ -16,7 +16,7 @@ app.use(cors());
 app.use(express.json());
 
 const SECRET_KEY = "demo-secret-key"; // for demo use only
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001; // Default to 5001 to avoid macOS AirPlay conflict on port 5000
 
 // Mock users for authentication
 const users = [

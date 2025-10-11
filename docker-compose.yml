@@ -5,10 +5,10 @@ services:
       dockerfile: Dockerfile
     container_name: bluesky-store-locator
     ports:
-      - "5001:5000"
+      - "5001:5001"
     environment:
       - NODE_ENV=production
-      - PORT=5000
+      - PORT=5001
     volumes:
       # Mount data directory for persistence (optional)
       - ./server/data:/app/server/data
@@ -16,7 +16,7 @@ services:
     networks:
       - bluesky-network
     healthcheck:
-      test: ["CMD", "node", "-e", "require('http').get('http://localhost:5000/api/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"]
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:5001/api/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"]
       interval: 30s
       timeout: 10s
       retries: 3

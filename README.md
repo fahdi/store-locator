@@ -19,7 +19,7 @@ docker-compose up --build
 
 # Or build and run manually
 docker build -t bluesky-store-locator .
-docker run -p 5001:5000 bluesky-store-locator
+docker run -p 5001:5001 bluesky-store-locator
 ```
 
 ### Option 2: Local Development
@@ -30,7 +30,7 @@ cd store-locator
 npm run install:all
 
 # Start unified server (http://localhost:5001)
-PORT=5001 npm run start:server
+npm run start:server
 
 # For development with hot reload
 npm run dev:server
@@ -176,10 +176,13 @@ docker-compose up --build
 
 # Or build and run manually
 docker build -t bluesky-store-locator .
-docker run -p 5001:5000 bluesky-store-locator
+docker run -p 5001:5001 bluesky-store-locator
 ```
 
 **Access**: http://localhost:5001
+
+> **⚠️ Why Port 5001?** 
+> Port 5000 is avoided because it's used by macOS AirPlay/ControlCenter services, which can cause conflicts. Port 5001 ensures reliable operation across all development environments.
 
 ### Docker Architecture
 
@@ -209,7 +212,7 @@ docker run -p 5001:5000 bluesky-store-locator
 docker build -t bluesky-store-locator .
 
 # Run container (note: port mapping 5001:5000 to avoid macOS AirPlay conflict)
-docker run -p 5001:5000 bluesky-store-locator
+docker run -p 5001:5001 bluesky-store-locator
 
 # Run with data persistence
 docker run -p 5001:5000 -v $(pwd)/server/data:/app/server/data bluesky-store-locator
@@ -228,7 +231,7 @@ docker system prune
 
 ### Container Details
 - **Base Image**: Node.js 18 Alpine
-- **Internal Port**: 5000 (mapped to 5001 externally)
+- **Port**: 5001 (consistent internal and external)
 - **User**: Non-root (bluesky:nodejs)
 - **Health Check**: HTTP GET /api/health every 30s
 - **Size**: ~200MB (optimized multi-stage build)
@@ -241,9 +244,9 @@ docker system prune
 - **Result**: All requests use same origin, eliminating CORS issues
 
 #### Port Configuration
-- **Internal**: Container runs on port 5000
-- **External**: Mapped to 5001 to avoid macOS AirPlay conflict
-- **API Base URL**: Changed to relative paths (`''`) for same-origin requests
+- **Port 5001**: Consistent across all environments and containers
+- **Port 5000 Avoided**: macOS AirPlay/ControlCenter conflicts resolved
+- **API Base URL**: Relative paths (`''`) for same-origin requests
 
 #### TypeScript Build Optimization
 - **Production Config**: Created `tsconfig.prod.json` with relaxed linting
@@ -253,7 +256,7 @@ docker system prune
 ### Troubleshooting
 
 #### Common Issues
-1. **Port Conflicts**: Use `docker run -p 5001:5000` if port 5000 is occupied
+1. **Port 5000 Conflicts**: Application uses port 5001 to avoid macOS AirPlay conflicts
 2. **CORS Errors**: Ensure using relative API URLs (not absolute localhost URLs)
 3. **Build Failures**: Check Docker logs for TypeScript or dependency issues
 
