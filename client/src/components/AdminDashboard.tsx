@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { 
   Building2, 
   Store, 
@@ -16,6 +17,7 @@ import {
 } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import { useDataService } from '../hooks/useDataService'
+import { ROUTES } from '../utils/constants'
 
 interface DashboardStats {
   totalMalls: number
@@ -220,7 +222,8 @@ export default function AdminDashboard() {
             </div>
             
             <nav className="space-y-3" aria-label="Quick actions navigation">
-              <button 
+              <Link 
+                to={ROUTES.MAP}
                 className="w-full flex items-center justify-between p-4 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 transition-colors group focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
                 aria-describedby="view-map-desc"
               >
@@ -234,9 +237,10 @@ export default function AdminDashboard() {
                   </div>
                 </div>
                 <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-gray-600" aria-hidden="true" />
-              </button>
+              </Link>
 
-              <button 
+              <Link 
+                to={ROUTES.MAP}
                 className="w-full flex items-center justify-between p-4 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 transition-colors group focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
                 aria-describedby="view-analytics-desc"
               >
@@ -250,7 +254,7 @@ export default function AdminDashboard() {
                   </div>
                 </div>
                 <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-gray-600" aria-hidden="true" />
-              </button>
+              </Link>
 
               <button 
                 className="w-full flex items-center justify-between p-4 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 transition-colors group focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
