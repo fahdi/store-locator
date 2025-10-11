@@ -296,18 +296,15 @@ export default function ManagerDashboard() {
 
         <div className="bg-white rounded-2xl shadow-sm p-6">
           <h3 className="text-lg font-bold text-gray-900 mb-4">Performance Today</h3>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-gray-600">Stores Opened</span>
-              <span className="font-bold text-green-600">+{Math.floor(stats.openStores * 0.3)}</span>
+          <div className="text-center py-8">
+            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <TrendingUp className="w-8 h-8 text-gray-400" />
             </div>
-            <div className="flex items-center justify-between">
-              <span className="text-gray-600">Status Changes</span>
-              <span className="font-bold text-blue-600">{Math.floor(stats.assignedStores * 0.1)}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-gray-600">Issues Resolved</span>
-              <span className="font-bold text-purple-600">3</span>
+            <h4 className="text-lg font-medium text-gray-700 mb-2">Performance Analytics</h4>
+            <p className="text-gray-500 text-sm mb-3">Detailed performance metrics and insights</p>
+            <div className="inline-flex items-center px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">
+              <Clock className="w-4 h-4 mr-1" />
+              Coming Soon
             </div>
           </div>
         </div>
