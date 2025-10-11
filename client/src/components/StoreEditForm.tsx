@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { X, Save, Clock, Phone, Mail, Globe } from 'lucide-react'
 import { Store } from '../types'
 import { mallService, StoreUpdateData } from '../services/mallService'
@@ -26,6 +26,24 @@ export default function StoreEditForm({ isOpen, onClose, store, onStoreUpdate }:
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
+
+  // Update form data when store prop changes
+  useEffect(() => {
+    setFormData({
+      name: store.name || '',
+      description: store.description || '',
+      opening_hours: store.opening_hours || '',
+      type: store.type || '',
+      contact: {
+        phone: store.contact?.phone || '',
+        email: store.contact?.email || '',
+        website: store.contact?.website || ''
+      }
+    })
+    // Reset form state when store changes
+    setError(null)
+    setSuccess(false)
+  }, [store])
 
   if (!isOpen) return null
 

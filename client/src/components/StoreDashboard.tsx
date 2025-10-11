@@ -369,8 +369,7 @@ export default function StoreDashboard() {
           isOpen={showEditForm}
           onClose={() => setShowEditForm(false)}
           store={{
-            ...selectedStore,
-            mallName: selectedStore.mallName
+            ...selectedStore
           }}
           onStoreUpdate={handleStoreUpdate}
         />
