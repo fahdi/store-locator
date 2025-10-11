@@ -121,7 +121,7 @@ export default function MapPage() {
 
           {/* Mobile Search Content */}
           <div className="flex-1 overflow-y-auto min-h-0 mobile-search-content">
-            <div className="p-4 space-y-6 pb-40">
+            <div className="p-4 space-y-6">
               {/* Search Input - Always visible */}
               <div className="space-y-3">
                 <HeaderSearch
