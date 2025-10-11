@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { X, Clock, MapPin, Phone, Store, Image as ImageIcon, Settings, ToggleLeft, ToggleRight } from 'lucide-react'
+import { X, Clock, MapPin, Phone, Mail, Globe, Store, Image as ImageIcon, Settings, ToggleLeft, ToggleRight } from 'lucide-react'
 import { Mall, Store as StoreType } from '../types'
 import { useAuth } from '../hooks/useAuth'
 import { mallService } from '../services/mallService'
@@ -393,10 +393,15 @@ export default function DetailModal({ isOpen, loading = false, onClose, mall, st
                     <MapPin className="w-4 h-4 mr-2" />
                     Get Directions
                   </button>
-                  <button className="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition-colors text-sm flex items-center justify-center">
-                    <Phone className="w-4 h-4 mr-2" />
-                    Call Store
-                  </button>
+                  {store.contact?.phone && (
+                    <a
+                      href={`tel:${store.contact.phone}`}
+                      className="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition-colors text-sm flex items-center justify-center"
+                    >
+                      <Phone className="w-4 h-4 mr-2" />
+                      Call Store
+                    </a>
+                  )}
                 </>
               ) : (
                 <button className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors text-sm flex items-center justify-center">
