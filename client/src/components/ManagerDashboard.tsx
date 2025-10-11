@@ -177,9 +177,12 @@ export default function ManagerDashboard() {
       <div className="bg-white rounded-2xl shadow-sm p-6">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-xl font-bold text-gray-900">Store Management</h3>
-          <button className="text-blue-600 hover:text-blue-700 font-medium text-sm">
+          <Link 
+            to={ROUTES.HOME}
+            className="text-blue-600 hover:text-blue-700 font-medium text-sm transition-colors"
+          >
             View on Map
-          </button>
+          </Link>
         </div>
         
         <div className="space-y-4">
