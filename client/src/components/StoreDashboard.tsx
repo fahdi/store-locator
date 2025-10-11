@@ -19,6 +19,8 @@ import { useAuth } from '../hooks/useAuth'
 import { useDataService } from '../hooks/useDataService'
 import { Link } from 'react-router-dom'
 import { ROUTES } from '../utils/constants'
+import StoreEditForm from './StoreEditForm'
+import toast from 'react-hot-toast'
 
 interface StoreInfo {
   id: number
@@ -58,6 +60,8 @@ export default function StoreDashboard() {
   const [selectedStore, setSelectedStore] = useState<StoreInfo | null>(null)
   const [allStores, setAllStores] = useState<StoreInfo[]>([])
   const [showStoreSelector, setShowStoreSelector] = useState(false)
+  const [showEditForm, setShowEditForm] = useState(false)
+  const { refreshData } = useDataService()
 
   useEffect(() => {
     if (malls.length > 0) {
@@ -87,6 +91,44 @@ export default function StoreDashboard() {
   const handleStoreSelect = (store: StoreInfo) => {
     setSelectedStore(store)
     setShowStoreSelector(false)
+  }
+
+  const handleEditStore = () => {
+    setShowEditForm(true)
+  }
+
+  const handleStoreUpdate = async (updatedStore: any) => {
+    try {
+      // Refresh the data to get the latest store information
+      await refreshData()
+      
+      // Update the selected store with the new data
+      const updatedStoreInfo: StoreInfo = {
+        id: updatedStore.id,
+        mallId: updatedStore.mallId,
+        name: updatedStore.name,
+        type: updatedStore.type,
+        isOpen: updatedStore.isOpen,
+        opening_hours: updatedStore.opening_hours,
+        mallName: selectedStore?.mallName || '',
+        contact: updatedStore.contact || {}
+      }
+      
+      setSelectedStore(updatedStoreInfo)
+      
+      // Update the store in the allStores array
+      setAllStores(prev => prev.map(store => 
+        store.id === updatedStore.id && store.mallId === updatedStore.mallId
+          ? updatedStoreInfo
+          : store
+      ))
+      
+      toast.success(`${updatedStore.name} details updated successfully!`)
+      setShowEditForm(false)
+    } catch (error) {
+      console.error('Error updating store:', error)
+      toast.error('Failed to update store details')
+    }
   }
 
   if (loading || !selectedStore) {
@@ -203,7 +245,10 @@ export default function StoreDashboard() {
         <div className="bg-white rounded-2xl shadow-sm p-6">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-xl font-bold text-gray-900">Store Information</h3>
-            <button className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+            <button 
+              onClick={handleEditStore}
+              className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
               <Edit3 className="w-4 h-4" />
               <span>Edit Details</span>
             </button>
@@ -288,7 +333,10 @@ export default function StoreDashboard() {
           <div className="bg-white rounded-2xl shadow-sm p-6">
             <h3 className="text-lg font-bold text-gray-900 mb-4">Quick Actions</h3>
             <div className="space-y-3">
-              <button className="w-full flex items-center space-x-3 p-4 bg-gray-50 border border-gray-200 rounded-xl hover:bg-gray-100 transition-colors">
+              <button 
+                onClick={handleEditStore}
+                className="w-full flex items-center space-x-3 p-4 bg-gray-50 border border-gray-200 rounded-xl hover:bg-gray-100 transition-colors"
+              >
                 <Edit3 className="w-5 h-5 text-gray-600" />
                 <div className="text-left">
                   <div className="font-medium text-gray-900">Update Store Details</div>
@@ -296,7 +344,10 @@ export default function StoreDashboard() {
                 </div>
               </button>
 
-              <button className="w-full flex items-center space-x-3 p-4 bg-gray-50 border border-gray-200 rounded-xl hover:bg-gray-100 transition-colors">
+              <button 
+                onClick={handleEditStore}
+                className="w-full flex items-center space-x-3 p-4 bg-gray-50 border border-gray-200 rounded-xl hover:bg-gray-100 transition-colors"
+              >
                 <Phone className="w-5 h-5 text-gray-600" />
                 <div className="text-left">
                   <div className="font-medium text-gray-900">Update Contact Info</div>
@@ -349,6 +400,19 @@ export default function StoreDashboard() {
 
         </div>
       </div>
+      
+      {/* Store Edit Form Modal */}
+      {selectedStore && (
+        <StoreEditForm
+          isOpen={showEditForm}
+          onClose={() => setShowEditForm(false)}
+          store={{
+            ...selectedStore,
+            mallName: selectedStore.mallName
+          }}
+          onStoreUpdate={handleStoreUpdate}
+        />
+      )}
     </div>
   )
 }
