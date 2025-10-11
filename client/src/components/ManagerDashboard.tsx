@@ -14,7 +14,10 @@ import {
 } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import { useDataService } from '../hooks/useDataService'
+import { useActivity } from '../context/ActivityContext'
+import { mallAPI } from '../services/api'
 import { ROUTES } from '../utils/constants'
+import toast from 'react-hot-toast'
 
 interface ManagerStats {
   assignedStores: number
@@ -25,8 +28,10 @@ interface ManagerStats {
 
 export default function ManagerDashboard() {
   const { user } = useAuth()
-  const { malls, loading } = useDataService()
+  const { malls, loading, refreshData } = useDataService()
+  const { refreshActivities } = useActivity()
   const [stats, setStats] = useState<ManagerStats | null>(null)
+  const [toggleLoading, setToggleLoading] = useState<string | null>(null)
 
   useEffect(() => {
     if (malls.length > 0) {
@@ -47,6 +52,41 @@ export default function ManagerDashboard() {
       })
     }
   }, [malls])
+
+  const handleToggleStore = async (mallId: number, storeId: number, storeName: string, mallName: string, currentStatus: boolean) => {
+    const storeKey = `${mallId}-${storeId}`
+    if (toggleLoading) return // Prevent multiple simultaneous toggles
+    
+    setToggleLoading(storeKey)
+    try {
+      await mallAPI.toggleStore(mallId, storeId)
+      await refreshData() // Refresh the data
+      await refreshActivities() // Refresh activities from server
+      
+      const action = currentStatus ? 'closed' : 'opened'
+      toast.success(`${storeName} has been ${action}`)
+    } catch (error: any) {
+      console.error('Failed to toggle store:', error)
+      
+      // More detailed error messaging
+      let errorMessage = `Failed to update ${storeName}.`
+      if (error.response?.status === 400) {
+        errorMessage = `Cannot open ${storeName}: ${mallName} is closed.`
+      } else if (error.response?.status === 404) {
+        errorMessage = `Store not found.`
+      } else if (error.response?.status === 403) {
+        errorMessage = `You don't have permission to modify this store.`
+      } else if (error.response?.data?.message) {
+        errorMessage = error.response.data.message
+      } else {
+        errorMessage += ' Please try again.'
+      }
+      
+      toast.error(errorMessage)
+    } finally {
+      setToggleLoading(null)
+    }
+  }
 
   if (loading || !stats) {
     return (
@@ -183,14 +223,28 @@ export default function ManagerDashboard() {
                           <XCircle className="w-4 h-4 text-red-500" />
                         )}
                         <button 
-                          className={`px-2 py-1 text-xs font-medium rounded ${
+                          onClick={() => handleToggleStore(mall.id, store.id, store.name, mall.name, store.isOpen)}
+                          disabled={(!mall.isOpen && !store.isOpen) || toggleLoading === `${mall.id}-${store.id}`}
+                          className={`px-2 py-1 text-xs font-medium rounded transition-colors ${
                             store.isOpen 
                               ? 'bg-red-100 text-red-700 hover:bg-red-200' 
                               : 'bg-green-100 text-green-700 hover:bg-green-200'
-                          } transition-colors`}
-                          disabled={!mall.isOpen && !store.isOpen}
+                          } ${
+                            (!mall.isOpen && !store.isOpen) || toggleLoading === `${mall.id}-${store.id}`
+                              ? 'opacity-50 cursor-not-allowed' 
+                              : ''
+                          }`}
+                          title={
+                            !mall.isOpen && !store.isOpen 
+                              ? `Cannot open store: ${mall.name} is closed`
+                              : `Click to ${store.isOpen ? 'close' : 'open'} ${store.name}`
+                          }
                         >
-                          {store.isOpen ? 'Close' : 'Open'}
+                          {toggleLoading === `${mall.id}-${store.id}` ? (
+                            <div className="w-3 h-3 border border-current border-t-transparent rounded-full animate-spin" />
+                          ) : (
+                            store.isOpen ? 'Close' : 'Open'
+                          )}
                         </button>
                       </div>
                     </div>

@@ -10,7 +10,7 @@
         "id": 101,
         "name": "Star Electronics",
         "type": "Electronics",
-        "isOpen": true,
+        "isOpen": false,
         "opening_hours": "Mon–Sun 10:00 AM – 10:00 PM"
       },
       {
