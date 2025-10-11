@@ -1,5 +1,17 @@
 [
   {
+    "id": "activity_1760192263739_vmvtalxna",
+    "type": "store_toggle",
+    "mallName": "Villaggio Mall",
+    "mallId": 2,
+    "storeName": "Pearl Perfumes",
+    "storeId": 202,
+    "timestamp": "2025-10-11T14:17:43.739Z",
+    "user": "manager",
+    "action": "opened",
+    "description": "Pearl Perfumes in Villaggio Mall was opened"
+  },
+  {
     "id": "activity_1760190674779_240hig5sa",
     "type": "mall_toggle",
     "mallName": "Doha City Center Mall",

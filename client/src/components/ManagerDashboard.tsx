@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { 
   Store, 
   Clock,
@@ -9,10 +10,15 @@ import {
   Activity,
   BarChart3,
   MapPin,
-  Users
+  Users,
+  Settings
 } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import { useDataService } from '../hooks/useDataService'
+import { useActivity } from '../context/ActivityContext'
+import { mallAPI } from '../services/api'
+import { ROUTES } from '../utils/constants'
+import toast from 'react-hot-toast'
 
 interface ManagerStats {
   assignedStores: number
@@ -23,8 +29,10 @@ interface ManagerStats {
 
 export default function ManagerDashboard() {
   const { user } = useAuth()
-  const { malls, loading } = useDataService()
+  const { malls, loading, refreshData } = useDataService()
+  const { refreshActivities, getRecentActivities } = useActivity()
   const [stats, setStats] = useState<ManagerStats | null>(null)
+  const [toggleLoading, setToggleLoading] = useState<string | null>(null)
 
   useEffect(() => {
     if (malls.length > 0) {
@@ -45,6 +53,41 @@ export default function ManagerDashboard() {
       })
     }
   }, [malls])
+
+  const handleToggleStore = async (mallId: number, storeId: number, storeName: string, mallName: string, currentStatus: boolean) => {
+    const storeKey = `${mallId}-${storeId}`
+    if (toggleLoading) return // Prevent multiple simultaneous toggles
+    
+    setToggleLoading(storeKey)
+    try {
+      await mallAPI.toggleStore(mallId, storeId)
+      await refreshData() // Refresh the data
+      await refreshActivities() // Refresh activities from server
+      
+      const action = currentStatus ? 'closed' : 'opened'
+      toast.success(`${storeName} has been ${action}`)
+    } catch (error: any) {
+      console.error('Failed to toggle store:', error)
+      
+      // More detailed error messaging
+      let errorMessage = `Failed to update ${storeName}.`
+      if (error.response?.status === 400) {
+        errorMessage = `Cannot open ${storeName}: ${mallName} is closed.`
+      } else if (error.response?.status === 404) {
+        errorMessage = `Store not found.`
+      } else if (error.response?.status === 403) {
+        errorMessage = `You don't have permission to modify this store.`
+      } else if (error.response?.data?.message) {
+        errorMessage = error.response.data.message
+      } else {
+        errorMessage += ' Please try again.'
+      }
+      
+      toast.error(errorMessage)
+    } finally {
+      setToggleLoading(null)
+    }
+  }
 
   if (loading || !stats) {
     return (
@@ -181,14 +224,28 @@ export default function ManagerDashboard() {
                           <XCircle className="w-4 h-4 text-red-500" />
                         )}
                         <button 
-                          className={`px-2 py-1 text-xs font-medium rounded ${
+                          onClick={() => handleToggleStore(mall.id, store.id, store.name, mall.name, store.isOpen)}
+                          disabled={(!mall.isOpen && !store.isOpen) || toggleLoading === `${mall.id}-${store.id}`}
+                          className={`px-2 py-1 text-xs font-medium rounded transition-colors ${
                             store.isOpen 
                               ? 'bg-red-100 text-red-700 hover:bg-red-200' 
                               : 'bg-green-100 text-green-700 hover:bg-green-200'
-                          } transition-colors`}
-                          disabled={!mall.isOpen && !store.isOpen}
+                          } ${
+                            (!mall.isOpen && !store.isOpen) || toggleLoading === `${mall.id}-${store.id}`
+                              ? 'opacity-50 cursor-not-allowed' 
+                              : ''
+                          }`}
+                          title={
+                            !mall.isOpen && !store.isOpen 
+                              ? `Cannot open store: ${mall.name} is closed`
+                              : `Click to ${store.isOpen ? 'close' : 'open'} ${store.name}`
+                          }
                         >
-                          {store.isOpen ? 'Close' : 'Open'}
+                          {toggleLoading === `${mall.id}-${store.id}` ? (
+                            <div className="w-3 h-3 border border-current border-t-transparent rounded-full animate-spin" />
+                          ) : (
+                            store.isOpen ? 'Close' : 'Open'
+                          )}
                         </button>
                       </div>
                     </div>
@@ -205,18 +262,32 @@ export default function ManagerDashboard() {
         <div className="bg-white rounded-2xl shadow-sm p-6">
           <h3 className="text-lg font-bold text-gray-900 mb-4">Quick Actions</h3>
           <div className="space-y-3">
-            <button className="w-full flex items-center justify-between p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">
+            <Link 
+              to={ROUTES.HOME}
+              className="w-full flex items-center justify-between p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors group"
+            >
               <div className="flex items-center space-x-3">
                 <MapPin className="w-5 h-5 text-blue-600" />
                 <span className="font-medium text-gray-900">View Live Map</span>
               </div>
-            </button>
-            <button className="w-full flex items-center justify-between p-3 bg-green-50 rounded-lg hover:bg-green-100 transition-colors">
-              <div className="flex items-center space-x-3">
-                <BarChart3 className="w-5 h-5 text-green-600" />
-                <span className="font-medium text-gray-900">Store Analytics</span>
-              </div>
-            </button>
+            </Link>
+            <div className="relative">
+              <button 
+                className="w-full flex items-center justify-between p-3 bg-gray-50 rounded-lg cursor-not-allowed opacity-60"
+                disabled
+                title="Coming soon - Store Analytics feature under development"
+              >
+                <div className="flex items-center space-x-3">
+                  <BarChart3 className="w-5 h-5 text-gray-400" />
+                  <div className="flex items-center space-x-2">
+                    <span className="font-medium text-gray-500">Store Analytics</span>
+                    <span className="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded-full">
+                      Coming soon
+                    </span>
+                  </div>
+                </div>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -236,6 +307,53 @@ export default function ManagerDashboard() {
               <span className="font-bold text-purple-600">3</span>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Recent Activity */}
+      <div className="bg-white rounded-2xl shadow-sm p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-xl font-bold text-gray-900">Recent Activity</h3>
+          <button className="text-blue-600 hover:text-blue-700 font-medium text-sm">
+            View All
+          </button>
+        </div>
+        
+        <div className="space-y-4">
+          {getRecentActivities(5).length === 0 ? (
+            <div className="text-center py-8">
+              <Activity className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+              <p className="text-gray-500 text-sm">No recent activity</p>
+              <p className="text-gray-400 text-xs">Start by toggling store status</p>
+            </div>
+          ) : (
+            getRecentActivities(5).map((activity) => (
+              <div key={activity.id} className="flex items-center space-x-4 p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                <div className={`p-2 rounded-full ${
+                  activity.type === 'mall_toggle' ? 'bg-blue-100' :
+                  activity.type === 'store_toggle' ? 'bg-green-100' : 'bg-purple-100'
+                }`}>
+                  {activity.type === 'mall_toggle' ? (
+                    <Building2 className="w-4 h-4 text-blue-600" />
+                  ) : activity.type === 'store_toggle' ? (
+                    <Store className="w-4 h-4 text-green-600" />
+                  ) : (
+                    <Settings className="w-4 h-4 text-purple-600" />
+                  )}
+                </div>
+                <div className="flex-1">
+                  <div className="font-medium text-gray-900">
+                    {activity.description}
+                  </div>
+                  <div className="flex items-center space-x-2 text-sm text-gray-500">
+                    <span>{activity.user}</span>
+                    <span>•</span>
+                    <span>{activity.formattedTime}</span>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
     </div>

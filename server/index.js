@@ -206,6 +206,7 @@ app.patch("/api/malls/:mallId/stores/:storeId/toggle", auth(["manager"]), (req, 
   }
 
   store.isOpen = !store.isOpen;
+  const action = store.isOpen ? 'opened' : 'closed';
   
   // Save changes
   fs.writeFileSync(DATA_PATH, JSON.stringify(malls, null, 2));
@@ -215,9 +216,13 @@ app.patch("/api/malls/:mallId/stores/:storeId/toggle", auth(["manager"]), (req, 
     s.id === store.id ? { ...s, isOpen: store.isOpen } : s
   );
 
+  // Log activity
+  const activity = addActivity('store_toggle', mall.name, mall.id, req.user.username, action, store.name, store.id);
+
   res.json({ 
     message: "Store status updated successfully", 
-    store: { id: store.id, name: store.name, isOpen: store.isOpen, mallId: mall.id }
+    store: { id: store.id, name: store.name, isOpen: store.isOpen, mallId: mall.id },
+    activity
   });
 });
 
