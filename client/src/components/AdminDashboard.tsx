@@ -6,7 +6,6 @@ import {
   TrendingUp, 
   Users, 
   Clock,
-  MoreHorizontal,
   ChevronRight,
   Activity,
   CheckCircle,
@@ -17,7 +16,9 @@ import {
 } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import { useDataService } from '../hooks/useDataService'
+import { mallAPI } from '../services/api'
 import { ROUTES } from '../utils/constants'
+import toast from 'react-hot-toast'
 
 interface DashboardStats {
   totalMalls: number
@@ -36,8 +37,9 @@ interface DashboardStats {
 
 export default function AdminDashboard() {
   const { user } = useAuth()
-  const { malls, loading } = useDataService()
+  const { malls, loading, refreshData } = useDataService()
   const [stats, setStats] = useState<DashboardStats | null>(null)
+  const [toggleLoading, setToggleLoading] = useState<number | null>(null)
 
   useEffect(() => {
     if (malls.length > 0) {
@@ -84,6 +86,39 @@ export default function AdminDashboard() {
       })
     }
   }, [malls])
+
+  const handleToggleMall = async (mallId: number, mallName: string, currentStatus: boolean) => {
+    if (toggleLoading) return // Prevent multiple simultaneous toggles
+    
+    setToggleLoading(mallId)
+    try {
+      await mallAPI.toggleMall(mallId)
+      await refreshData() // Refresh the data
+      
+      const action = currentStatus ? 'closed' : 'opened'
+      toast.success(`${mallName} has been ${action}`)
+    } catch (error: any) {
+      console.error('Failed to toggle mall:', error)
+      
+      // More detailed error messaging
+      let errorMessage = `Failed to update ${mallName}.`
+      if (error.response?.status === 401) {
+        errorMessage = 'Authentication required. Please log in again.'
+      } else if (error.response?.status === 403) {
+        errorMessage = 'Admin access required to toggle malls.'
+      } else if (error.response?.status === 404) {
+        errorMessage = `Mall "${mallName}" not found.`
+      } else if (error.response?.data?.message) {
+        errorMessage = error.response.data.message
+      } else if (error.message) {
+        errorMessage = `Error: ${error.message}`
+      }
+      
+      toast.error(errorMessage)
+    } finally {
+      setToggleLoading(null)
+    }
+  }
 
   if (loading || !stats) {
     return (
@@ -320,14 +355,31 @@ export default function AdminDashboard() {
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
-                    {mall.isOpen ? (
-                      <CheckCircle className="w-5 h-5 text-green-500" />
-                    ) : (
-                      <XCircle className="w-5 h-5 text-red-500" />
-                    )}
-                    <button className="p-1 hover:bg-gray-100 rounded">
-                      <MoreHorizontal className="w-4 h-4 text-gray-400" />
+                    <button
+                      onClick={() => handleToggleMall(mall.id, mall.name, mall.isOpen)}
+                      disabled={toggleLoading === mall.id}
+                      className={`p-2 rounded-lg border transition-colors ${
+                        mall.isOpen
+                          ? 'bg-green-50 border-green-200 text-green-700 hover:bg-green-100'
+                          : 'bg-red-50 border-red-200 text-red-700 hover:bg-red-100'
+                      } ${toggleLoading === mall.id ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-sm'}`}
+                      title={`Click to ${mall.isOpen ? 'close' : 'open'} ${mall.name}`}
+                    >
+                      {toggleLoading === mall.id ? (
+                        <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                      ) : mall.isOpen ? (
+                        <CheckCircle className="w-4 h-4" />
+                      ) : (
+                        <XCircle className="w-4 h-4" />
+                      )}
                     </button>
+                    <span className={`text-xs font-medium px-2 py-1 rounded-full ${
+                      mall.isOpen
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-red-100 text-red-800'
+                    }`}>
+                      {mall.isOpen ? 'Open' : 'Closed'}
+                    </span>
                   </div>
                 </div>
               ))}
