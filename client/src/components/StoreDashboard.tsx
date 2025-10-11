@@ -75,7 +75,7 @@ export default function StoreDashboard() {
           isOpen: store.isOpen,
           opening_hours: store.opening_hours,
           mallName: mall.name,
-          description: store.description || '',
+          description: (store as any).description || '',
           contact: store.contact || {}
         }))
       )

@@ -348,7 +348,7 @@ export default function ManagerDashboard() {
                   <div className="flex items-center space-x-2 text-sm text-gray-500">
                     <span>{activity.user}</span>
                     <span>•</span>
-                    <span>{activity.formattedTime}</span>
+                    <span>{new Date(activity.timestamp).toLocaleString()}</span>
                   </div>
                 </div>
               </div>
