@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { 
   Building2, 
   Store, 
   TrendingUp, 
   Users, 
   Clock,
-  MoreHorizontal,
   ChevronRight,
   Activity,
   CheckCircle,
@@ -16,26 +16,24 @@ import {
 } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import { useDataService } from '../hooks/useDataService'
+import { useActivity } from '../context/ActivityContext'
+import { mallAPI } from '../services/api'
+import { ROUTES } from '../utils/constants'
+import toast from 'react-hot-toast'
 
 interface DashboardStats {
   totalMalls: number
   totalStores: number
   openMalls: number
   openStores: number
-  recentActivity: Array<{
-    id: string
-    type: 'mall_toggle' | 'store_toggle' | 'store_edit'
-    mallName: string
-    storeName?: string
-    timestamp: string
-    user: string
-  }>
 }
 
 export default function AdminDashboard() {
   const { user } = useAuth()
-  const { malls, loading } = useDataService()
+  const { malls, loading, refreshData } = useDataService()
+  const { getRecentActivities, refreshActivities } = useActivity()
   const [stats, setStats] = useState<DashboardStats | null>(null)
+  const [toggleLoading, setToggleLoading] = useState<number | null>(null)
 
   useEffect(() => {
     if (malls.length > 0) {
@@ -46,42 +44,48 @@ export default function AdminDashboard() {
         sum + mall.stores.filter(store => store.isOpen).length, 0
       )
 
-      // Mock recent activity - in real app this would come from audit logs
-      const recentActivity = [
-        {
-          id: '1',
-          type: 'mall_toggle' as const,
-          mallName: 'Villaggio Mall',
-          timestamp: '2 hours ago',
-          user: 'admin'
-        },
-        {
-          id: '2', 
-          type: 'store_toggle' as const,
-          mallName: 'City Center Doha',
-          storeName: 'Nike Store',
-          timestamp: '4 hours ago',
-          user: 'manager'
-        },
-        {
-          id: '3',
-          type: 'store_edit' as const,
-          mallName: 'Landmark Mall',
-          storeName: 'Starbucks',
-          timestamp: '1 day ago',
-          user: 'store'
-        }
-      ]
-
       setStats({
         totalMalls,
         totalStores,
         openMalls,
-        openStores,
-        recentActivity
+        openStores
       })
     }
   }, [malls])
+
+  const handleToggleMall = async (mallId: number, mallName: string, currentStatus: boolean) => {
+    if (toggleLoading) return // Prevent multiple simultaneous toggles
+    
+    setToggleLoading(mallId)
+    try {
+      await mallAPI.toggleMall(mallId)
+      await refreshData() // Refresh the data
+      await refreshActivities() // Refresh activities from server
+      
+      const action = currentStatus ? 'closed' : 'opened'
+      toast.success(`${mallName} has been ${action}`)
+    } catch (error: any) {
+      console.error('Failed to toggle mall:', error)
+      
+      // More detailed error messaging
+      let errorMessage = `Failed to update ${mallName}.`
+      if (error.response?.status === 401) {
+        errorMessage = 'Authentication required. Please log in again.'
+      } else if (error.response?.status === 403) {
+        errorMessage = 'Admin access required to toggle malls.'
+      } else if (error.response?.status === 404) {
+        errorMessage = `Mall "${mallName}" not found.`
+      } else if (error.response?.data?.message) {
+        errorMessage = error.response.data.message
+      } else if (error.message) {
+        errorMessage = `Error: ${error.message}`
+      }
+      
+      toast.error(errorMessage)
+    } finally {
+      setToggleLoading(null)
+    }
+  }
 
   if (loading || !stats) {
     return (
@@ -216,11 +220,12 @@ export default function AdminDashboard() {
           <section className="bg-white rounded-xl md:rounded-2xl shadow-sm p-4 md:p-6" aria-labelledby="quick-actions-heading">
             <div className="flex items-center justify-between mb-4 md:mb-6">
               <h3 id="quick-actions-heading" className="text-lg md:text-xl font-bold text-gray-900">Quick Actions</h3>
-              <Settings className="w-4 h-4 md:w-5 md:h-5 text-gray-400" aria-hidden="true" />
+              <Settings className="w-4 h-4 md:w-5 md:h-5 text-gray-300" aria-hidden="true" />
             </div>
             
             <nav className="space-y-3" aria-label="Quick actions navigation">
-              <button 
+              <Link 
+                to={ROUTES.MAP}
                 className="w-full flex items-center justify-between p-4 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 transition-colors group focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
                 aria-describedby="view-map-desc"
               >
@@ -234,39 +239,55 @@ export default function AdminDashboard() {
                   </div>
                 </div>
                 <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-gray-600" aria-hidden="true" />
-              </button>
+              </Link>
 
-              <button 
-                className="w-full flex items-center justify-between p-4 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 transition-colors group focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+              <div 
+                className="w-full flex items-center justify-between p-4 bg-gray-50 border border-gray-200 rounded-lg opacity-60 cursor-not-allowed group relative"
                 aria-describedby="view-analytics-desc"
+                title="Feature coming soon"
               >
                 <div className="flex items-center space-x-3">
-                  <div className="p-2 bg-emerald-50 border border-emerald-200 rounded-lg" aria-hidden="true">
-                    <BarChart3 className="w-5 h-5 text-emerald-600" />
+                  <div className="p-2 bg-gray-100 border border-gray-300 rounded-lg" aria-hidden="true">
+                    <BarChart3 className="w-5 h-5 text-gray-500" />
                   </div>
                   <div className="text-left">
-                    <div className="font-medium text-gray-900">View Analytics</div>
-                    <div id="view-analytics-desc" className="text-sm text-gray-500">Performance insights</div>
+                    <div className="font-medium text-gray-600">View Analytics</div>
+                    <div id="view-analytics-desc" className="text-sm text-gray-500">Coming soon</div>
                   </div>
                 </div>
-                <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-gray-600" aria-hidden="true" />
-              </button>
+                <div className="flex items-center space-x-2">
+                  <span className="text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded-full">Soon</span>
+                  <ChevronRight className="w-5 h-5 text-gray-300" aria-hidden="true" />
+                </div>
+                {/* Tooltip on hover */}
+                <div className="absolute left-1/2 transform -translate-x-1/2 -top-12 bg-gray-900 text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
+                  Analytics dashboard coming soon
+                </div>
+              </div>
 
-              <button 
-                className="w-full flex items-center justify-between p-4 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 transition-colors group focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+              <div 
+                className="w-full flex items-center justify-between p-4 bg-gray-50 border border-gray-200 rounded-lg opacity-60 cursor-not-allowed group relative"
                 aria-describedby="manage-users-desc"
+                title="Feature coming soon"
               >
                 <div className="flex items-center space-x-3">
-                  <div className="p-2 bg-violet-50 border border-violet-200 rounded-lg" aria-hidden="true">
-                    <Users className="w-5 h-5 text-violet-600" />
+                  <div className="p-2 bg-gray-100 border border-gray-300 rounded-lg" aria-hidden="true">
+                    <Users className="w-5 h-5 text-gray-500" />
                   </div>
                   <div className="text-left">
-                    <div className="font-medium text-gray-900">Manage Users</div>
-                    <div id="manage-users-desc" className="text-sm text-gray-500">Roles & permissions</div>
+                    <div className="font-medium text-gray-600">Manage Users</div>
+                    <div id="manage-users-desc" className="text-sm text-gray-500">Coming soon</div>
                   </div>
                 </div>
-                <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-gray-600" aria-hidden="true" />
-              </button>
+                <div className="flex items-center space-x-2">
+                  <span className="text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded-full">Soon</span>
+                  <ChevronRight className="w-5 h-5 text-gray-300" aria-hidden="true" />
+                </div>
+                {/* Tooltip on hover */}
+                <div className="absolute left-1/2 transform -translate-x-1/2 -top-12 bg-gray-900 text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
+                  User management coming soon
+                </div>
+              </div>
             </nav>
           </section>
         </div>
@@ -301,14 +322,31 @@ export default function AdminDashboard() {
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
-                    {mall.isOpen ? (
-                      <CheckCircle className="w-5 h-5 text-green-500" />
-                    ) : (
-                      <XCircle className="w-5 h-5 text-red-500" />
-                    )}
-                    <button className="p-1 hover:bg-gray-100 rounded">
-                      <MoreHorizontal className="w-4 h-4 text-gray-400" />
+                    <button
+                      onClick={() => handleToggleMall(mall.id, mall.name, mall.isOpen)}
+                      disabled={toggleLoading === mall.id}
+                      className={`p-2 rounded-lg border transition-colors ${
+                        mall.isOpen
+                          ? 'bg-green-50 border-green-200 text-green-700 hover:bg-green-100'
+                          : 'bg-red-50 border-red-200 text-red-700 hover:bg-red-100'
+                      } ${toggleLoading === mall.id ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-sm'}`}
+                      title={`Click to ${mall.isOpen ? 'close' : 'open'} ${mall.name}`}
+                    >
+                      {toggleLoading === mall.id ? (
+                        <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                      ) : mall.isOpen ? (
+                        <CheckCircle className="w-4 h-4" />
+                      ) : (
+                        <XCircle className="w-4 h-4" />
+                      )}
                     </button>
+                    <span className={`text-xs font-medium px-2 py-1 rounded-full ${
+                      mall.isOpen
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-red-100 text-red-800'
+                    }`}>
+                      {mall.isOpen ? 'Open' : 'Closed'}
+                    </span>
                   </div>
                 </div>
               ))}
@@ -325,36 +363,39 @@ export default function AdminDashboard() {
             </div>
             
             <div className="space-y-4">
-              {stats.recentActivity.map((activity) => (
-                <div key={activity.id} className="flex items-center space-x-4 p-3 hover:bg-gray-50 rounded-lg transition-colors">
-                  <div className={`p-2 rounded-full ${
-                    activity.type === 'mall_toggle' ? 'bg-blue-100' :
-                    activity.type === 'store_toggle' ? 'bg-green-100' : 'bg-purple-100'
-                  }`}>
-                    {activity.type === 'mall_toggle' ? (
-                      <Building2 className={`w-4 h-4 ${
-                        activity.type === 'mall_toggle' ? 'text-blue-600' :
-                        activity.type === 'store_toggle' ? 'text-green-600' : 'text-purple-600'
-                      }`} />
-                    ) : activity.type === 'store_toggle' ? (
-                      <Store className="w-4 h-4 text-green-600" />
-                    ) : (
-                      <Settings className="w-4 h-4 text-purple-600" />
-                    )}
-                  </div>
-                  <div className="flex-1">
-                    <div className="font-medium text-gray-900">
-                      {activity.type === 'mall_toggle' && `Mall ${activity.mallName} status changed`}
-                      {activity.type === 'store_toggle' && `${activity.storeName} in ${activity.mallName} toggled`}
-                      {activity.type === 'store_edit' && `${activity.storeName} details updated`}
-                    </div>
-                    <div className="text-sm text-gray-500">
-                      by {activity.user} • {activity.timestamp}
-                    </div>
-                  </div>
-                  <Clock className="w-4 h-4 text-gray-400" />
+              {getRecentActivities(5).length === 0 ? (
+                <div className="text-center py-8">
+                  <Activity className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                  <p className="text-gray-500 text-sm">No recent activity</p>
+                  <p className="text-gray-400 text-xs">Start by toggling mall or store status</p>
                 </div>
-              ))}
+              ) : (
+                getRecentActivities(5).map((activity) => (
+                  <div key={activity.id} className="flex items-center space-x-4 p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                    <div className={`p-2 rounded-full ${
+                      activity.type === 'mall_toggle' ? 'bg-blue-100' :
+                      activity.type === 'store_toggle' ? 'bg-green-100' : 'bg-purple-100'
+                    }`}>
+                      {activity.type === 'mall_toggle' ? (
+                        <Building2 className="w-4 h-4 text-blue-600" />
+                      ) : activity.type === 'store_toggle' ? (
+                        <Store className="w-4 h-4 text-green-600" />
+                      ) : (
+                        <Settings className="w-4 h-4 text-purple-600" />
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <div className="font-medium text-gray-900">
+                        {activity.description}
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        by {activity.user} • {(activity as any).formattedTime}
+                      </div>
+                    </div>
+                    <Clock className="w-4 h-4 text-gray-400" />
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </div>

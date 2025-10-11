@@ -33,7 +33,7 @@
         "id": 201,
         "name": "Desert Bites",
         "type": "Restaurant",
-        "isOpen": true,
+        "isOpen": false,
         "opening_hours": "Daily 11:00 AM – 11:00 PM"
       },
       {

@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 import { AuthProvider } from './context/AuthContext'
+import { ActivityProvider } from './context/ActivityContext'
 import ProtectedRoute from './components/ProtectedRoute'
 import LoginPage from './pages/LoginPage'
 import DashboardPage from './pages/DashboardPage'
@@ -12,7 +13,8 @@ import './styles/animations.css'
 function App() {
   return (
     <AuthProvider>
-      <Router
+      <ActivityProvider>
+        <Router
         future={{
           v7_startTransition: true,
           v7_relativeSplatPath: true
@@ -75,7 +77,8 @@ function App() {
             }}
           />
         </div>
-      </Router>
+        </Router>
+      </ActivityProvider>
     </AuthProvider>
   )
 }
