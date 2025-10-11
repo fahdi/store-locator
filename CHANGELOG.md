@@ -6,6 +6,58 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [1.2.0] - 2025-10-11
+
+### Added - Dashboard Implementations & Activity Tracking System ✅
+- **Admin Dashboard**: Complete administrative interface with real-time controls
+  - **Functional Quick Actions**: View Live Map (links to home), Monitor All Locations
+  - **Mall Overview**: Interactive toggle buttons for opening/closing entire malls
+  - **Recent Activity Section**: Real-time activity feed with server persistence
+  - **System Statistics**: Comprehensive mall and store metrics with live data
+  - **Professional UI**: Modern design with loading states, error handling, and toast notifications
+  
+- **Manager Dashboard**: Comprehensive store management interface
+  - **Functional Quick Actions**: View Live Map (home), Store Analytics (coming soon with professional disabled styling)
+  - **Store Management**: Interactive store open/close toggle functionality with business logic
+  - **Recent Activity Section**: Real-time activity logging for all manager actions
+  - **Operational Statistics**: Store performance metrics and assigned location data
+  - **Business Logic Enforcement**: Cannot open stores when parent mall is closed
+  - **View on Map Integration**: Store Management section "View on Map" links to home page
+
+- **Activity Tracking System**: Complete audit trail with server-side persistence
+  - **Server-side Logging**: All activities persisted to `server/data/activities.json`
+  - **Real-time Updates**: Activities appear immediately across all authenticated users
+  - **User Attribution**: Complete audit trail with user identification and timestamps
+  - **Activity Types**: Mall toggle, store toggle operations with detailed descriptions
+  - **Professional Display**: Formatted timestamps, context-aware icons, and descriptions
+  - **API Integration**: GET `/api/activities?limit=N` endpoint for activity retrieval
+
+### Enhanced
+- **Backend Activity Logging**: Added comprehensive activity tracking to server endpoints
+  - Enhanced `/api/malls/:id/toggle` with activity logging for admin mall toggles
+  - Added activity logging to `/api/malls/:mallId/stores/:storeId/toggle` for manager store toggles
+  - Activity metadata includes: type, mall/store names, user, action, timestamp, description
+  - Automatic activity limit management (keeps last 100 activities)
+
+- **Error Handling & User Experience**: Professional error management across all dashboards
+  - Comprehensive error messages for different failure scenarios (400, 403, 404, 500)
+  - Loading states with professional spinning indicators during API operations
+  - Toast notifications for immediate user feedback on all operations
+  - Proper disabled states with helpful tooltips for unavailable actions
+
+### Fixed
+- **Manager Dashboard Store Toggle**: Store toggle buttons now functional with proper API integration
+- **Activity Context Integration**: Both admin and manager dashboards properly use ActivityContext
+- **Real-time Data Synchronization**: All dashboard operations trigger proper data and activity refreshes
+- **Business Rule Enforcement**: Store open/close operations respect mall-store hierarchy rules
+
+### Technical Implementation
+- **React Context Integration**: Enhanced ActivityContext with server synchronization
+- **API Service Layer**: Comprehensive error handling and data transformation
+- **Component Architecture**: Reusable patterns between admin and manager dashboards
+- **State Management**: Proper loading states and error boundaries across all operations
+- **TypeScript Strict Mode**: Maintained type safety across all new implementations
+
 ## [1.1.0] - 2025-10-11
 
 ### Added - Docker Implementation & Production Deployment ✅
