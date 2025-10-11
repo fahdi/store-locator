@@ -34,7 +34,13 @@
         "name": "Desert Bites",
         "type": "Restaurant",
         "isOpen": false,
-        "opening_hours": "Daily 11:00 AM – 11:00 PM"
+        "opening_hours": "Daily 11:00 AM – 11:00 PM",
+        "description": "Store Description",
+        "contact": {
+          "phone": "+97512342132",
+          "email": "storeemail@example.com",
+          "website": "https://desertbitesdoha.com"
+        }
       },
       {
         "id": 202,
