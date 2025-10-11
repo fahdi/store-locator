@@ -391,7 +391,7 @@ export default function DetailModal({ isOpen, loading = false, onClose, mall, st
                 <>
                   <button className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors text-sm flex items-center justify-center">
                     <MapPin className="w-4 h-4 mr-2" />
-                    Get Directions
+                    Directions
                   </button>
                   {store.contact?.phone && (
                     <a
@@ -399,7 +399,7 @@ export default function DetailModal({ isOpen, loading = false, onClose, mall, st
                       className="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition-colors text-sm flex items-center justify-center"
                     >
                       <Phone className="w-4 h-4 mr-2" />
-                      Call Store
+                      Call
                     </a>
                   )}
                 </>
