@@ -19,7 +19,7 @@ docker-compose up --build
 
 # Or build and run manually
 docker build -t bluesky-store-locator .
-docker run -p 5000:5000 bluesky-store-locator
+docker run -p 5001:5000 bluesky-store-locator
 ```
 
 ### Option 2: Local Development
@@ -29,8 +29,8 @@ git clone https://github.com/fahdi/store-locator.git
 cd store-locator
 npm run install:all
 
-# Start unified server (http://localhost:5000)
-npm run start:server
+# Start unified server (http://localhost:5001)
+PORT=5001 npm run start:server
 
 # For development with hot reload
 npm run dev:server
@@ -139,8 +139,8 @@ store-locator/
    ```
 
 4. **Access the Application**
-   - **Application**: http://localhost:5000
-   - **Health Check**: http://localhost:5000/api/health
+   - **Application**: http://localhost:5001
+   - **Health Check**: http://localhost:5001/api/health
    - **API Documentation**: See endpoints section below
 
 ### Available Scripts
