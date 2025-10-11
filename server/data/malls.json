@@ -40,7 +40,7 @@
         "id": 202,
         "name": "Pearl Perfumes",
         "type": "Beauty",
-        "isOpen": false,
+        "isOpen": true,
         "opening_hours": "Mon–Sat 9:00 AM – 7:00 PM"
       }
     ]
