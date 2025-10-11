@@ -313,10 +313,10 @@ export default function StoreDashboard() {
                     </div>
                     <a
                       href={`tel:${selectedStore.contact.phone}`}
-                      className="inline-flex items-center px-3 py-1 bg-green-100 text-green-700 hover:bg-green-200 rounded-full text-sm font-medium transition-colors"
+                      className="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition-colors text-sm flex items-center justify-center"
                     >
-                      <Phone className="w-3 h-3 mr-1" />
-                      Call
+                      <Phone className="w-4 h-4 mr-2" />
+                      Call Store
                     </a>
                   </div>
                 )}
