@@ -337,17 +337,6 @@ export default function StoreDashboard() {
                 onClick={handleEditStore}
                 className="w-full flex items-center space-x-3 p-4 bg-gray-50 border border-gray-200 rounded-xl hover:bg-gray-100 transition-colors"
               >
-                <Edit3 className="w-5 h-5 text-gray-600" />
-                <div className="text-left">
-                  <div className="font-medium text-gray-900">Update Store Details</div>
-                  <div className="text-sm text-gray-500">Edit name, description, hours</div>
-                </div>
-              </button>
-
-              <button 
-                onClick={handleEditStore}
-                className="w-full flex items-center space-x-3 p-4 bg-gray-50 border border-gray-200 rounded-xl hover:bg-gray-100 transition-colors"
-              >
                 <Phone className="w-5 h-5 text-gray-600" />
                 <div className="text-left">
                   <div className="font-medium text-gray-900">Update Contact Info</div>
@@ -368,35 +357,6 @@ export default function StoreDashboard() {
             </div>
           </div>
 
-          {/* Recent Updates */}
-          <div className="bg-white rounded-2xl shadow-sm p-6">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">Recent Updates</h3>
-            <div className="space-y-4">
-              <div className="flex items-start space-x-3 p-3 bg-gray-50 border border-gray-200 rounded-lg">
-                <CheckCircle className="w-5 h-5 text-gray-600 mt-0.5" />
-                <div>
-                  <p className="text-sm font-medium text-gray-900">Hours updated successfully</p>
-                  <p className="text-xs text-gray-500">2 hours ago</p>
-                </div>
-              </div>
-              
-              <div className="flex items-start space-x-3 p-3 bg-gray-50 border border-gray-200 rounded-lg">
-                <Edit3 className="w-5 h-5 text-gray-600 mt-0.5" />
-                <div>
-                  <p className="text-sm font-medium text-gray-900">Contact information added</p>
-                  <p className="text-xs text-gray-500">1 day ago</p>
-                </div>
-              </div>
-
-              <div className="flex items-start space-x-3 p-3 bg-gray-50 border border-gray-200 rounded-lg">
-                <Clock className="w-5 h-5 text-gray-600 mt-0.5" />
-                <div>
-                  <p className="text-sm font-medium text-gray-900">Store description updated</p>
-                  <p className="text-xs text-gray-500">3 days ago</p>
-                </div>
-              </div>
-            </div>
-          </div>
 
         </div>
       </div>
