@@ -58,7 +58,7 @@ export const mallAPI = {
 
   // Public endpoint for unauthenticated users (still available for demo purposes)
   getAllPublic: async (): Promise<Mall[]> => {
-    const response = await axios.get<Mall[]>(`${API_BASE_URL}/api/malls/public`)
+    const response = await api.get<Mall[]>('/api/malls/public')
     return response.data
   },
 

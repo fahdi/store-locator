@@ -8,6 +8,8 @@ import express from "express";
 import cors from "cors";
 import jwt from "jsonwebtoken";
 import fs from "fs";
+import path from "path";
+import { fileURLToPath } from 'url';
 
 const app = express();
 app.use(cors());
@@ -240,6 +242,19 @@ app.get("/api/health", (req, res) => {
       health: "/api/health"
     }
   });
+});
+
+// ===== STATIC FILE SERVING =====
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Serve static files from React build
+app.use(express.static(path.join(__dirname, '../client/dist')));
+
+// Catch-all handler for React Router
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/dist/index.html'));
 });
 
 // Start server

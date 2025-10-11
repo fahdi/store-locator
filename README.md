@@ -8,13 +8,28 @@ This is a take-home technical assessment project that demonstrates modern web de
 
 ## ⚡ Quick Start
 
+### Option 1: Docker (Recommended)
+```bash
+# Clone the repository
+git clone https://github.com/fahdi/store-locator.git
+cd store-locator
+
+# Build and run with Docker Compose
+docker-compose up --build
+
+# Or build and run manually
+docker build -t bluesky-store-locator .
+docker run -p 5000:5000 bluesky-store-locator
+```
+
+### Option 2: Local Development
 ```bash
 # Clone and install
 git clone https://github.com/fahdi/store-locator.git
 cd store-locator
 npm run install:all
 
-# Start unified server (http://localhost:5001)
+# Start unified server (http://localhost:5000)
 npm run start:server
 
 # For development with hot reload
@@ -123,9 +138,9 @@ store-locator/
    npm run dev:server
    ```
 
-4. **Access the API**
-   - **Server**: http://localhost:5001
-   - **Health Check**: http://localhost:5001/api/health
+4. **Access the Application**
+   - **Application**: http://localhost:5000
+   - **Health Check**: http://localhost:5000/api/health
    - **API Documentation**: See endpoints section below
 
 ### Available Scripts
@@ -141,6 +156,118 @@ npm run validate-data        # Validate mall and store data
 # Development utilities
 npm run install:all          # Install all dependencies
 npm run clean               # Clean all node_modules
+```
+
+## 🐳 Docker Deployment
+
+### Prerequisites
+- Docker and Docker Compose installed
+- Git
+
+### Quick Docker Setup
+
+```bash
+# Clone the repository
+git clone https://github.com/fahdi/store-locator.git
+cd store-locator
+
+# Build and run with Docker Compose (recommended)
+docker-compose up --build
+
+# Or build and run manually
+docker build -t bluesky-store-locator .
+docker run -p 5001:5000 bluesky-store-locator
+```
+
+**Access**: http://localhost:5001
+
+### Docker Architecture
+
+#### Multi-Stage Build Process
+1. **Stage 1**: React client build with Vite and TypeScript
+2. **Stage 2**: Production image with Node.js server and static files
+
+#### Unified Server Design
+- **Single Container**: Serves both React frontend and Express API
+- **Same Origin**: Eliminates CORS issues by serving from same domain
+- **Static Files**: Built React app served from `/client/dist`
+- **API Routes**: Express endpoints on `/api/*` paths
+- **Catch-all Routing**: React Router handles client-side navigation
+
+### Docker Features
+- **Multi-stage build**: Optimized production image (~200MB)
+- **Security**: Non-root user execution (bluesky:nodejs)
+- **Health checks**: Built-in container health monitoring every 30s
+- **Data persistence**: Optional volume mounting for mall data
+- **Production ready**: Alpine Linux base with minimal footprint
+- **CORS-free**: Unified origin for API and frontend
+
+### Docker Commands
+
+```bash
+# Build the image
+docker build -t bluesky-store-locator .
+
+# Run container (note: port mapping 5001:5000 to avoid macOS AirPlay conflict)
+docker run -p 5001:5000 bluesky-store-locator
+
+# Run with data persistence
+docker run -p 5001:5000 -v $(pwd)/server/data:/app/server/data bluesky-store-locator
+
+# Run with custom environment variables
+docker run -p 5001:5000 -e NODE_ENV=production bluesky-store-locator
+
+# Check container health
+docker ps
+docker logs <container-id>
+
+# Stop and cleanup
+docker-compose down
+docker system prune
+```
+
+### Container Details
+- **Base Image**: Node.js 18 Alpine
+- **Internal Port**: 5000 (mapped to 5001 externally)
+- **User**: Non-root (bluesky:nodejs)
+- **Health Check**: HTTP GET /api/health every 30s
+- **Size**: ~200MB (optimized multi-stage build)
+
+### Docker Implementation Notes
+
+#### CORS Resolution
+- **Issue**: Original setup caused CORS errors with separate origins
+- **Solution**: Unified server architecture serving both frontend and API
+- **Result**: All requests use same origin, eliminating CORS issues
+
+#### Port Configuration
+- **Internal**: Container runs on port 5000
+- **External**: Mapped to 5001 to avoid macOS AirPlay conflict
+- **API Base URL**: Changed to relative paths (`''`) for same-origin requests
+
+#### TypeScript Build Optimization
+- **Production Config**: Created `tsconfig.prod.json` with relaxed linting
+- **Build Process**: Uses production config to avoid strict type errors
+- **Development**: Maintains strict typing for development workflow
+
+### Troubleshooting
+
+#### Common Issues
+1. **Port Conflicts**: Use `docker run -p 5001:5000` if port 5000 is occupied
+2. **CORS Errors**: Ensure using relative API URLs (not absolute localhost URLs)
+3. **Build Failures**: Check Docker logs for TypeScript or dependency issues
+
+#### Health Check Verification
+```bash
+# Check container health
+curl http://localhost:5001/api/health
+
+# Expected response:
+{
+  "status": "healthy",
+  "timestamp": "2025-10-11T00:00:00.000Z",
+  "endpoints": {...}
+}
 ```
 
 ## 🔧 Development Status

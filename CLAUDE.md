@@ -6,27 +6,35 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 BlueSky Store Locator & Management System - A comprehensive web application for managing malls and stores in Doha, Qatar, featuring role-based authentication, interactive maps, and CRUD operations based on user permissions.
 
-**Current Status**: Phase 3 Interactive Map Integration Complete (100%) - Ready for Phase 4: Data Display Components
+**Current Status**: Docker Implementation Complete (100%) - Production-ready containerized deployment
 
 ## Development Environment
 
 ### Essential Commands
 
 ```bash
-# Server management (primary development focus)
-npm run start:server          # Start unified server (production mode)
-npm run dev:server           # Development mode with hot reload on port 5001
+# Docker deployment (recommended for production)
+docker-compose up --build    # Start containerized app on port 5001
+docker build -t bluesky-store-locator .  # Build Docker image
+docker run -p 5001:5000 bluesky-store-locator  # Run container
+
+# Local development
+PORT=5001 npm run start:server  # Start unified server (avoids port conflicts)
+npm run dev:server           # Development mode with hot reload
 
 # Project setup
 npm run install:all          # Install dependencies across all workspaces
 npm run clean               # Clean all node_modules
 
+# Client build (required for unified server)
+cd client && npm run build  # Build React app for production
+cd client && npx vite build # Build without TypeScript checking (faster)
+
 # Data management  
 npm run validate-data       # Validate mall and store data integrity
 
-# Development utilities (when client is implemented)
+# Development utilities
 npm run dev:client          # Start React/Vite dev server (port 5173)
-npm run build:client        # Build client for production
 npm run test:client         # Run Vitest tests
 npm run lint:client         # Run ESLint on client code
 npm run typecheck:client    # TypeScript strict mode validation
@@ -37,7 +45,7 @@ npm run typecheck:client    # TypeScript strict mode validation
 ### Monorepo Structure
 
 **Workspace Organization:**
-- `/client/` - React frontend (Vite + TypeScript + Tailwind) - Foundation setup complete
+- `/client/` - React frontend (Vite + TypeScript + Tailwind) - Complete with Docker build
 - `/server/` - Unified Express backend (JWT auth + file-based storage) - Complete
   - `index.js` - Main unified API server combining auth and data endpoints
   - `data/malls.json` - Mall and store data with Doha coordinates
@@ -45,6 +53,45 @@ npm run typecheck:client    # TypeScript strict mode validation
 - `/docs/` - Project documentation (PRD.md, initial-requirements.md)
 - `docs/TODOS.md` - Comprehensive task tracking for all development phases
 - `CHANGELOG.md` - Project change history and version tracking
+- **Docker Files (NEW):**
+  - `Dockerfile` - Multi-stage build for production deployment
+  - `docker-compose.yml` - Container orchestration configuration
+  - `.dockerignore` - Build context optimization
+
+## Docker Implementation (NEW)
+
+### Container Architecture
+- **Multi-stage Build**: React client build → Production server image
+- **Base Image**: Node.js 18 Alpine (~200MB total)
+- **Security**: Non-root user (bluesky:nodejs)
+- **Health Monitoring**: Built-in health checks every 30s
+- **Port Configuration**: Internal 5000 → External 5001 (macOS compatibility)
+
+### Key Docker Features
+- **Unified Server**: Single container serves both React frontend and Express API
+- **CORS Resolution**: Same-origin architecture eliminates cross-origin issues
+- **Static File Serving**: Express serves built React files from `/client/dist`
+- **API Routing**: Express endpoints on `/api/*` paths
+- **Catch-all Routing**: React Router handles client-side navigation
+
+### Docker Development Workflow
+```bash
+# Build and run with Docker Compose
+docker-compose up --build
+
+# Manual Docker commands
+docker build -t bluesky-store-locator .
+docker run -p 5001:5000 bluesky-store-locator
+
+# Health check
+curl http://localhost:5001/api/health
+```
+
+### Production Optimizations
+- **TypeScript Config**: `client/tsconfig.prod.json` for relaxed production builds
+- **Build Process**: `npx vite build` skips strict type checking for faster deployment
+- **API Base URL**: Relative paths (`''`) for same-origin requests
+- **Data Persistence**: Optional volume mounting for mall data
 
 ### Backend Architecture
 
