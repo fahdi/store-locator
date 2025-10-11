@@ -118,53 +118,41 @@ export default function SearchOverlay({
 
   return (
     <>
-      {/* Mobile Full Screen Overlay */}
-      <div className={`md:hidden fixed inset-0 bg-white z-50 flex flex-col transition-transform duration-300 ${
-        isExpanded ? 'translate-y-0' : 'translate-y-full'
-      }`}>
-        {/* Mobile Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">Search & Filters</h2>
-          <button
-            onClick={() => setIsExpanded(false)}
-            className="p-2 text-gray-400 hover:text-gray-600"
-          >
-            <X className="w-6 h-6" />
-          </button>
-        </div>
-
-        {/* Mobile Content */}
-        <div className="flex-1 overflow-y-auto">
-          {/* Search Input with Filters Button */}
-          <div className="p-4 border-b border-gray-200">
-            <div className="flex gap-2">
-              <div className="flex-1 flex items-center bg-gray-50 rounded-lg p-3">
-                <Search className="w-5 h-5 text-gray-400 mr-2" />
-                <input
-                  type="text"
-                  placeholder="Search malls and stores..."
-                  value={filters.searchTerm}
-                  onChange={(e) => updateFilters({ searchTerm: e.target.value })}
-                  className="flex-1 bg-transparent border-none outline-none text-sm placeholder-gray-400"
-                />
-                {filters.searchTerm && (
-                  <button
-                    onClick={clearSearch}
-                    className="text-gray-400 hover:text-gray-600 ml-2"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                )}
-              </div>
-              <button className="bg-blue-600 text-white px-4 py-3 rounded-lg flex items-center space-x-2">
-                <Filter className="w-4 h-4" />
-                <span className="text-sm font-medium">Filters</span>
+      {/* Mobile Compact Overlay */}
+      <div className="md:hidden absolute top-4 left-4 right-4 z-[1000]">
+        {/* Mobile Search & Filters Panel */}
+        <div className="bg-white rounded-lg shadow-lg border border-gray-200 mb-2">
+          <div className="flex items-center p-3">
+            <Search className="w-5 h-5 text-gray-400 mr-2" />
+            <input
+              type="text"
+              placeholder="Search malls and stores..."
+              value={filters.searchTerm}
+              onChange={(e) => updateFilters({ searchTerm: e.target.value })}
+              onFocus={() => setIsExpanded(true)}
+              className="flex-1 border-none outline-none text-sm placeholder-gray-400"
+            />
+            {filters.searchTerm && (
+              <button
+                onClick={clearSearch}
+                className="text-gray-400 hover:text-gray-600 ml-2"
+              >
+                <X className="w-4 h-4" />
               </button>
-            </div>
+            )}
+            {isExpanded && (
+              <button
+                onClick={() => setIsExpanded(false)}
+                className="text-gray-400 hover:text-gray-600 ml-2"
+              >
+                <Filter className="w-4 h-4" />
+              </button>
+            )}
           </div>
 
-          {/* Mobile Filters - Same as Desktop */}
-          <div className="p-4 space-y-3">
+          {/* Mobile Filters - Only show when expanded */}
+          {isExpanded && (
+            <div className="border-t border-gray-200 p-3 space-y-3">
             {/* Show/Hide Options */}
             <div>
               <label className="text-xs font-medium text-gray-600 mb-2 block">Show</label>
@@ -232,90 +220,92 @@ export default function SearchOverlay({
                 </select>
               </div>
             )}
-          </div>
 
-          {/* Mobile Search Results */}
-          {(filters.searchTerm || filteredResults.length > 0) && (
-            <div className="border-t border-gray-200">
-              <div className="p-4">
-                <h3 className="text-sm font-medium text-gray-900 mb-3">Search Results</h3>
-                {filteredResults.length === 0 ? (
-                  <div className="text-sm text-gray-500 text-center py-8">
-                    No results found
-                  </div>
-                ) : (
-                  <div className="space-y-2">
-                    {filteredResults.slice(0, 10).map((result) => {
-                      const isStore = result.type === 'store'
-                      const item = result.item
-                      const name = isStore ? (item as StoreType).name : (item as Mall).name
-                      const isOpen = isStore ? (item as StoreType).isOpen : (item as Mall).isOpen
-                      const mallName = isStore ? (item as StoreType & { mallName: string }).mallName : undefined
-                      const storeType = isStore ? (item as StoreType).type : undefined
+              {/* Mobile Search Results */}
+              {(filters.searchTerm || filteredResults.length > 0) && (
+                <div className="border-t border-gray-200 max-h-48 overflow-y-auto">
+                  {filteredResults.length === 0 ? (
+                    <div className="p-3 text-sm text-gray-500 text-center">
+                      No results found
+                    </div>
+                  ) : (
+                    <div className="py-1">
+                      {filteredResults.slice(0, 5).map((result) => {
+                        const isStore = result.type === 'store'
+                        const item = result.item
+                        const name = isStore ? (item as StoreType).name : (item as Mall).name
+                        const isOpen = isStore ? (item as StoreType).isOpen : (item as Mall).isOpen
+                        const mallName = isStore ? (item as StoreType & { mallName: string }).mallName : undefined
+                        const storeType = isStore ? (item as StoreType).type : undefined
 
-                      return (
-                        <button
-                          key={`${result.type}-${isStore ? (item as StoreType).id : (item as Mall).id}`}
-                          onClick={() => handleResultClick(result)}
-                          className="w-full text-left p-3 border border-gray-200 rounded-lg hover:bg-gray-50 flex items-center space-x-3"
-                        >
-                          <div className="flex-shrink-0">
-                            {isStore ? (
-                              <Store className={`w-5 h-5 ${isOpen ? 'text-blue-600' : 'text-red-600'}`} />
-                            ) : (
-                              <MapPin className={`w-5 h-5 ${isOpen ? 'text-green-600' : 'text-red-600'}`} />
-                            )}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="text-sm font-medium text-gray-900 truncate">
-                              {name}
-                            </div>
-                            <div className="text-xs text-gray-500 truncate">
+                        return (
+                          <button
+                            key={`${result.type}-${isStore ? (item as StoreType).id : (item as Mall).id}`}
+                            onClick={() => handleResultClick(result)}
+                            className="w-full text-left px-3 py-2 hover:bg-gray-50 flex items-center space-x-2"
+                          >
+                            <div className="flex-shrink-0">
                               {isStore ? (
-                                <>
-                                  {storeType} • {mallName}
-                                </>
+                                <Store className={`w-4 h-4 ${isOpen ? 'text-blue-600' : 'text-red-600'}`} />
                               ) : (
-                                `${(item as Mall).stores.length} store${(item as Mall).stores.length !== 1 ? 's' : ''}`
+                                <MapPin className={`w-4 h-4 ${isOpen ? 'text-green-600' : 'text-red-600'}`} />
                               )}
                             </div>
-                          </div>
-                          <div className={`text-xs px-2 py-1 rounded-full ${
-                            isOpen 
-                              ? 'bg-green-100 text-green-800' 
-                              : 'bg-red-100 text-red-800'
-                          }`}>
-                            {isOpen ? 'Open' : 'Closed'}
-                          </div>
-                        </button>
-                      )
-                    })}
+                            <div className="flex-1 min-w-0">
+                              <div className="text-sm font-medium text-gray-900 truncate">
+                                {name}
+                              </div>
+                              <div className="text-xs text-gray-500 truncate">
+                                {isStore ? (
+                                  <>
+                                    {storeType} • {mallName}
+                                  </>
+                                ) : (
+                                  `${(item as Mall).stores.length} store${(item as Mall).stores.length !== 1 ? 's' : ''}`
+                                )}
+                              </div>
+                            </div>
+                            <div className={`text-xs px-2 py-1 rounded-full ${
+                              isOpen 
+                                ? 'bg-green-100 text-green-800' 
+                                : 'bg-red-100 text-red-800'
+                            }`}>
+                              {isOpen ? 'Open' : 'Closed'}
+                            </div>
+                          </button>
+                        )
+                      })}
+                      {filteredResults.length > 5 && (
+                        <div className="px-3 py-2 text-xs text-gray-500 bg-gray-50">
+                          Showing first 5 of {filteredResults.length} results
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Mobile Quick Stats */}
+              <div className="border-t border-gray-200 p-3">
+                <div className="text-xs text-gray-600 space-y-1">
+                  <div className="flex justify-between">
+                    <span>Total Malls:</span>
+                    <span className="font-medium">{malls.length}</span>
                   </div>
-                )}
+                  <div className="flex justify-between">
+                    <span>Total Stores:</span>
+                    <span className="font-medium">{malls.reduce((sum, mall) => sum + mall.stores.length, 0)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Open Now:</span>
+                    <span className="font-medium text-green-600">
+                      {malls.filter(m => m.isOpen).length + malls.reduce((sum, mall) => sum + mall.stores.filter(s => s.isOpen).length, 0)}
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
           )}
-
-          {/* Mobile Stats */}
-          <div className="border-t border-gray-200 p-4">
-            <h3 className="text-sm font-medium text-gray-900 mb-3">Quick Stats</h3>
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Total Malls:</span>
-                <span className="font-medium">{malls.length}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Total Stores:</span>
-                <span className="font-medium">{malls.reduce((sum, mall) => sum + mall.stores.length, 0)}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Open Now:</span>
-                <span className="font-medium text-green-600">
-                  {malls.filter(m => m.isOpen).length + malls.reduce((sum, mall) => sum + mall.stores.filter(s => s.isOpen).length, 0)}
-                </span>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -349,9 +339,8 @@ export default function SearchOverlay({
           </button>
         </div>
 
-        {/* Expanded Filters */}
-        {isExpanded && (
-          <div className="border-t border-gray-200 p-3 space-y-3">
+        {/* Desktop Filters - Always visible */}
+        <div className="border-t border-gray-200 p-3 space-y-3">
             {/* Show/Hide Options */}
             <div>
               <label className="text-xs font-medium text-gray-600 mb-2 block">Show</label>
@@ -420,7 +409,6 @@ export default function SearchOverlay({
               </div>
             )}
           </div>
-        )}
 
         {/* Search Results */}
         {(filters.searchTerm || isExpanded) && (
@@ -508,13 +496,6 @@ export default function SearchOverlay({
         </div>
       </div>
 
-      {/* Mobile Search Trigger Button */}
-      <button
-        onClick={() => setIsExpanded(true)}
-        className="md:hidden fixed bottom-4 right-4 z-40 bg-blue-600 text-white p-4 rounded-full shadow-lg hover:bg-blue-700 transition-colors"
-      >
-        <Search className="w-6 h-6" />
-      </button>
     </>
   )
 }
