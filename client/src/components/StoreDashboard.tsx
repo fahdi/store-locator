@@ -7,7 +7,6 @@ import {
   Mail,
   Globe,
   MapPin,
-  TrendingUp,
   Calendar,
   Star,
   CheckCircle,
@@ -30,6 +29,7 @@ interface StoreInfo {
   isOpen: boolean
   opening_hours: string
   mallName: string
+  description?: string
   contact?: {
     phone?: string
     email?: string
@@ -75,6 +75,7 @@ export default function StoreDashboard() {
           isOpen: store.isOpen,
           opening_hours: store.opening_hours,
           mallName: mall.name,
+          description: store.description || '',
           contact: store.contact || {}
         }))
       )
@@ -111,6 +112,7 @@ export default function StoreDashboard() {
         isOpen: updatedStore.isOpen,
         opening_hours: updatedStore.opening_hours,
         mallName: selectedStore?.mallName || '',
+        description: updatedStore.description || '',
         contact: updatedStore.contact || {}
       }
       
