@@ -17,7 +17,7 @@ export function useDataService(): UseDataServiceResult {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [retryCount, setRetryCount] = useState(0)
-  const retryTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const retryTimeoutRef = useRef<any>(null)
   const mountedRef = useRef(true)
 
   const clearError = useCallback(() => {
