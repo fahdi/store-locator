@@ -264,23 +264,46 @@
     -moz-appearance: menulist !important;
     min-height: 44px !important;
     font-size: 16px !important; /* Prevents zoom on iOS */
-    margin-bottom: 3rem !important; /* Extra space for dropdown */
+    margin-bottom: 1rem !important;
+    touch-action: manipulation !important;
   }
   
-  .mobile-filters {
-    margin-bottom: 4rem !important;
+  .mobile-filters-container {
+    min-height: auto !important;
+    padding-bottom: 2rem !important;
+    margin-bottom: 6rem !important; /* Increased space for dropdown */
   }
   
-  /* Ensure dropdown options have enough space */
-  .mobile-filters > div > div:last-child {
-    margin-bottom: 4rem !important;
+  /* Ensure each filter section has enough space */
+  .mobile-filters .grid > div {
+    margin-bottom: 2rem !important;
   }
   
-  /* Mobile overlay scroll area */
+  /* Special spacing for last filter (Mall Location) */
+  .mobile-filters .grid > div:last-child,
+  .mobile-mall-filter {
+    margin-bottom: 8rem !important; /* Extra space for Mall Location dropdown */
+    padding-bottom: 4rem !important;
+  }
+  
+  /* Improve select dropdown positioning */
+  .mobile-filters select:focus,
+  .mobile-filters select:active {
+    position: relative !important;
+    z-index: 10 !important;
+  }
+  
+  /* Mobile overlay scroll area with more space */
   @media (max-width: 768px) {
     .mobile-search-content {
-      max-height: calc(100vh - 140px) !important;
+      max-height: calc(100vh - 120px) !important;
       overflow-y: auto !important;
+      -webkit-overflow-scrolling: touch !important;
+    }
+    
+    /* Ensure scroll container has proper bottom padding */
+    .mobile-search-content > div {
+      padding-bottom: 12rem !important; /* Increased from pb-48 equivalent */
     }
   }
 }

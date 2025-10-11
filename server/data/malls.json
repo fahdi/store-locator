@@ -17,7 +17,7 @@
         "id": 102,
         "name": "Gulf Fashion",
         "type": "Clothing",
-        "isOpen": false,
+        "isOpen": true,
         "opening_hours": "Mon–Sun 10:00 AM – 9:00 PM"
       }
     ]

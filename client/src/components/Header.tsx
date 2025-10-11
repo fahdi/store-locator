@@ -37,8 +37,12 @@ export default function Header({ currentPage, showSearch = false, searchComponen
               className="flex items-center space-x-2 sm:space-x-3 hover:opacity-80 transition-opacity duration-200"
               aria-label="Go to home page"
             >
-              <div className="w-8 h-8 bg-gray-900 rounded-md flex items-center justify-center">
-                <span className="text-white font-bold text-sm">B</span>
+              <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-blue-800 rounded-lg flex items-center justify-center shadow-sm">
+                <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                  <circle cx="18" cy="18" r="3" fill="currentColor"/>
+                  <rect x="16.5" y="17" width="3" height="2" rx="0.5" fill="white"/>
+                </svg>
               </div>
               <h1 className="text-lg sm:text-xl font-bold text-gray-900">
                 <span className="hidden sm:inline">BlueSky Store Locator</span>

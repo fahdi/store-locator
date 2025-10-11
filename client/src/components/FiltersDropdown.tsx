@@ -38,9 +38,9 @@ export default function FiltersDropdown({ malls, onFiltersChange, className = ''
   }
 
   return (
-    <div className={`bg-white ${className?.includes('mobile-filters') ? '' : 'border-b border-gray-200 shadow-sm'} ${className}`}>
+    <div className={`bg-white ${className?.includes('mobile-filters') ? 'mobile-filters-container' : 'border-b border-gray-200 shadow-sm'} ${className}`}>
       <div className={`${className?.includes('mobile-filters') ? 'px-0 py-0' : 'max-w-7xl mx-auto px-4 py-4'}`}>
-        <div className={`grid gap-4 ${className?.includes('mobile-filters') ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-3'}`}>
+        <div className={`grid gap-4 ${className?.includes('mobile-filters') ? 'grid-cols-1 space-y-1' : 'grid-cols-1 md:grid-cols-3'}`}>
           
           {/* Status Filter */}
           <div>
@@ -51,7 +51,7 @@ export default function FiltersDropdown({ malls, onFiltersChange, className = ''
             <select
               value={filters.statusFilter}
               onChange={(e) => updateFilter('statusFilter', e.target.value)}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-3 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent min-h-[44px] touch-manipulation"
             >
               <option value="all">All Locations</option>
               <option value="open">Open Now</option>
@@ -68,7 +68,7 @@ export default function FiltersDropdown({ malls, onFiltersChange, className = ''
             <select
               value={filters.storeTypeFilter}
               onChange={(e) => updateFilter('storeTypeFilter', e.target.value)}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-3 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent min-h-[44px] touch-manipulation"
             >
               <option value="">All Types</option>
               {storeTypes.map(type => (
@@ -78,7 +78,7 @@ export default function FiltersDropdown({ malls, onFiltersChange, className = ''
           </div>
 
           {/* Mall Filter */}
-          <div>
+          <div className={className?.includes('mobile-filters') ? 'mobile-mall-filter' : ''}>
             <label className="block text-xs font-medium text-gray-700 mb-2">
               <MapPin className="inline h-3 w-3 mr-1" />
               Mall Location
@@ -86,7 +86,7 @@ export default function FiltersDropdown({ malls, onFiltersChange, className = ''
             <select
               value={filters.mallFilter}
               onChange={(e) => updateFilter('mallFilter', e.target.value)}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-3 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent min-h-[44px] touch-manipulation"
             >
               <option value="">All Malls</option>
               {mallNames.map(mall => (

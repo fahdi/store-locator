@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { MapContainer, TileLayer, Marker, Popup, Tooltip } from 'react-leaflet'
+import { useState, useEffect, useRef } from 'react'
+import { MapContainer, TileLayer, Marker, Popup, Tooltip, ZoomControl } from 'react-leaflet'
 import L from 'leaflet'
 import toast from 'react-hot-toast'
 import 'leaflet/dist/leaflet.css'
@@ -15,41 +15,42 @@ import { Mall, Store } from '../types'
 import { DOHA_CENTER } from '../utils/constants'
 import { useDataService } from '../hooks/useDataService'
 import DetailModal from './DetailModal'
+import SearchOverlay, { SearchFilters } from './SearchOverlay'
 
 interface MapViewProps {
   malls?: Mall[] // Make optional since we'll fetch data internally
 }
 
-// Custom icon for open malls
+// Custom icon for open malls - Large marker style
 const openMallIcon = new L.Icon({
-  iconUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8Y2lyY2xlIGN4PSIxNiIgY3k9IjE2IiByPSIxNSIgZmlsbD0iIzEwQjk4MSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiLz4KICA8cGF0aCBkPSJNMTYgNkM5LjM3IDYgNCA5LjM3IDQgMTNDNCAyMC4yNSAxNiAyOCAxNiAyOEMxNiAyOCAyOCAyMC4yNSAyOCAxM0MyOCA5LjM3IDIyLjYzIDYgMTYgNlpNMTYgMTVDMTQuMzQgMTUgMTMgMTMuNjYgMTMgMTJDMTMgMTAuMzQgMTQuMzQgOSAxNiA5QzE3LjY2IDkgMTkgMTAuMzQgMTkgMTJDMTkgMTMuNjYgMTcuNjYgMTUgMTYgMTVaIiBmaWxsPSIjZmZmIi8+Cjwvc3ZnPg==',
-  iconSize: [32, 32],
-  iconAnchor: [16, 32],
-  popupAnchor: [0, -32],
+  iconUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNTAiIHZpZXdCb3g9IjAgMCA0MCA1MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8IS0tIE1hcmtlciBTaGFkb3cgLS0+CiAgPGVsbGlwc2UgY3g9IjIwIiBjeT0iNDciIHJ4PSI2IiByeT0iMyIgZmlsbD0iIzAwMCIgb3BhY2l0eT0iMC4yIi8+CiAgPCEtLSBNYXJrZXIgQm9keSAtLT4KICA8cGF0aCBkPSJNMjAgNEMxMC42IDQgMyAxMS42IDMgMjFDMyAzMy41IDIwIDQ2IDIwIDQ2UzM3IDMzLjUgMzcgMjFDMzcgMTEuNiAyOS40IDQgMjAgNFoiIGZpbGw9IiMxMGI5ODEiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSIzIi8+CiAgPCEtLSBNYWxsIEljb24gLS0+CiAgPGNpcmNsZSBjeD0iMjAiIGN5PSIyMSIgcj0iMTAiIGZpbGw9IiNmZmYiLz4KICA8IS0tIEJ1aWxkaW5nIEljb24gLS0+CiAgPHJlY3QgeD0iMTQiIHk9IjE3IiB3aWR0aD0iMTIiIGhlaWdodD0iOCIgZmlsbD0iIzEwYjk4MSIgcng9IjEiLz4KICA8cmVjdCB4PSIxNiIgeT0iMTkiIHdpZHRoPSIyIiBoZWlnaHQ9IjIiIGZpbGw9IiNmZmYiLz4KICA8cmVjdCB4PSIyMCIgeT0iMTkiIHdpZHRoPSIyIiBoZWlnaHQ9IjIiIGZpbGw9IiNmZmYiLz4KICA8cmVjdCB4PSIyNCIgeT0iMTkiIHdpZHRoPSIyIiBoZWlnaHQ9IjIiIGZpbGw9IiNmZmYiLz4KICA8cmVjdCB4PSIxOCIgeT0iMjMiIHdpZHRoPSI0IiBoZWlnaHQ9IjIiIGZpbGw9IiNmZmYiLz4KPC9zdmc+',
+  iconSize: [40, 50],
+  iconAnchor: [20, 50],
+  popupAnchor: [0, -50],
 })
 
-// Custom icon for closed malls
+// Custom icon for closed malls - Large marker style with X
 const closedMallIcon = new L.Icon({
-  iconUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8Y2lyY2xlIGN4PSIxNiIgY3k9IjE2IiByPSIxNSIgZmlsbD0iI0RDMjYyNiIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiLz4KICA8cGF0aCBkPSJNMTYgNkM5LjM3IDYgNCA5LjM3IDQgMTNDNCAyMC4yNSAxNiAyOCAxNiAyOEMxNiAyOCAyOCAyMC4yNSAyOCAxM0MyOCA5LjM3IDIyLjYzIDYgMTYgNloiIGZpbGw9IiNmZmYiLz4KICA8bGluZSB4MT0iMTAiIHkxPSIxMCIgeDI9IjIyIiB5Mj0iMjIiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSIyLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDxsaW5lIHgxPSIyMiIgeTE9IjEwIiB4Mj0iMTAiIHkyPSIyMiIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+Cjwvc3ZnPg==',
-  iconSize: [32, 32],
-  iconAnchor: [16, 32],
-  popupAnchor: [0, -32],
+  iconUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNTAiIHZpZXdCb3g9IjAgMCA0MCA1MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8IS0tIE1hcmtlciBTaGFkb3cgLS0+CiAgPGVsbGlwc2UgY3g9IjIwIiBjeT0iNDciIHJ4PSI2IiByeT0iMyIgZmlsbD0iIzAwMCIgb3BhY2l0eT0iMC4yIi8+CiAgPCEtLSBNYXJrZXIgQm9keSAtLT4KICA8cGF0aCBkPSJNMjAgNEMxMC42IDQgMyAxMS42IDMgMjFDMyAzMy41IDIwIDQ2IDIwIDQ2UzM3IDMzLjUgMzcgMjFDMzcgMTEuNiAyOS40IDQgMjAgNFoiIGZpbGw9IiNkYzI2MjYiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSIzIi8+CiAgPCEtLSBYIE92ZXJsYXkgLS0+CiAgPGNpcmNsZSBjeD0iMjAiIGN5PSIyMSIgcj0iMTAiIGZpbGw9IiNmZmYiLz4KICA8bGluZSB4MT0iMTQiIHkxPSIxNSIgeDI9IjI2IiB5Mj0iMjciIHN0cm9rZT0iI2RjMjYyNiIgc3Ryb2tlLXdpZHRoPSIzIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8bGluZSB4MT0iMjYiIHkxPSIxNSIgeDI9IjE0IiB5Mj0iMjciIHN0cm9rZT0iI2RjMjYyNiIgc3Ryb2tlLXdpZHRoPSIzIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPC9zdmc+',
+  iconSize: [40, 50],
+  iconAnchor: [20, 50],
+  popupAnchor: [0, -50],
 })
 
-// Custom icon for open stores (smaller, different color)
+// Custom icon for open stores - Smaller marker style
 const openStoreIcon = new L.Icon({
-  iconUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxMSIgZmlsbD0iIzA2ODhCMCIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiLz4KICA8cGF0aCBkPSJNMTIgNEMxMS40NSA0IDExIDQuNDUgMTEgNVYxMUg1QzQuNDUgMTEgNCAxMS40NSA0IDEyQzQgMTIuNTUgNC40NSAxMyA1IDEzSDExVjE5QzExIDE5LjU1IDExLjQ1IDIwIDEyIDIwQzEyLjU1IDIwIDEzIDE5LjU1IDEzIDE5VjEzSDE5QzE5LjU1IDEzIDIwIDEyLjU1IDIwIDEyQzIwIDExLjQ1IDE5LjU1IDExIDE5IDExSDEzVjVDMTMgNC40NSAxMi41NSA0IDEyIDRaIiBmaWxsPSIjZmZmIi8+Cjwvc3ZnPg==',
-  iconSize: [24, 24],
-  iconAnchor: [12, 24],
-  popupAnchor: [0, -24],
+  iconUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzgiIHZpZXdCb3g9IjAgMCAzMCAzOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8IS0tIE1hcmtlciBTaGFkb3cgLS0+CiAgPGVsbGlwc2UgY3g9IjE1IiBjeT0iMzYiIHJ4PSI0LjUiIHJ5PSIyIiBmaWxsPSIjMDAwIiBvcGFjaXR5PSIwLjIiLz4KICA8IS0tIE1hcmtlciBCb2R5IC0tPgogIDxwYXRoIGQ9Ik0xNSAzQzguOSAzIDQgNy45IDQgMTRDNCAyMy41IDE1IDM1IDE1IDM1UzI2IDIzLjUgMjYgMTRDMjYgNy45IDIxLjEgMyAxNSAzWiIgZmlsbD0iIzA2ODhiMCIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIuNSIvPgogIDwhLS0gU3RvcmUgSWNvbiAtLT4KICA8Y2lyY2xlIGN4PSIxNSIgY3k9IjE0IiByPSI3IiBmaWxsPSIjZmZmIi8+CiAgPCEtLSBTaG9wIEljb24gLS0+CiAgPHJlY3QgeD0iMTEiIHk9IjExIiB3aWR0aD0iOCIgaGVpZ2h0PSI2IiBmaWxsPSIjMDY4OGIwIiByeD0iMC41Ii8+CiAgPHJlY3QgeD0iMTIiIHk9IjEyIiB3aWR0aD0iMS41IiBoZWlnaHQ9IjEuNSIgZmlsbD0iI2ZmZiIvPgogIDxyZWN0IHg9IjE1IiB5PSIxMiIgd2lkdGg9IjEuNSIgaGVpZ2h0PSIxLjUiIGZpbGw9IiNmZmYiLz4KICA8cmVjdCB4PSIxNCIgeT0iMTUiIHdpZHRoPSIyIiBoZWlnaHQ9IjIiIGZpbGw9IiNmZmYiLz4KPC9zdmc+',
+  iconSize: [30, 38],
+  iconAnchor: [15, 38],
+  popupAnchor: [0, -38],
 })
 
-// Custom icon for closed stores (smaller, different color)
+// Custom icon for closed stores - Smaller marker style with X
 const closedStoreIcon = new L.Icon({
-  iconUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxMSIgZmlsbD0iI0RDMjYyNiIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiLz4KICA8cGF0aCBkPSJNOSA5TDE1IDE1TTkgMTVMMTUgOSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4=',
-  iconSize: [24, 24],
-  iconAnchor: [12, 24],
-  popupAnchor: [0, -24],
+  iconUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzgiIHZpZXdCb3g9IjAgMCAzMCAzOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8IS0tIE1hcmtlciBTaGFkb3cgLS0+CiAgPGVsbGlwc2UgY3g9IjE1IiBjeT0iMzYiIHJ4PSI0LjUiIHJ5PSIyIiBmaWxsPSIjMDAwIiBvcGFjaXR5PSIwLjIiLz4KICA8IS0tIE1hcmtlciBCb2R5IC0tPgogIDxwYXRoIGQ9Ik0xNSAzQzguOSAzIDQgNy45IDQgMTRDNCAyMy41IDE1IDM1IDE1IDM1UzI2IDIzLjUgMjYgMTRDMjYgNy45IDIxLjEgMyAxNSAzWiIgZmlsbD0iI2RjMjYyNiIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIuNSIvPgogIDwhLS0gWCBPdmVybGF5IC0tPgogIDxjaXJjbGUgY3g9IjE1IiBjeT0iMTQiIHI9IjciIGZpbGw9IiNmZmYiLz4KICA8bGluZSB4MT0iMTEiIHkxPSIxMCIgeDI9IjE5IiB5Mj0iMTgiIHN0cm9rZT0iI2RjMjYyNiIgc3Ryb2tlLXdpZHRoPSIyLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDxsaW5lIHgxPSIxOSIgeTE9IjEwIiB4Mj0iMTEiIHkyPSIxOCIgc3Ryb2tlPSIjZGMyNjI2IiBzdHJva2Utd2lkdGg9IjIuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+Cjwvc3ZnPg==',
+  iconSize: [30, 38],
+  iconAnchor: [15, 38],
+  popupAnchor: [0, -38],
 })
 
 // Helper function to generate store coordinates (mimics server logic)
@@ -79,6 +80,15 @@ export default function MapView({ malls: propMalls }: MapViewProps) {
     loading: false
   })
   const [localMalls, setLocalMalls] = useState<Mall[]>([])
+  const [searchFilters, setSearchFilters] = useState<SearchFilters>({
+    searchTerm: '',
+    showMalls: true,
+    showStores: true,
+    showOpen: true,
+    showClosed: true,
+    storeType: 'all'
+  })
+  const mapRef = useRef<any>(null)
 
   // Use prop malls if provided, otherwise use fetched malls
   // localMalls will override for real-time updates
@@ -197,6 +207,59 @@ export default function MapView({ malls: propMalls }: MapViewProps) {
     setModalState({ isOpen: false, loading: false })
   }
 
+  // Handle search overlay interactions
+  const handleMallSelectFromSearch = (mall: Mall) => {
+    openMallModal(mall)
+    // Center map on selected mall
+    if (mapRef.current) {
+      mapRef.current.setView([mall.latitude, mall.longitude], 14)
+    }
+  }
+
+  const handleStoreSelectFromSearch = (store: Store, mallName: string, mallId: number) => {
+    openStoreModal(store, mallName, mallId)
+    // Center map on store's mall
+    const mall = malls.find(m => m.id === mallId)
+    if (mall && mapRef.current) {
+      const storeCoords = generateStoreCoordinates(mall.latitude, mall.longitude, store.id, mall.stores.indexOf(store))
+      mapRef.current.setView([storeCoords.latitude, storeCoords.longitude], 16)
+    }
+  }
+
+  const handleFilterChange = (filters: SearchFilters) => {
+    setSearchFilters(filters)
+  }
+
+  // Filter malls and stores based on search filters
+  const getFilteredMalls = () => {
+    return malls.map(mall => {
+      // Filter stores
+      const filteredStores = mall.stores.filter(store => {
+        const statusMatch = (store.isOpen && searchFilters.showOpen) || (!store.isOpen && searchFilters.showClosed)
+        const typeMatch = searchFilters.storeType === 'all' || store.type === searchFilters.storeType
+        const searchMatch = !searchFilters.searchTerm || 
+          store.name.toLowerCase().includes(searchFilters.searchTerm.toLowerCase()) ||
+          store.type.toLowerCase().includes(searchFilters.searchTerm.toLowerCase())
+        
+        return statusMatch && typeMatch && searchMatch && searchFilters.showStores
+      })
+
+      // Check if mall should be shown
+      const mallStatusMatch = (mall.isOpen && searchFilters.showOpen) || (!mall.isOpen && searchFilters.showClosed)
+      const mallSearchMatch = !searchFilters.searchTerm || 
+        mall.name.toLowerCase().includes(searchFilters.searchTerm.toLowerCase())
+      const showMall = mallStatusMatch && mallSearchMatch && searchFilters.showMalls
+
+      return {
+        ...mall,
+        stores: filteredStores,
+        _showMall: showMall
+      }
+    }).filter(mall => mall._showMall || mall.stores.length > 0)
+  }
+
+  const filteredMalls = getFilteredMalls()
+
   // Show error state
   if (error) {
     return (
@@ -246,33 +309,45 @@ export default function MapView({ malls: propMalls }: MapViewProps) {
   return (
     <>
       <div className="h-full w-full relative overflow-hidden">
-      <MapContainer
-        center={[DOHA_CENTER.latitude, DOHA_CENTER.longitude]}
-        zoom={11}
-        style={{ height: '100%', width: '100%', minHeight: 'calc(100vh - 140px)' }}
-        className="h-full w-full rounded-lg"
-        zoomControl={true}
-        scrollWheelZoom={true}
-        touchZoom={true}
-        doubleClickZoom={true}
-        dragging={true}
-        attributionControl={true}
-        zoomAnimation={true}
-        fadeAnimation={true}
-        markerZoomAnimation={true}
-        zoomSnap={0.5}
-        zoomDelta={0.5}
-        wheelDebounceTime={40}
-        wheelPxPerZoomLevel={60}
-      >
+        {/* Search Overlay */}
+        <SearchOverlay
+          malls={malls}
+          onMallSelect={handleMallSelectFromSearch}
+          onStoreSelect={handleStoreSelectFromSearch}
+          onFilterChange={handleFilterChange}
+        />
+
+        <MapContainer
+          ref={mapRef}
+          center={[DOHA_CENTER.latitude, DOHA_CENTER.longitude]}
+          zoom={11}
+          style={{ height: '100%', width: '100%', minHeight: 'calc(100vh - 140px)' }}
+          className="h-full w-full rounded-lg"
+          zoomControl={false}
+          scrollWheelZoom={true}
+          touchZoom={true}
+          doubleClickZoom={true}
+          dragging={true}
+          attributionControl={true}
+          zoomAnimation={true}
+          fadeAnimation={true}
+          markerZoomAnimation={true}
+          zoomSnap={0.5}
+          zoomDelta={0.5}
+          wheelDebounceTime={40}
+          wheelPxPerZoomLevel={60}
+        >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
+
+        {/* Custom positioned zoom control */}
+        <ZoomControl position="bottomright" />
         
         
         {/* Mall Markers */}
-        {malls.map((mall) => {
+        {filteredMalls.filter(mall => mall._showMall).map((mall) => {
           const lat = mall.latitude
           const lng = mall.longitude
           
@@ -320,7 +395,7 @@ export default function MapView({ malls: propMalls }: MapViewProps) {
         }).filter(Boolean)}
 
         {/* Store Markers */}
-        {malls.flatMap((mall) => {
+        {filteredMalls.flatMap((mall) => {
           const mallLat = mall.latitude
           const mallLng = mall.longitude
           
