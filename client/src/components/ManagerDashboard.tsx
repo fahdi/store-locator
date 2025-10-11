@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { 
   Store, 
   Clock,
@@ -13,6 +14,7 @@ import {
 } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import { useDataService } from '../hooks/useDataService'
+import { ROUTES } from '../utils/constants'
 
 interface ManagerStats {
   assignedStores: number
@@ -205,18 +207,32 @@ export default function ManagerDashboard() {
         <div className="bg-white rounded-2xl shadow-sm p-6">
           <h3 className="text-lg font-bold text-gray-900 mb-4">Quick Actions</h3>
           <div className="space-y-3">
-            <button className="w-full flex items-center justify-between p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">
+            <Link 
+              to={ROUTES.HOME}
+              className="w-full flex items-center justify-between p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors group"
+            >
               <div className="flex items-center space-x-3">
                 <MapPin className="w-5 h-5 text-blue-600" />
                 <span className="font-medium text-gray-900">View Live Map</span>
               </div>
-            </button>
-            <button className="w-full flex items-center justify-between p-3 bg-green-50 rounded-lg hover:bg-green-100 transition-colors">
-              <div className="flex items-center space-x-3">
-                <BarChart3 className="w-5 h-5 text-green-600" />
-                <span className="font-medium text-gray-900">Store Analytics</span>
-              </div>
-            </button>
+            </Link>
+            <div className="relative">
+              <button 
+                className="w-full flex items-center justify-between p-3 bg-gray-50 rounded-lg cursor-not-allowed opacity-60"
+                disabled
+                title="Coming soon - Store Analytics feature under development"
+              >
+                <div className="flex items-center space-x-3">
+                  <BarChart3 className="w-5 h-5 text-gray-400" />
+                  <div className="flex items-center space-x-2">
+                    <span className="font-medium text-gray-500">Store Analytics</span>
+                    <span className="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded-full">
+                      Coming soon
+                    </span>
+                  </div>
+                </div>
+              </button>
+            </div>
           </div>
         </div>
 
