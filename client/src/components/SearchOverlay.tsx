@@ -163,86 +163,75 @@ export default function SearchOverlay({
             </div>
           </div>
 
-          {/* Mobile Filters */}
-          <div className="p-4 space-y-6">
-            {/* Status Filter */}
+          {/* Mobile Filters - Same as Desktop */}
+          <div className="p-4 space-y-3">
+            {/* Show/Hide Options */}
             <div>
-              <div className="flex items-center space-x-2 mb-3">
-                <div className="w-5 h-5 rounded-full bg-gray-200 flex items-center justify-center">
-                  <div className="w-2 h-2 rounded-full bg-gray-500"></div>
-                </div>
-                <label className="text-sm font-medium text-gray-900">Status</label>
-              </div>
-              <select
-                value={
-                  filters.showOpen && filters.showClosed ? 'all' :
-                  filters.showOpen ? 'open' :
-                  filters.showClosed ? 'closed' : 'none'
-                }
-                onChange={(e) => {
-                  const value = e.target.value
-                  if (value === 'all') {
-                    updateFilters({ showOpen: true, showClosed: true })
-                  } else if (value === 'open') {
-                    updateFilters({ showOpen: true, showClosed: false })
-                  } else if (value === 'closed') {
-                    updateFilters({ showOpen: false, showClosed: true })
-                  }
-                }}
-                className="w-full text-sm border border-gray-300 rounded-lg px-3 py-3 bg-white text-gray-600"
-              >
-                <option value="all">All Locations</option>
-                <option value="open">Open Only</option>
-                <option value="closed">Closed Only</option>
-              </select>
-            </div>
-
-            {/* Store Type Filter */}
-            <div>
-              <div className="flex items-center space-x-2 mb-3">
-                <Store className="w-5 h-5 text-gray-500" />
-                <label className="text-sm font-medium text-gray-900">Store Type</label>
-              </div>
-              <select
-                value={filters.storeType}
-                onChange={(e) => updateFilters({ storeType: e.target.value })}
-                className="w-full text-sm border border-gray-300 rounded-lg px-3 py-3 bg-white text-gray-600"
-              >
-                {storeTypes.map(type => (
-                  <option key={type} value={type}>
-                    {type === 'all' ? 'All Types' : type}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Show/Hide Toggle */}
-            <div>
-              <div className="flex items-center space-x-2 mb-3">
-                <MapPin className="w-5 h-5 text-gray-500" />
-                <label className="text-sm font-medium text-gray-900">Show on Map</label>
-              </div>
-              <div className="space-y-3">
-                <label className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                  <span className="text-sm text-gray-700">Malls</span>
+              <label className="text-xs font-medium text-gray-600 mb-2 block">Show</label>
+              <div className="flex flex-wrap gap-2">
+                <label className="flex items-center text-sm">
                   <input
                     type="checkbox"
                     checked={filters.showMalls}
                     onChange={(e) => updateFilters({ showMalls: e.target.checked })}
-                    className="h-5 w-5 text-blue-600 rounded"
+                    className="mr-1"
                   />
+                  Malls
                 </label>
-                <label className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                  <span className="text-sm text-gray-700">Stores</span>
+                <label className="flex items-center text-sm">
                   <input
                     type="checkbox"
                     checked={filters.showStores}
                     onChange={(e) => updateFilters({ showStores: e.target.checked })}
-                    className="h-5 w-5 text-blue-600 rounded"
+                    className="mr-1"
                   />
+                  Stores
                 </label>
               </div>
             </div>
+
+            {/* Status Filter */}
+            <div>
+              <label className="text-xs font-medium text-gray-600 mb-2 block">Status</label>
+              <div className="flex flex-wrap gap-2">
+                <label className="flex items-center text-sm">
+                  <input
+                    type="checkbox"
+                    checked={filters.showOpen}
+                    onChange={(e) => updateFilters({ showOpen: e.target.checked })}
+                    className="mr-1"
+                  />
+                  <span className="text-green-600">Open</span>
+                </label>
+                <label className="flex items-center text-sm">
+                  <input
+                    type="checkbox"
+                    checked={filters.showClosed}
+                    onChange={(e) => updateFilters({ showClosed: e.target.checked })}
+                    className="mr-1"
+                  />
+                  <span className="text-red-600">Closed</span>
+                </label>
+              </div>
+            </div>
+
+            {/* Store Type Filter */}
+            {filters.showStores && (
+              <div>
+                <label className="text-xs font-medium text-gray-600 mb-2 block">Store Type</label>
+                <select
+                  value={filters.storeType}
+                  onChange={(e) => updateFilters({ storeType: e.target.value })}
+                  className="w-full text-sm border border-gray-300 rounded px-2 py-1"
+                >
+                  {storeTypes.map(type => (
+                    <option key={type} value={type}>
+                      {type === 'all' ? 'All Types' : type}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
           </div>
 
           {/* Mobile Search Results */}
