@@ -306,9 +306,18 @@ export default function StoreDashboard() {
               <label className="text-sm font-medium text-gray-500 mb-3 block">Contact Information</label>
               <div className="space-y-3">
                 {selectedStore.contact?.phone && (
-                  <div className="flex items-center space-x-3">
-                    <Phone className="w-4 h-4 text-gray-400" />
-                    <span className="text-gray-900">{selectedStore.contact.phone}</span>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <Phone className="w-4 h-4 text-gray-400" />
+                      <span className="text-gray-900">{selectedStore.contact.phone}</span>
+                    </div>
+                    <a
+                      href={`tel:${selectedStore.contact.phone}`}
+                      className="inline-flex items-center px-3 py-1 bg-green-100 text-green-700 hover:bg-green-200 rounded-full text-sm font-medium transition-colors"
+                    >
+                      <Phone className="w-3 h-3 mr-1" />
+                      Call
+                    </a>
                   </div>
                 )}
                 {selectedStore.contact?.email && (
