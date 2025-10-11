@@ -239,38 +239,53 @@ export default function AdminDashboard() {
                 <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-gray-600" aria-hidden="true" />
               </Link>
 
-              <Link 
-                to={ROUTES.MAP}
-                className="w-full flex items-center justify-between p-4 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 transition-colors group focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+              <div 
+                className="w-full flex items-center justify-between p-4 bg-gray-50 border border-gray-200 rounded-lg opacity-60 cursor-not-allowed group relative"
                 aria-describedby="view-analytics-desc"
+                title="Feature coming soon"
               >
                 <div className="flex items-center space-x-3">
-                  <div className="p-2 bg-emerald-50 border border-emerald-200 rounded-lg" aria-hidden="true">
-                    <BarChart3 className="w-5 h-5 text-emerald-600" />
+                  <div className="p-2 bg-gray-100 border border-gray-300 rounded-lg" aria-hidden="true">
+                    <BarChart3 className="w-5 h-5 text-gray-500" />
                   </div>
                   <div className="text-left">
-                    <div className="font-medium text-gray-900">View Analytics</div>
-                    <div id="view-analytics-desc" className="text-sm text-gray-500">Performance insights</div>
+                    <div className="font-medium text-gray-600">View Analytics</div>
+                    <div id="view-analytics-desc" className="text-sm text-gray-500">Coming soon</div>
                   </div>
                 </div>
-                <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-gray-600" aria-hidden="true" />
-              </Link>
+                <div className="flex items-center space-x-2">
+                  <span className="text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded-full">Soon</span>
+                  <ChevronRight className="w-5 h-5 text-gray-300" aria-hidden="true" />
+                </div>
+                {/* Tooltip on hover */}
+                <div className="absolute left-1/2 transform -translate-x-1/2 -top-12 bg-gray-900 text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
+                  Analytics dashboard coming soon
+                </div>
+              </div>
 
-              <button 
-                className="w-full flex items-center justify-between p-4 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 transition-colors group focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+              <div 
+                className="w-full flex items-center justify-between p-4 bg-gray-50 border border-gray-200 rounded-lg opacity-60 cursor-not-allowed group relative"
                 aria-describedby="manage-users-desc"
+                title="Feature coming soon"
               >
                 <div className="flex items-center space-x-3">
-                  <div className="p-2 bg-violet-50 border border-violet-200 rounded-lg" aria-hidden="true">
-                    <Users className="w-5 h-5 text-violet-600" />
+                  <div className="p-2 bg-gray-100 border border-gray-300 rounded-lg" aria-hidden="true">
+                    <Users className="w-5 h-5 text-gray-500" />
                   </div>
                   <div className="text-left">
-                    <div className="font-medium text-gray-900">Manage Users</div>
-                    <div id="manage-users-desc" className="text-sm text-gray-500">Roles & permissions</div>
+                    <div className="font-medium text-gray-600">Manage Users</div>
+                    <div id="manage-users-desc" className="text-sm text-gray-500">Coming soon</div>
                   </div>
                 </div>
-                <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-gray-600" aria-hidden="true" />
-              </button>
+                <div className="flex items-center space-x-2">
+                  <span className="text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded-full">Soon</span>
+                  <ChevronRight className="w-5 h-5 text-gray-300" aria-hidden="true" />
+                </div>
+                {/* Tooltip on hover */}
+                <div className="absolute left-1/2 transform -translate-x-1/2 -top-12 bg-gray-900 text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
+                  User management coming soon
+                </div>
+              </div>
             </nav>
           </section>
         </div>
