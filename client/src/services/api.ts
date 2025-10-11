@@ -78,6 +78,14 @@ export const mallAPI = {
   },
 }
 
+// Activity API
+export const activityAPI = {
+  getActivities: async (limit: number = 50): Promise<any[]> => {
+    const response = await api.get(`/api/activities?limit=${limit}`)
+    return response.data
+  },
+}
+
 // Utility API
 export const utilityAPI = {
   healthCheck: async (): Promise<{ status: string; timestamp: string }> => {

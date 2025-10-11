@@ -1,0 +1,38 @@
+[
+  {
+    "id": "activity_1760190674779_240hig5sa",
+    "type": "mall_toggle",
+    "mallName": "Doha City Center Mall",
+    "mallId": 1,
+    "storeName": null,
+    "storeId": null,
+    "timestamp": "2025-10-11T13:51:14.779Z",
+    "user": "admin",
+    "action": "opened",
+    "description": "Doha City Center Mall was opened"
+  },
+  {
+    "id": "activity_1760190671212_4jufupsdf",
+    "type": "mall_toggle",
+    "mallName": "Doha City Center Mall",
+    "mallId": 1,
+    "storeName": null,
+    "storeId": null,
+    "timestamp": "2025-10-11T13:51:11.212Z",
+    "user": "admin",
+    "action": "closed",
+    "description": "Doha City Center Mall was closed"
+  },
+  {
+    "id": "activity_1760190667893_4acaoxn6m",
+    "type": "mall_toggle",
+    "mallName": "Doha City Center Mall",
+    "mallId": 1,
+    "storeName": null,
+    "storeId": null,
+    "timestamp": "2025-10-11T13:51:07.893Z",
+    "user": "admin",
+    "action": "opened",
+    "description": "Doha City Center Mall was opened"
+  }
+]

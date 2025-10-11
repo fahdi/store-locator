@@ -27,7 +27,18 @@ const users = [
 
 // Load mall data
 const DATA_PATH = "./data/malls.json";
+const ACTIVITIES_PATH = "./data/activities.json";
 let malls = JSON.parse(fs.readFileSync(DATA_PATH, "utf-8"));
+
+// Load activities data
+let activities = [];
+try {
+  activities = JSON.parse(fs.readFileSync(ACTIVITIES_PATH, "utf-8"));
+} catch (error) {
+  console.log("Creating new activities file...");
+  fs.writeFileSync(ACTIVITIES_PATH, JSON.stringify([], null, 2));
+  activities = [];
+}
 
 // Generate flattened stores data for mock endpoints
 let stores = malls.flatMap((mall) => 
@@ -48,6 +59,41 @@ let forcedFailure = false;
 // Utility: Random delay for mock endpoints
 function randomDelay(min = 400, max = 1500) {
   return new Promise((resolve) => setTimeout(resolve, Math.random() * (max - min) + min));
+}
+
+// Utility: Add activity to log
+function addActivity(type, mallName, mallId, user, action, storeName = null, storeId = null) {
+  const activity = {
+    id: `activity_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`,
+    type,
+    mallName,
+    mallId,
+    storeName,
+    storeId,
+    timestamp: new Date().toISOString(),
+    user,
+    action,
+    description: storeName 
+      ? `${storeName} in ${mallName} was ${action}`
+      : `${mallName} was ${action}`
+  };
+
+  // Add to beginning of array (most recent first)
+  activities.unshift(activity);
+  
+  // Keep only last 100 activities to prevent unbounded growth
+  if (activities.length > 100) {
+    activities = activities.slice(0, 100);
+  }
+
+  // Save to file
+  try {
+    fs.writeFileSync(ACTIVITIES_PATH, JSON.stringify(activities, null, 2));
+  } catch (error) {
+    console.error("Failed to save activities:", error);
+  }
+
+  return activity;
 }
 
 // Middleware: JWT Authentication with role-based access
@@ -102,6 +148,13 @@ app.get("/api/malls", auth(), (req, res) => {
   res.json(malls);
 });
 
+// Get recent activities (requires authentication)
+app.get("/api/activities", auth(), (req, res) => {
+  const limit = parseInt(req.query.limit) || 50;
+  const recentActivities = activities.slice(0, Math.min(limit, activities.length));
+  res.json(recentActivities);
+});
+
 // Admin: Toggle entire mall open/close (affects all stores)
 app.patch("/api/malls/:id/toggle", auth(["admin"]), (req, res) => {
   const mall = malls.find(m => m.id == req.params.id);
@@ -110,6 +163,8 @@ app.patch("/api/malls/:id/toggle", auth(["admin"]), (req, res) => {
   }
 
   mall.isOpen = !mall.isOpen;
+  const action = mall.isOpen ? 'opened' : 'closed';
+  
   // Cascade to all stores in the mall
   mall.stores.forEach(store => {
     store.isOpen = mall.isOpen;
@@ -123,9 +178,13 @@ app.patch("/api/malls/:id/toggle", auth(["admin"]), (req, res) => {
     store.mallId === mall.id ? { ...store, isOpen: mall.isOpen } : store
   );
 
+  // Log activity
+  const activity = addActivity('mall_toggle', mall.name, mall.id, req.user.username, action);
+
   res.json({ 
     message: "Mall status updated successfully", 
-    mall: { id: mall.id, name: mall.name, isOpen: mall.isOpen }
+    mall: { id: mall.id, name: mall.name, isOpen: mall.isOpen },
+    activity
   });
 });
 

@@ -16,6 +16,7 @@ import {
 } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import { useDataService } from '../hooks/useDataService'
+import { useActivity } from '../context/ActivityContext'
 import { mallAPI } from '../services/api'
 import { ROUTES } from '../utils/constants'
 import toast from 'react-hot-toast'
@@ -25,19 +26,12 @@ interface DashboardStats {
   totalStores: number
   openMalls: number
   openStores: number
-  recentActivity: Array<{
-    id: string
-    type: 'mall_toggle' | 'store_toggle' | 'store_edit'
-    mallName: string
-    storeName?: string
-    timestamp: string
-    user: string
-  }>
 }
 
 export default function AdminDashboard() {
   const { user } = useAuth()
   const { malls, loading, refreshData } = useDataService()
+  const { getRecentActivities, refreshActivities } = useActivity()
   const [stats, setStats] = useState<DashboardStats | null>(null)
   const [toggleLoading, setToggleLoading] = useState<number | null>(null)
 
@@ -50,39 +44,11 @@ export default function AdminDashboard() {
         sum + mall.stores.filter(store => store.isOpen).length, 0
       )
 
-      // Mock recent activity - in real app this would come from audit logs
-      const recentActivity = [
-        {
-          id: '1',
-          type: 'mall_toggle' as const,
-          mallName: 'Villaggio Mall',
-          timestamp: '2 hours ago',
-          user: 'admin'
-        },
-        {
-          id: '2', 
-          type: 'store_toggle' as const,
-          mallName: 'City Center Doha',
-          storeName: 'Nike Store',
-          timestamp: '4 hours ago',
-          user: 'manager'
-        },
-        {
-          id: '3',
-          type: 'store_edit' as const,
-          mallName: 'Landmark Mall',
-          storeName: 'Starbucks',
-          timestamp: '1 day ago',
-          user: 'store'
-        }
-      ]
-
       setStats({
         totalMalls,
         totalStores,
         openMalls,
-        openStores,
-        recentActivity
+        openStores
       })
     }
   }, [malls])
@@ -94,6 +60,7 @@ export default function AdminDashboard() {
     try {
       await mallAPI.toggleMall(mallId)
       await refreshData() // Refresh the data
+      await refreshActivities() // Refresh activities from server
       
       const action = currentStatus ? 'closed' : 'opened'
       toast.success(`${mallName} has been ${action}`)
@@ -396,36 +363,39 @@ export default function AdminDashboard() {
             </div>
             
             <div className="space-y-4">
-              {stats.recentActivity.map((activity) => (
-                <div key={activity.id} className="flex items-center space-x-4 p-3 hover:bg-gray-50 rounded-lg transition-colors">
-                  <div className={`p-2 rounded-full ${
-                    activity.type === 'mall_toggle' ? 'bg-blue-100' :
-                    activity.type === 'store_toggle' ? 'bg-green-100' : 'bg-purple-100'
-                  }`}>
-                    {activity.type === 'mall_toggle' ? (
-                      <Building2 className={`w-4 h-4 ${
-                        activity.type === 'mall_toggle' ? 'text-blue-600' :
-                        activity.type === 'store_toggle' ? 'text-green-600' : 'text-purple-600'
-                      }`} />
-                    ) : activity.type === 'store_toggle' ? (
-                      <Store className="w-4 h-4 text-green-600" />
-                    ) : (
-                      <Settings className="w-4 h-4 text-purple-600" />
-                    )}
-                  </div>
-                  <div className="flex-1">
-                    <div className="font-medium text-gray-900">
-                      {activity.type === 'mall_toggle' && `Mall ${activity.mallName} status changed`}
-                      {activity.type === 'store_toggle' && `${activity.storeName} in ${activity.mallName} toggled`}
-                      {activity.type === 'store_edit' && `${activity.storeName} details updated`}
-                    </div>
-                    <div className="text-sm text-gray-500">
-                      by {activity.user} • {activity.timestamp}
-                    </div>
-                  </div>
-                  <Clock className="w-4 h-4 text-gray-400" />
+              {getRecentActivities(5).length === 0 ? (
+                <div className="text-center py-8">
+                  <Activity className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                  <p className="text-gray-500 text-sm">No recent activity</p>
+                  <p className="text-gray-400 text-xs">Start by toggling mall or store status</p>
                 </div>
-              ))}
+              ) : (
+                getRecentActivities(5).map((activity) => (
+                  <div key={activity.id} className="flex items-center space-x-4 p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                    <div className={`p-2 rounded-full ${
+                      activity.type === 'mall_toggle' ? 'bg-blue-100' :
+                      activity.type === 'store_toggle' ? 'bg-green-100' : 'bg-purple-100'
+                    }`}>
+                      {activity.type === 'mall_toggle' ? (
+                        <Building2 className="w-4 h-4 text-blue-600" />
+                      ) : activity.type === 'store_toggle' ? (
+                        <Store className="w-4 h-4 text-green-600" />
+                      ) : (
+                        <Settings className="w-4 h-4 text-purple-600" />
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <div className="font-medium text-gray-900">
+                        {activity.description}
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        by {activity.user} • {(activity as any).formattedTime}
+                      </div>
+                    </div>
+                    <Clock className="w-4 h-4 text-gray-400" />
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </div>
