@@ -93,7 +93,6 @@ store-locator/
 │   └── package.json
 ├── server/                 # Unified Express backend
 │   ├── index.js           # Main unified API server
-│   ├── authServer.js      # Legacy auth server (reference)
 │   ├── data/              # JSON data files
 │   │   └── malls.json     # Mall and store data
 │   ├── utils/             # Server utilities
@@ -417,7 +416,7 @@ npm test spatial.test.ts
 
 ### Provided Gist Files
 - [Malls Data (malls.json)](https://gist.github.com/topazahmed/ea65717dfee7d8d6725f019957cab0e7)
-- [Auth Server (authServer.js)](https://gist.github.com/topazahmed/fb5e226a906b87a29a8937db6c051d72)
+- [Auth Server Reference (integrated into index.js)](https://gist.github.com/topazahmed/fb5e226a906b87a29a8937db6c051d72)
 - [Data Validation (validateData.ts)](https://gist.github.com/topazahmed/56d2896f0ad36eb2e00b286ab894afa5)
 - [Spatial Utilities (spatial.ts)](https://gist.github.com/topazahmed/084b16b58d95efa136a86c89aae567b5)
 - [Spatial Tests (spatial.test.ts)](https://gist.github.com/topazahmed/0b46475d01c19fb8d8b9404f856c0959)

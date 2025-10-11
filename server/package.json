@@ -8,8 +8,7 @@
     "start": "node index.js",
     "dev": "nodemon index.js",
     "test": "jest",
-    "validate-data": "node utils/validate-data.js",
-    "legacy:auth": "node authServer.js"
+    "validate-data": "node utils/validate-data.js"
   },
   "dependencies": {
     "cors": "^2.8.5",

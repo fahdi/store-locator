@@ -57,16 +57,16 @@ Create a React (or .NET Core) web app that:
 
 ### 🧩 Server Setup
 
-**File**: `server/authServer.js`
+**File**: `server/index.js` (unified server)
 
-[Auth Server Gist](https://gist.github.com/topazahmed/fb5e226a906b87a29a8937db6c051d72)
+[Auth Server Reference Gist](https://gist.github.com/topazahmed/fb5e226a906b87a29a8937db6c051d72)
 
 ```bash
 npm install express cors jsonwebtoken
-node server/authServer.js
+npm run start:server
 ```
 
-Runs at `http://localhost:5000`
+Runs at `http://localhost:5001`
 
 ### 🔑 Login Credentials
 

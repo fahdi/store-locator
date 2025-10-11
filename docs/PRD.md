@@ -1047,7 +1047,7 @@ bluesky-store-locator/
 │   │   └── malls.js
 │   ├── utils/
 │   │   └── validateData.js
-│   ├── authServer.js
+│   ├── index.js           # Unified server with auth
 │   ├── mockServer.js (optional)
 │   ├── package.json
 │   └── .env
@@ -1314,7 +1314,7 @@ The following features are explicitly **NOT** required for this project:
 
 ### Provided Resources
 - [Malls Data (malls.json)](https://gist.github.com/topazahmed/ea65717dfee7d8d6725f019957cab0e7) - Complete mall and store data for Doha
-- [Auth Server (authServer.js)](https://gist.github.com/topazahmed/fb5e226a906b87a29a8937db6c051d72) - Express server with JWT authentication
+- [Auth Server Reference (integrated into index.js)](https://gist.github.com/topazahmed/fb5e226a906b87a29a8937db6c051d72) - Express server with JWT authentication
 - [Data Validation (validateData.ts)](https://gist.github.com/topazahmed/56d2896f0ad36eb2e00b286ab894afa5) - Validation utilities for required fields and coordinates
 - [Spatial Utilities (spatial.ts)](https://gist.github.com/topazahmed/084b16b58d95efa136a86c89aae567b5) - Distance calculations and proximity functions
 - [Spatial Tests (spatial.test.ts)](https://gist.github.com/topazahmed/0b46475d01c19fb8d8b9404f856c0959) - Unit tests for spatial utilities
