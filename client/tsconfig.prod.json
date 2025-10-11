@@ -9,6 +9,13 @@
     "noImplicitAny": false,
     "noImplicitReturns": false,
     "noImplicitThis": false,
-    "noImplicitOverride": false
-  }
+    "noImplicitOverride": false,
+    "skipLibCheck": true
+  },
+  "exclude": [
+    "**/*.test.*",
+    "**/*.spec.*",
+    "src/**/*.test.tsx",
+    "src/**/*.test.ts"
+  ]
 }
