@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { MapContainer, TileLayer, Marker, Popup, Tooltip } from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, Popup, Tooltip, ZoomControl } from 'react-leaflet'
 import L from 'leaflet'
 import toast from 'react-hot-toast'
 import 'leaflet/dist/leaflet.css'
@@ -21,36 +21,36 @@ interface MapViewProps {
   malls?: Mall[] // Make optional since we'll fetch data internally
 }
 
-// Custom icon for open malls - Diamond shape
+// Custom icon for open malls - Large marker style
 const openMallIcon = new L.Icon({
-  iconUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8IS0tIERpYW1vbmQgc2hhcGUgLS0+CiAgPHBhdGggZD0iTTE2IDMgTDI5IDE2IEwxNiAyOSBMMyAxNiBaIiBmaWxsPSIjMTBiOTgxIiBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iMyIvPgogIDwhLS0gTWFsbCBpY29uIGluIGNlbnRlciAtLT4KICA8cmVjdCB4PSIxMCIgeT0iMTIiIHdpZHRoPSIxMiIgaGVpZ2h0PSI4IiBmaWxsPSIjZmZmIiByeD0iMSIvPgogIDxyZWN0IHg9IjEzIiB5PSIxNCIgd2lkdGg9IjIiIGhlaWdodD0iMiIgZmlsbD0iIzEwYjk4MSIvPgogIDxyZWN0IHg9IjE3IiB5PSIxNCIgd2lkdGg9IjIiIGhlaWdodD0iMiIgZmlsbD0iIzEwYjk4MSIvPgogIDxyZWN0IHg9IjE1IiB5PSIxOCIgd2lkdGg9IjIiIGhlaWdodD0iMiIgZmlsbD0iIzEwYjk4MSIvPgo8L3N2Zz4=',
-  iconSize: [32, 32],
-  iconAnchor: [16, 16],
-  popupAnchor: [0, -16],
+  iconUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNTAiIHZpZXdCb3g9IjAgMCA0MCA1MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8IS0tIE1hcmtlciBTaGFkb3cgLS0+CiAgPGVsbGlwc2UgY3g9IjIwIiBjeT0iNDciIHJ4PSI2IiByeT0iMyIgZmlsbD0iIzAwMCIgb3BhY2l0eT0iMC4yIi8+CiAgPCEtLSBNYXJrZXIgQm9keSAtLT4KICA8cGF0aCBkPSJNMjAgNEMxMC42IDQgMyAxMS42IDMgMjFDMyAzMy41IDIwIDQ2IDIwIDQ2UzM3IDMzLjUgMzcgMjFDMzcgMTEuNiAyOS40IDQgMjAgNFoiIGZpbGw9IiMxMGI5ODEiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSIzIi8+CiAgPCEtLSBNYWxsIEljb24gLS0+CiAgPGNpcmNsZSBjeD0iMjAiIGN5PSIyMSIgcj0iMTAiIGZpbGw9IiNmZmYiLz4KICA8IS0tIEJ1aWxkaW5nIEljb24gLS0+CiAgPHJlY3QgeD0iMTQiIHk9IjE3IiB3aWR0aD0iMTIiIGhlaWdodD0iOCIgZmlsbD0iIzEwYjk4MSIgcng9IjEiLz4KICA8cmVjdCB4PSIxNiIgeT0iMTkiIHdpZHRoPSIyIiBoZWlnaHQ9IjIiIGZpbGw9IiNmZmYiLz4KICA8cmVjdCB4PSIyMCIgeT0iMTkiIHdpZHRoPSIyIiBoZWlnaHQ9IjIiIGZpbGw9IiNmZmYiLz4KICA8cmVjdCB4PSIyNCIgeT0iMTkiIHdpZHRoPSIyIiBoZWlnaHQ9IjIiIGZpbGw9IiNmZmYiLz4KICA8cmVjdCB4PSIxOCIgeT0iMjMiIHdpZHRoPSI0IiBoZWlnaHQ9IjIiIGZpbGw9IiNmZmYiLz4KPC9zdmc+',
+  iconSize: [40, 50],
+  iconAnchor: [20, 50],
+  popupAnchor: [0, -50],
 })
 
-// Custom icon for closed malls - Diamond shape with X
+// Custom icon for closed malls - Large marker style with X
 const closedMallIcon = new L.Icon({
-  iconUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8IS0tIERpYW1vbmQgc2hhcGUgLS0+CiAgPHBhdGggZD0iTTE2IDMgTDI5IDE2IEwxNiAyOSBMMyAxNiBaIiBmaWxsPSIjZGMyNjI2IiBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iMyIvPgogIDwhLS0gWCBvdmVyIGRpYW1vbmQgLS0+CiAgPGxpbmUgeDE9IjEwIiB5MT0iMTAiIHgyPSIyMiIgeTI9IjIyIiBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgPGxpbmUgeDE9IjIyIiB5MT0iMTAiIHgyPSIxMCIgeTI9IjIyIiBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+Cjwvc3ZnPg==',
-  iconSize: [32, 32],
-  iconAnchor: [16, 16],
-  popupAnchor: [0, -16],
+  iconUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNTAiIHZpZXdCb3g9IjAgMCA0MCA1MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8IS0tIE1hcmtlciBTaGFkb3cgLS0+CiAgPGVsbGlwc2UgY3g9IjIwIiBjeT0iNDciIHJ4PSI2IiByeT0iMyIgZmlsbD0iIzAwMCIgb3BhY2l0eT0iMC4yIi8+CiAgPCEtLSBNYXJrZXIgQm9keSAtLT4KICA8cGF0aCBkPSJNMjAgNEMxMC42IDQgMyAxMS42IDMgMjFDMyAzMy41IDIwIDQ2IDIwIDQ2UzM3IDMzLjUgMzcgMjFDMzcgMTEuNiAyOS40IDQgMjAgNFoiIGZpbGw9IiNkYzI2MjYiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSIzIi8+CiAgPCEtLSBYIE92ZXJsYXkgLS0+CiAgPGNpcmNsZSBjeD0iMjAiIGN5PSIyMSIgcj0iMTAiIGZpbGw9IiNmZmYiLz4KICA8bGluZSB4MT0iMTQiIHkxPSIxNSIgeDI9IjI2IiB5Mj0iMjciIHN0cm9rZT0iI2RjMjYyNiIgc3Ryb2tlLXdpZHRoPSIzIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8bGluZSB4MT0iMjYiIHkxPSIxNSIgeDI9IjE0IiB5Mj0iMjciIHN0cm9rZT0iI2RjMjYyNiIgc3Ryb2tlLXdpZHRoPSIzIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPC9zdmc+',
+  iconSize: [40, 50],
+  iconAnchor: [20, 50],
+  popupAnchor: [0, -50],
 })
 
-// Custom icon for open stores - Circle shape
+// Custom icon for open stores - Smaller marker style
 const openStoreIcon = new L.Icon({
-  iconUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8IS0tIENpcmNsZSBzaGFwZSAtLT4KICA8Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxMCIgZmlsbD0iIzA2ODhiMCIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjMiLz4KICA8IS0tIFN0b3JlIGljb24gaW4gY2VudGVyIC0tPgogIDxyZWN0IHg9IjgiIHk9IjkiIHdpZHRoPSI4IiBoZWlnaHQ9IjYiIGZpbGw9IiNmZmYiIHJ4PSIwLjUiLz4KICA8cmVjdCB4PSI5IiB5PSIxMCIgd2lkdGg9IjIiIGhlaWdodD0iMiIgZmlsbD0iIzA2ODhiMCIvPgogIDxyZWN0IHg9IjEzIiB5PSIxMCIgd2lkdGg9IjIiIGhlaWdodD0iMiIgZmlsbD0iIzA2ODhiMCIvPgogIDxyZWN0IHg9IjExIiB5PSIxMyIgd2lkdGg9IjIiIGhlaWdodD0iMiIgZmlsbD0iIzA2ODhiMCIvPgo8L3N2Zz4=',
-  iconSize: [24, 24],
-  iconAnchor: [12, 12],
-  popupAnchor: [0, -12],
+  iconUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzgiIHZpZXdCb3g9IjAgMCAzMCAzOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8IS0tIE1hcmtlciBTaGFkb3cgLS0+CiAgPGVsbGlwc2UgY3g9IjE1IiBjeT0iMzYiIHJ4PSI0LjUiIHJ5PSIyIiBmaWxsPSIjMDAwIiBvcGFjaXR5PSIwLjIiLz4KICA8IS0tIE1hcmtlciBCb2R5IC0tPgogIDxwYXRoIGQ9Ik0xNSAzQzguOSAzIDQgNy45IDQgMTRDNCAyMy41IDE1IDM1IDE1IDM1UzI2IDIzLjUgMjYgMTRDMjYgNy45IDIxLjEgMyAxNSAzWiIgZmlsbD0iIzA2ODhiMCIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIuNSIvPgogIDwhLS0gU3RvcmUgSWNvbiAtLT4KICA8Y2lyY2xlIGN4PSIxNSIgY3k9IjE0IiByPSI3IiBmaWxsPSIjZmZmIi8+CiAgPCEtLSBTaG9wIEljb24gLS0+CiAgPHJlY3QgeD0iMTEiIHk9IjExIiB3aWR0aD0iOCIgaGVpZ2h0PSI2IiBmaWxsPSIjMDY4OGIwIiByeD0iMC41Ii8+CiAgPHJlY3QgeD0iMTIiIHk9IjEyIiB3aWR0aD0iMS41IiBoZWlnaHQ9IjEuNSIgZmlsbD0iI2ZmZiIvPgogIDxyZWN0IHg9IjE1IiB5PSIxMiIgd2lkdGg9IjEuNSIgaGVpZ2h0PSIxLjUiIGZpbGw9IiNmZmYiLz4KICA8cmVjdCB4PSIxNCIgeT0iMTUiIHdpZHRoPSIyIiBoZWlnaHQ9IjIiIGZpbGw9IiNmZmYiLz4KPC9zdmc+',
+  iconSize: [30, 38],
+  iconAnchor: [15, 38],
+  popupAnchor: [0, -38],
 })
 
-// Custom icon for closed stores - Circle shape with X
+// Custom icon for closed stores - Smaller marker style with X
 const closedStoreIcon = new L.Icon({
-  iconUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8IS0tIENpcmNsZSBzaGFwZSAtLT4KICA8Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxMCIgZmlsbD0iI2RjMjYyNiIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjMiLz4KICA8IS0tIFggb3ZlciBjaXJjbGUgLS0+CiAgPGxpbmUgeDE9IjgiIHkxPSI4IiB4Mj0iMTYiIHkyPSIxNiIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDxsaW5lIHgxPSIxNiIgeTE9IjgiIHgyPSI4IiB5Mj0iMTYiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSIzIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPC9zdmc+',
-  iconSize: [24, 24],
-  iconAnchor: [12, 12],
-  popupAnchor: [0, -12],
+  iconUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzgiIHZpZXdCb3g9IjAgMCAzMCAzOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8IS0tIE1hcmtlciBTaGFkb3cgLS0+CiAgPGVsbGlwc2UgY3g9IjE1IiBjeT0iMzYiIHJ4PSI0LjUiIHJ5PSIyIiBmaWxsPSIjMDAwIiBvcGFjaXR5PSIwLjIiLz4KICA8IS0tIE1hcmtlciBCb2R5IC0tPgogIDxwYXRoIGQ9Ik0xNSAzQzguOSAzIDQgNy45IDQgMTRDNCAyMy41IDE1IDM1IDE1IDM1UzI2IDIzLjUgMjYgMTRDMjYgNy45IDIxLjEgMyAxNSAzWiIgZmlsbD0iI2RjMjYyNiIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIuNSIvPgogIDwhLS0gWCBPdmVybGF5IC0tPgogIDxjaXJjbGUgY3g9IjE1IiBjeT0iMTQiIHI9IjciIGZpbGw9IiNmZmYiLz4KICA8bGluZSB4MT0iMTEiIHkxPSIxMCIgeDI9IjE5IiB5Mj0iMTgiIHN0cm9rZT0iI2RjMjYyNiIgc3Ryb2tlLXdpZHRoPSIyLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDxsaW5lIHgxPSIxOSIgeTE9IjEwIiB4Mj0iMTEiIHkyPSIxOCIgc3Ryb2tlPSIjZGMyNjI2IiBzdHJva2Utd2lkdGg9IjIuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+Cjwvc3ZnPg==',
+  iconSize: [30, 38],
+  iconAnchor: [15, 38],
+  popupAnchor: [0, -38],
 })
 
 // Helper function to generate store coordinates (mimics server logic)
@@ -323,7 +323,7 @@ export default function MapView({ malls: propMalls }: MapViewProps) {
           zoom={11}
           style={{ height: '100%', width: '100%', minHeight: 'calc(100vh - 140px)' }}
           className="h-full w-full rounded-lg"
-          zoomControl={true}
+          zoomControl={false}
           scrollWheelZoom={true}
           touchZoom={true}
           doubleClickZoom={true}
@@ -341,6 +341,9 @@ export default function MapView({ malls: propMalls }: MapViewProps) {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
+
+        {/* Custom positioned zoom control */}
+        <ZoomControl position="bottomright" />
         
         
         {/* Mall Markers */}
